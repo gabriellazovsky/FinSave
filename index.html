@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinSave - Ahorra jugando, aprende creciendo</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <nav class="nav">
+            <div class="nav-container">
+                <div class="nav-brand">
+                    <h1 class="logo">FinSave</h1>
+                    <p class="tagline">Ahorra jugando, aprende creciendo</p>
+                </div>
+                <button class="nav-toggle" aria-label="Toggle navigation">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu">
+                    <li><a href="#inicio" class="nav-link">Inicio</a></li>
+                    <li><a href="#ahorros" class="nav-link">Mis Ahorros</a></li>
+                    <li><a href="#educacion" class="nav-link">Educación</a></li>
+                    <li><a href="#calculadora" class="nav-link">Calculadora</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main class="main">
+        <section id="inicio" class="hero">
+            <div class="hero-container">
+                <div class="hero-content">
+                    <h2 class="hero-title">Aprende a ahorrar de manera divertida</h2>
+                    <p class="hero-subtitle">Convierte el ahorro en un juego y alcanza tus metas financieras mientras aprendes.</p>
+                    <button class="cta-button">Comenzar ahora</button>
+                </div>
+                <div class="hero-image">
+                    <div class="piggy-bank">🐷</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="ahorros" class="savings-section">
+            <div class="container">
+                <h2 class="section-title">Mis Metas de Ahorro</h2>
+                <div class="savings-grid">
+                    <div class="savings-card">
+                        <h3>Meta Principal</h3>
+                        <div class="progress-container">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 65%"></div>
+                            </div>
+                            <span class="progress-text">$650 / $1,000</span>
+                        </div>
+                        <p class="savings-description">Vacaciones de verano</p>
+                    </div>
+                    <div class="savings-card">
+                        <h3>Emergencias</h3>
+                        <div class="progress-container">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 30%"></div>
+                            </div>
+                            <span class="progress-text">$300 / $1,000</span>
+                        </div>
+                        <p class="savings-description">Fondo de emergencia</p>
+                    </div>
+                    <div class="add-goal-card">
+                        <button class="add-goal-btn">
+                            <span class="plus-icon">+</span>
+                            <span>Nueva Meta</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="educacion" class="education-section">
+            <div class="container">
+                <h2 class="section-title">Centro de Aprendizaje</h2>
+                <div class="education-grid">
+                    <div class="education-card">
+                        <div class="education-icon">📚</div>
+                        <h3>Conceptos Básicos</h3>
+                        <p>Aprende los fundamentos del ahorro y las finanzas personales.</p>
+                        <button class="learn-btn">Aprender</button>
+                    </div>
+                    <div class="education-card">
+                        <div class="education-icon">💡</div>
+                        <h3>Tips de Ahorro</h3>
+                        <p>Descubre estrategias efectivas para ahorrar más dinero.</p>
+                        <button class="learn-btn">Aprender</button>
+                    </div>
+                    <div class="education-card">
+                        <div class="education-icon">🎯</div>
+                        <h3>Metas SMART</h3>
+                        <p>Cómo establecer metas de ahorro específicas y alcanzables.</p>
+                        <button class="learn-btn">Aprender</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="calculadora" class="calculator-section">
+            <div class="container">
+                <h2 class="section-title">Calculadora de Ahorros</h2>
+                <div class="calculator-container">
+                    <div class="calculator-form">
+                        <div class="form-group">
+                            <label for="amount">Cantidad a ahorrar ($)</label>
+                            <input type="number" id="amount" placeholder="1000" min="0" step="10">
+                        </div>
+                        <div class="form-group">
+                            <label for="monthly">Ahorro mensual ($)</label>
+                            <input type="number" id="monthly" placeholder="100" min="0" step="10">
+                        </div>
+                        <div class="form-group">
+                            <label for="interest">Tasa de interés anual (%)</label>
+                            <input type="number" id="interest" placeholder="5" min="0" max="100" step="0.1">
+                        </div>
+                        <button class="calculate-btn" onclick="calculateSavings()">Calcular</button>
+                    </div>
+                    <div class="calculator-result">
+                        <div class="result-card">
+                            <h3>Resultados</h3>
+                            <div id="results">
+                                <p>Ingresa tus datos para ver los resultados</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 FinSave. Aprende a ahorrar, crece financieramente.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

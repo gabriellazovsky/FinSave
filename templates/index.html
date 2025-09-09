@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="hero-section text-center bg-gradient-success text-white p-5 rounded mb-4">
+            <h1 class="display-4"><i class="fas fa-piggy-bank me-3"></i>FinSave</h1>
+            <p class="lead">Ahorra jugando, aprende creciendo</p>
+            <p class="mb-4">Tu compañero para alcanzar la libertad financiera</p>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <div class="display-1 text-success mb-3">
+                    <i class="fas fa-wallet"></i>
+                </div>
+                <h5 class="card-title">Total Ahorrado</h5>
+                <h2 class="text-success">${{ "%.2f"|format(total_savings) }}</h2>
+                <p class="card-text">¡Sigue así! Cada peso cuenta.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <div class="display-1 text-primary mb-3">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h5 class="card-title">Entradas de Ahorro</h5>
+                <h2 class="text-primary">{{ savings_data|length }}</h2>
+                <p class="card-text">Transacciones registradas este mes.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <div class="display-1 text-warning mb-3">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <h5 class="card-title">Meta del Mes</h5>
+                <h2 class="text-warning">75%</h2>
+                <p class="card-text">¡Estás muy cerca de tu objetivo!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if savings_data %}
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-history me-2"></i>Historial de Ahorros</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Descripción</th>
+                                <th>Categoría</th>
+                                <th class="text-end">Monto</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for entry in savings_data %}
+                            <tr>
+                                <td>{{ entry.date }}</td>
+                                <td>{{ entry.description }}</td>
+                                <td>
+                                    <span class="badge bg-secondary">{{ entry.category }}</span>
+                                </td>
+                                <td class="text-end text-success fw-bold">${{ "%.2f"|format(entry.amount) }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="fas fa-plus-circle display-1 text-muted mb-3"></i>
+                <h5>¡Comienza tu viaje de ahorro!</h5>
+                <p class="text-muted">Aún no tienes ahorros registrados. ¡Agrega tu primer ahorro para comenzar!</p>
+                <a href="{{ url_for('add_savings') }}" class="btn btn-success btn-lg">
+                    <i class="fas fa-plus me-2"></i>Agregar Primer Ahorro
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="text-center">
+            <a href="{{ url_for('add_savings') }}" class="btn btn-success btn-lg me-3">
+                <i class="fas fa-plus me-2"></i>Agregar Ahorro
+            </a>
+            <a href="{{ url_for('learn') }}" class="btn btn-outline-primary btn-lg">
+                <i class="fas fa-graduation-cap me-2"></i>Aprender a Ahorrar
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

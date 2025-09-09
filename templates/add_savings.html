@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}Agregar Ahorro - FinSave{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-plus-circle me-2"></i>Agregar Nuevo Ahorro</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="amount" class="form-label">Monto ($)</label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="number" 
+                                   class="form-control" 
+                                   id="amount" 
+                                   name="amount" 
+                                   step="0.01" 
+                                   min="0.01" 
+                                   required 
+                                   placeholder="0.00">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Descripción</label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="description" 
+                               name="description" 
+                               required 
+                               placeholder="¿Para qué estás ahorrando?">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="category" class="form-label">Categoría</label>
+                        <select class="form-select" id="category" name="category" required>
+                            <option value="">Selecciona una categoría</option>
+                            <option value="Emergencia">🚨 Fondo de Emergencia</option>
+                            <option value="Vacaciones">🏖️ Vacaciones</option>
+                            <option value="Educacion">📚 Educación</option>
+                            <option value="Salud">🏥 Salud</option>
+                            <option value="Hogar">🏠 Hogar</option>
+                            <option value="Transporte">🚗 Transporte</option>
+                            <option value="Tecnologia">💻 Tecnología</option>
+                            <option value="Inversion">📈 Inversión</option>
+                            <option value="Otro">📝 Otro</option>
+                        </select>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('index') }}" class="btn btn-outline-secondary me-md-2">
+                            <i class="fas fa-arrow-left me-2"></i>Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save me-2"></i>Guardar Ahorro
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="card mt-4">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-lightbulb me-2"></i>Consejos para Ahorrar</h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Establece metas específicas</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Automatiza tus ahorros</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Celebra pequeños logros</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Revisa gastos regularmente</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Busca formas de reducir costos</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Invierte en tu educación financiera</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

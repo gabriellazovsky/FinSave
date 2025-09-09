@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block title %}Aprender - FinSave{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="text-center mb-4">
+            <h2><i class="fas fa-graduation-cap me-3"></i>Centro de Aprendizaje</h2>
+            <p class="lead text-muted">Mejora tus habilidades financieras con estos consejos prácticos</p>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    {% for tip in tips %}
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="bg-primary text-white rounded-circle p-3 me-3">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h5 class="card-title mb-0">{{ tip.title }}</h5>
+                </div>
+                <p class="card-text">{{ tip.description }}</p>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-calculator me-2"></i>Calculadora de Ahorros</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <form id="savingsCalculator">
+                            <div class="mb-3">
+                                <label for="monthlyAmount" class="form-label">Monto mensual a ahorrar ($)</label>
+                                <input type="number" class="form-control" id="monthlyAmount" placeholder="100" min="1">
+                            </div>
+                            <div class="mb-3">
+                                <label for="months" class="form-label">Número de meses</label>
+                                <input type="number" class="form-control" id="months" placeholder="12" min="1">
+                            </div>
+                            <div class="mb-3">
+                                <label for="interestRate" class="form-label">Tasa de interés anual (%)</label>
+                                <input type="number" class="form-control" id="interestRate" placeholder="5" min="0" step="0.1">
+                            </div>
+                            <button type="button" class="btn btn-primary" onclick="calculateSavings()">
+                                <i class="fas fa-calculator me-2"></i>Calcular
+                            </button>
+                        </form>
+                    </div>
+                    <div class="col-md-6">
+                        <div id="calculatorResult" class="d-none">
+                            <h6>Resultado:</h6>
+                            <div class="alert alert-success">
+                                <p class="mb-2"><strong>Total ahorrado:</strong> $<span id="totalAmount">0</span></p>
+                                <p class="mb-2"><strong>Capital invertido:</strong> $<span id="principal">0</span></p>
+                                <p class="mb-0"><strong>Intereses ganados:</strong> $<span id="interest">0</span></p>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <i class="fas fa-chart-pie display-1 text-muted"></i>
+                            <p class="text-muted mt-2">Los resultados aparecerán aquí</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-book me-2"></i>Recursos Adicionales</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="text-center p-3">
+                            <i class="fas fa-mobile-alt display-4 text-info mb-3"></i>
+                            <h6>Apps de Presupuesto</h6>
+                            <p class="text-muted small">Utiliza aplicaciones móviles para rastrear tus gastos diarios.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center p-3">
+                            <i class="fas fa-university display-4 text-warning mb-3"></i>
+                            <h6>Cuentas de Ahorro</h6>
+                            <p class="text-muted small">Compara tasas de interés en diferentes bancos.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center p-3">
+                            <i class="fas fa-chart-line display-4 text-success mb-3"></i>
+                            <h6>Inversiones Básicas</h6>
+                            <p class="text-muted small">Aprende sobre opciones de inversión seguras.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function calculateSavings() {
+    const monthlyAmount = parseFloat(document.getElementById('monthlyAmount').value);
+    const months = parseInt(document.getElementById('months').value);
+    const annualRate = parseFloat(document.getElementById('interestRate').value) / 100;
+    
+    if (!monthlyAmount || !months || isNaN(annualRate)) {
+        alert('Por favor completa todos los campos con valores válidos');
+        return;
+    }
+    
+    const monthlyRate = annualRate / 12;
+    const principal = monthlyAmount * months;
+    
+    // Cálculo de interés compuesto mensual
+    let total = 0;
+    for (let i = 1; i <= months; i++) {
+        total += monthlyAmount * Math.pow(1 + monthlyRate, months - i + 1);
+    }
+    
+    const interest = total - principal;
+    
+    document.getElementById('totalAmount').textContent = total.toFixed(2);
+    document.getElementById('principal').textContent = principal.toFixed(2);
+    document.getElementById('interest').textContent = interest.toFixed(2);
+    document.getElementById('calculatorResult').classList.remove('d-none');
+}
+</script>
+{% endblock %}

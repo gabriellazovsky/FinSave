@@ -1,2 +1,2 @@
 # FinSave
-Ahorra jugando, aprende creciendo
+Ahorra jugando, aprende creciendo.

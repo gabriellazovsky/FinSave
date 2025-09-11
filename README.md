@@ -1,2 +1,12 @@
-# FinSave
-Ahorra jugando, aprende creciendo.
+# FinSave  
+_Ahorra jugando, aprende creciendo._
+
+<div align="center">
+  <img src="imagen.png" alt="Diagrama de la App" width="500"><br>
+  <sub>📌 <b>Boceto de la web</b></sub>
+</div>
+
+Documento de [RF](https://ceu365-my.sharepoint.com/:w:/g/personal/gabriel_lazovskyigual_usp_ceu_es/EUta0UbD4RhMsot5hp6VB7MBX9FZESix9fx7_nO_TtEOJA?e=d8dmcj)
+Repo en [Github](https://github.com/gabriellazovsky/FinSave)
+
+---

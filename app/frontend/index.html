@@ -4,7 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>FinSave – Navegación</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
     <style>
+
         body {
             margin: 0;
             font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial;
@@ -45,7 +48,7 @@
         main {
             margin-top: 80px;
             padding: 20px;
-            text-align: center;
+            text-align: left;
         }
     </style>
 </head>
@@ -59,9 +62,18 @@
     </nav>
 </header>
 
-<main>
-    <h1>Pantalla de ejemplo</h1>
+<main class="flex items-center justify-start h-screen pl-8">
 
+    <div>
+    <h1 class="mb-4"> Pantalla de ejemplo</h1>
+
+    <button class="inline-flex items-center gap-2 px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        Insertar
+    </button>
+    </div>
 </main>
 </body>
 </html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>FinSave – Historial</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial;
+            background: #ffffff;
+            color: #003366;
+        }
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: #ffffff;
+            border-bottom: 2px solid #007bff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        nav { display: flex; justify-content: space-evenly; width: 100%; max-width: 800px; }
+        nav a { text-decoration: none; color: #003366; font-weight: 600; padding: 10px; }
+        nav a:hover { color: #007bff; }
+        main { margin-top: 80px; padding: 20px; text-align: left; }
+    </style>
+</head>
+<body>
+
+<header>
+    <nav>
+        <a href="#empresa">Empresa</a>
+        <a href="#persona">Persona</a>
+        <a href="#consejo">Consejo</a>
+        <a href="#faq">FAQ</a>
+    </nav>
+</header>
+
+<main class="pl-8">
+
+    <!-- Botón Insertar -->
+    <div class="mb-6">
+        <button id="openForm" class="inline-flex items-center gap-2 px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">
+            Insertar
+        </button>
+    </div>
+
+    <!-- Modal de ingreso -->
+    <dialog id="formDialog" class="rounded-lg p-0 backdrop:bg-black/40">
+        <div class="w-[32rem] max-w-[95vw] rounded-lg bg-white shadow-xl">
+            <div class="flex items-center justify-between border-b px-6 py-4">
+                <h2 class="text-lg font-semibold text-slate-800">Nuevo registro</h2>
+                <button id="closeForm" class="p-2 rounded hover:bg-slate-100">✕</button>
+            </div>
+            <form id="nuevoRegistro" class="space-y-4 px-6 py-5">
+                <input class="w-full rounded border px-3 py-2" placeholder="ID Cliente" id="inputClienteId"/>
+                <input class="w-full rounded border px-3 py-2" placeholder="Título" id="inputTitulo"/>
+                <input class="w-full rounded border px-3 py-2" placeholder="0.00" type="number" step="0.01" inputmode="decimal" id="inputMonto"/>
+
+                <label for="objeto">Ingreso/Gasto:</label>
+                <select name="objetos" id="objeto">
+                    <option value="ingreso">Ingreso</option>
+                    <option value="gasto">Gasto</option>
+                </select>
+
+                <label for="tag">Tag:</label>
+                <select name="tag" id="tag">
+                    <option value="ocio">Ocio</option>
+                    <option value="comida">Comida</option>
+                    <option value="alquiler">Alquiler</option>
+                    <option value="nomina">Nómina</option>
+                    <option value="gasolina">Gasolina</option>
+                </select>
+
+                <input type="date" id="start" name="Calendario" min="2010-01-01" max="2040-12-31"/>
+
+                <div class="flex justify-end gap-3 border-t px-6 py-4">
+                    <button id="cancelForm" class="rounded border px-4 py-2 hover:bg-slate-100">Cancelar</button>
+                    <button type="submit" class="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </dialog>
+
+    <!-- Historial financiero -->
+    <section class="mt-10">
+        <h2 class="text-xl font-semibold mb-2">Historial Financiero</h2>
+        <input id="clienteId" placeholder="ID Cliente" class="border px-2 py-1 rounded"/>
+        <button onclick="verHistorial()" class="ml-2 px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">Ver Historial</button>
+        <ul id="lista" class="mt-4 list-disc pl-6"></ul>
+    </section>
+
+</main>
+
+<script>
+    // Modal
+    const dlg = document.getElementById('formDialog');
+    document.getElementById('openForm').addEventListener('click', () => dlg.showModal());
+    document.getElementById('closeForm').addEventListener('click', () => dlg.close());
+    document.getElementById('cancelForm').addEventListener('click', (e) => { e.preventDefault(); dlg.close(); });
+    dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+
+    // Formulario ingreso
+    const form = document.getElementById('nuevoRegistro');
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const clienteId = document.getElementById('inputClienteId').value;
+        const titulo = document.getElementById('inputTitulo').value;
+        const monto = parseFloat(document.getElementById('inputMonto').value);
+        const tipo = document.getElementById('objeto').value;
+        const tag = document.getElementById('tag').value;
+        const fecha = document.getElementById('start').value;
+
+        if(!clienteId || !titulo || !monto || !tipo) { alert("Completa todos los campos"); return; }
+
+        const res = await fetch('/movimientos', {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({ idCuenta: clienteId, tipo, monto, descripcion:`${titulo} - ${tag}`, fecha })
+        });
+        await res.json();
+        form.reset();
+        dlg.close();
+    });
+
+    // Historial
+    async function verHistorial() {
+        const id = document.getElementById("clienteId").value;
+        if(!id) { alert("Ingresa un ID de cliente"); return; }
+        const res = await fetch(`/historial/${id}`);
+        const data = await res.json();
+        const ul = document.getElementById("lista");
+        ul.innerHTML = "";
+        data.forEach(m => {
+            const li = document.createElement("li");
+            li.textContent = `${m.tipo} - $${m.monto} - ${new Date(m.fecha).toLocaleDateString()} - ${m.descripcion || ""}`;
+            ul.appendChild(li);
+        });
+    }
+</script>
+
+</body>
+</html>
+
+

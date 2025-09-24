@@ -90,9 +90,9 @@
         <form id="demoIngresoGasto" class="space-y-4 px-6 py-5">
             <input class="w-full rounded border px-3 py-2" placeholder="Título" />
             <input class="w-full rounded border px-3 py-2"
-                   placeholder="Importe (€): "
+                   placeholder="0.00 "
                    type="number"
-                   step="0.00"
+                   step="0.01"
                    inputmode="decimal"/>
 
             <label for="objeto">Ingreso/Gasto:</label>
@@ -115,6 +115,16 @@
 
             </select>
         </form>
+
+        <!-- Calendario -->
+        <input
+                type="date"
+                id="start"
+                name="Calendario"
+                value="0000-00-00"
+                min="2010-01-01"
+                max="2040-12-31"
+                class="w-auto rounded border px-3 py-2"/>
 
         <!-- Footer -->
         <div class="flex justify-end gap-3 border-t px-6 py-4">

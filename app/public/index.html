@@ -57,15 +57,15 @@
         </div>
         <!-- Botón Exportar -->
         <div class="mt-80">
-        <button id="exportBtn"
-                class="inline-flex items-center gap-2 px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
-                 stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5-5m0 0l5 5m-5-5v12"/>
-            </svg>
-            Exportar
-        </button>
+            <button id="exportBtn"
+                    class="inline-flex items-center gap-2 px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                     stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5-5m0 0l5 5m-5-5v12"/>
+                </svg>
+                Exportar
+            </button>
         </div>
     </div>
     <!-- Modal de ingreso -->
@@ -76,7 +76,8 @@
                 <button id="closeForm" class="p-2 rounded hover:bg-slate-100">✕</button>
             </div>
             <form id="demoIngresoGasto" class="space-y-4 px-6 py-5">
-                <input class="w-full rounded border px-3 py-2" placeholder="Título" />
+                <input class="w-full rounded border px-3 py-2" placeholder="Título"/>
+                <input class="w-full rounded border px-3 py-2" placeholder="ID persona"/>
                 <input class="w-full rounded border px-3 py-2"
                        placeholder="0.00 "
                        type="number"
@@ -112,6 +113,15 @@
                     max="2040-12-31"
                     class="w-auto rounded border px-3 py-2 ml-6"/>
 
+            <!-- Footer -->
+            <div class="flex justify-end gap-3 border-t px-6 py-4">
+                <button id="cancelForm" class="rounded border px-4 py-2 hover:bg-slate-100">
+                    Cancelar
+                </button>
+                <button form="demoTag" class="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">
+                    Guardar
+                </button>
+            </div>
         </div>
     </dialog>
 

@@ -161,6 +161,12 @@
             ul.appendChild(li);
         });
     }
+
+    // Botón exportar → descarga CSV desde el backend
+document.getElementById("exportBtn").addEventListener("click", () => {
+  window.location.href = "http://localhost:3000/exportar";
+});
+
 </script>
 
 </body>

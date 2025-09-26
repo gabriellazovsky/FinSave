@@ -1,7 +1,7 @@
-// server.js
 const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
+const { Parser } = require('json2csv');
 
 const app = express();
 const PORT = 3000;
@@ -43,17 +43,14 @@ app.post('/movimientos', async (req, res) => {
 // Exportar todos los movimientos a CSV
 app.get('/exportar', async (req, res) => {
     try {
-        const movimientos = await Movimiento.find().lean(); // obtener todos los documentos
-
+        const movimientos = await Movimiento.find().lean();
         if (!movimientos || movimientos.length === 0) {
             return res.status(204).send('No hay datos para exportar');
         }
 
-        // Convertir a CSV
         const parser = new Parser();
         const csv = parser.parse(movimientos);
 
-        // Enviar como descarga
         res.header('Content-Type', 'text/csv; charset=utf-8');
         res.attachment('movimientos.csv');
         res.send(csv);
@@ -62,7 +59,6 @@ app.get('/exportar', async (req, res) => {
         res.status(500).send('Error al exportar datos');
     }
 });
-
 
 // Obtener historial por ID de cliente
 app.get('/historial/:id', async (req, res) => {
@@ -76,3 +72,4 @@ app.get('/historial/:id', async (req, res) => {
 
 // Iniciar servidor
 app.listen(PORT, () => console.log(`Servidor escuchando en http://localhost:${PORT}`));
+

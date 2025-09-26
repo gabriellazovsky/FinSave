@@ -40,6 +40,30 @@ app.post('/movimientos', async (req, res) => {
     }
 });
 
+// Exportar todos los movimientos a CSV
+app.get('/exportar', async (req, res) => {
+    try {
+        const movimientos = await Movimiento.find().lean(); // obtener todos los documentos
+
+        if (!movimientos || movimientos.length === 0) {
+            return res.status(204).send('No hay datos para exportar');
+        }
+
+        // Convertir a CSV
+        const parser = new Parser();
+        const csv = parser.parse(movimientos);
+
+        // Enviar como descarga
+        res.header('Content-Type', 'text/csv; charset=utf-8');
+        res.attachment('movimientos.csv');
+        res.send(csv);
+    } catch (err) {
+        console.error('Error exportando CSV:', err);
+        res.status(500).send('Error al exportar datos');
+    }
+});
+
+
 // Obtener historial por ID de cliente
 app.get('/historial/:id', async (req, res) => {
     try {

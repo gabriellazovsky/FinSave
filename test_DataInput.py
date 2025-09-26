@@ -11,3 +11,6 @@ class Test(TestCase):
     def test_input_classify2(self):
         DataInput.input_classify(1,"aaaaaaaaa")
 
+if __name__ == "__main__":
+    import unittest
+    unittest.main()

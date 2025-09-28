@@ -10,11 +10,11 @@
 
 <body>
 <header>
-    <nav>
-        <a href="#empresa">Empresa</a>
-        <a href="#persona">Persona</a>
-        <a href="#consejo">Consejo</a>
-        <a href="#faq">FAQ</a>
+    <nav class="flex gap-4 p-4 bg-gray-100 shadow">
+        <a href="#empresa" class="hover:text-blue-600">Empresa</a>
+        <a href="#persona" class="hover:text-blue-600">Persona</a>
+        <a href="#consejo" class="hover:text-blue-600">Consejo</a>
+        <a href="#faq" class="hover:text-blue-600">FAQ</a>
     </nav>
 </header>
 
@@ -44,15 +44,13 @@
             </div>
         </div>
 
-
-        <!-- Botón Insertar -->
+        <!-- Botones -->
         <div class="mt-4 flex-col gap-3">
             <button id="openForm"
                     class="inline-flex items-center gap-2 px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">
                 Insertar
             </button>
 
-            <!-- Botón Exportar -->
             <button id="exportBtn"
                     class="inline-flex items-center gap-2 px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700">
                 Exportar
@@ -68,7 +66,6 @@
                 <button id="closeForm" class="p-2 rounded hover:bg-slate-100">✕</button>
             </div>
 
-            <!-- Formulario unificado -->
             <form id="nuevoRegistro" class="space-y-4 px-6 py-5">
                 <input id="inputTitulo" class="w-full rounded border px-3 py-2" placeholder="Título"/>
                 <input id="inputClienteId" class="w-full rounded border px-3 py-2" placeholder="ID persona"/>
@@ -93,7 +90,6 @@
                 <input type="date" id="start" name="Calendario" value="2025-01-01" min="2010-01-01" max="2040-12-31"
                        class="w-auto rounded border px-3 py-2 ml-6"/>
 
-                <!-- Footer -->
                 <div class="flex justify-end gap-3 border-t px-6 py-4">
                     <button id="cancelForm" class="rounded border px-4 py-2 hover:bg-slate-100">Cancelar</button>
                     <button type="submit" class="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">Guardar
@@ -103,18 +99,32 @@
         </div>
     </dialog>
 
-    <!-- Historial financiero -->
-    <section class="mt-6 w-full max-w-xl">
+    <!-- Historial financiero moderno -->
+    <section class="mt-6 w-full max-w-4xl">
         <h2 class="text-xl font-semibold mb-2 mt-5">Historial Financiero</h2>
-        <div class="flex items-center ">
+        <div class="flex items-center mb-4">
             <input id="clienteId" placeholder="ID Cliente" class="border px-2 py-1 rounded"/>
-            <button onclick="verHistorial()" class="ml-2 px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">Ver
-                Historial
+            <button onclick="verHistorial()" class="ml-2 px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">
+                Ver Historial
             </button>
         </div>
-        <ul id="lista" class="mt-2 list-disc pl-6"></ul>
-    </section>
 
+        <div class="overflow-x-auto">
+            <table id="historialTabla" class="min-w-full divide-y divide-gray-200 border rounded-lg shadow">
+                <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Monto</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Descripción</th>
+                </tr>
+                </thead>
+                <tbody id="tablaCuerpo" class="bg-white divide-y divide-gray-200">
+                <!-- Filas dinámicas aquí -->
+                </tbody>
+            </table>
+        </div>
+    </section>
 
 </main>
 
@@ -164,14 +174,26 @@
             alert("Ingresa un ID de cliente");
             return;
         }
+
         const res = await fetch(`/historial/${id}`);
         const data = await res.json();
-        const ul = document.getElementById("lista");
-        ul.innerHTML = "";
+        const tbody = document.getElementById("tablaCuerpo");
+        tbody.innerHTML = "";
+
+        if (data.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-gray-500">No hay registros</td></tr>`;
+            return;
+        }
+
         data.forEach(m => {
-            const li = document.createElement("li");
-            li.textContent = `${m.tipo} - $${m.monto} - ${new Date(m.fecha).toLocaleDateString()} - ${m.descripcion || ""}`;
-            ul.appendChild(li);
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td class="px-6 py-4 whitespace-nowrap">${m.tipo}</td>
+                <td class="px-6 py-4 whitespace-nowrap">$${m.monto.toFixed(2)}</td>
+                <td class="px-6 py-4 whitespace-nowrap">${new Date(m.fecha).toLocaleDateString()}</td>
+                <td class="px-6 py-4 whitespace-nowrap">${m.descripcion || ""}</td>
+            `;
+            tbody.appendChild(tr);
         });
     }
 
@@ -182,5 +204,6 @@
 </script>
 </body>
 </html>
+
 
 

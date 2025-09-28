@@ -28,7 +28,6 @@ const movimientoSchema = new mongoose.Schema({
 });
 const Movimiento = mongoose.model('Movimiento', movimientoSchema);
 
-// Rutas
 // Guardar un movimiento
 app.post('/movimientos', async (req, res) => {
     try {
@@ -72,4 +71,3 @@ app.get('/historial/:id', async (req, res) => {
 
 // Iniciar servidor
 app.listen(PORT, () => console.log(`Servidor escuchando en http://localhost:${PORT}`));
-

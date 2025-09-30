@@ -1,12 +1,15 @@
 const mongoose = require("mongoose");
 
+// Clientes
 const clienteSchema = new mongoose.Schema({
     nombre: String,
     identificacion: String,
     correo: String,
-    fechaRegistro: { type: Date, default: Date.now }
+    fechaRegistro: { type: Date, default: Date.now },
+    password: String // para login
 });
 
+// Cuentas
 const cuentaSchema = new mongoose.Schema({
     idCliente: { type: mongoose.Schema.Types.ObjectId, ref: "Cliente" },
     tipo: String, // prestamo, credito, inversion
@@ -14,6 +17,7 @@ const cuentaSchema = new mongoose.Schema({
     fechaApertura: { type: Date, default: Date.now }
 });
 
+// Movimientos
 const movimientoSchema = new mongoose.Schema({
     idCuenta: { type: mongoose.Schema.Types.ObjectId, ref: "Cuenta" },
     tipo: String, // abono, cargo, interes

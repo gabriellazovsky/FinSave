@@ -4,207 +4,127 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>FinSave – Historial</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="./css/styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .chart-container { position: relative; width:250px; height:250px; border-radius:50%; background: conic-gradient(#4CAF50 0% 60%, #2196F3 60% 85%, #FFC107 85% 100%); margin:auto; }
+        .center-label { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:100px; height:100px; border-radius:50%; background:white; display:flex; justify-content:center; align-items:center; font-weight:bold; }
+    </style>
 </head>
+<body class="bg-light">
 
-<body>
-<header>
-    <nav>
-        <a href="#empresa" class="hover:text-blue-600">Empresa</a>
-        <a href="#persona" class="hover:text-blue-600">Persona</a>
-        <a href="#consejo" class="hover:text-blue-600">Consejo</a>
-        <a href="#faq">FAQ</a>
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow mb-4">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">FinSave</a>
+        <button class="btn btn-outline-danger" id="logoutBtn">Cerrar sesión</button>
+    </div>
+</nav>
 
-    </nav>
-</header>
-
-<main class="flex flex-col items-start justify-start min-h-screen p-8">
-
-    <div class="flex-col gap-2 mt-10">
-
-        <div class="chart">
-            <h2 class="chart-title">Gráfico</h2>
-            <div class="chart-container">
-                <div class="center-label">100%</div>
-            </div>
-
-            <div class="legend">
-                <div class="legend-item">
-                    <div class="legend-color ingresos"></div>
-                    Ingresos - 60%
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color gastos"></div>
-                    Gastos - 25%
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color ahorro"></div>
-                    Ahorro - 15%
-                </div>
-            </div>
+<div class="container">
+    <div class="text-center mb-4">
+        <h2>Gráfico de Finanzas</h2>
+        <div class="chart-container">
+            <div class="center-label">100%</div>
         </div>
-
-        <!-- Botones -->
-        <div class="mt-4 flex-col gap-3">
-            <button id="openForm"
-                    class="inline-flex items-center gap-2 px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">
-                Insertar
-            </button>
-
-            <button id="exportBtn"
-                    class="inline-flex items-center gap-2 px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700">
-                Exportar
-            </button>
+        <div class="d-flex justify-content-around mt-3">
+            <span class="badge bg-success">Ingresos 60%</span>
+            <span class="badge bg-primary">Gastos 25%</span>
+            <span class="badge bg-warning text-dark">Ahorro 15%</span>
         </div>
     </div>
 
-    <!-- Modal de ingreso -->
-    <dialog id="formDialog" class="rounded-lg p-0 backdrop:bg-black/40">
-        <div class="w-[32rem] max-w-[95vw] rounded-lg bg-white shadow-xl">
-            <div class="flex items-center justify-between border-b px-6 py-4">
-                <h2 class="text-lg font-semibold text-slate-800">Nuevo registro</h2>
-                <button id="closeForm" class="p-2 rounded hover:bg-slate-100">✕</button>
+    <div class="mb-3 text-center">
+        <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#movModal">Insertar movimiento</button>
+        <button class="btn btn-success" id="exportBtn">Exportar CSV</button>
+    </div>
+
+    <div class="mb-3 d-flex">
+        <input id="clienteId" class="form-control me-2" placeholder="ID Cliente">
+        <button class="btn btn-secondary" onclick="verHistorial()">Ver Historial</button>
+    </div>
+
+    <table class="table table-striped table-bordered">
+        <thead>
+        <tr>
+            <th>Tipo</th><th>Monto</th><th>Fecha</th><th>Descripción</th>
+        </tr>
+        </thead>
+        <tbody id="tablaCuerpo"></tbody>
+    </table>
+</div>
+
+<!-- Modal Movimiento -->
+<div class="modal fade" id="movModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Nuevo Movimiento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-
-            <form id="nuevoRegistro" class="space-y-4 px-6 py-5">
-                <input id="inputTitulo" class="w-full rounded border px-3 py-2" placeholder="Título"/>
-                <input id="inputClienteId" class="w-full rounded border px-3 py-2" placeholder="ID persona"/>
-                <input id="inputMonto" class="w-full rounded border px-3 py-2" placeholder="0.00" type="number"
-                       step="0.01" inputmode="decimal"/>
-
-                <label for="objeto">Ingreso/Gasto:</label>
-                <select name="objetos" id="objeto">
-                    <option value="ingreso">ingreso</option>
-                    <option value="gasto">gasto</option>
-                </select>
-
-                <label for="tag">Tag:</label>
-                <select name="tag" id="tag">
-                    <option value="ocio">ocio</option>
-                    <option value="comida">comida</option>
-                    <option value="alquiler">alquiler</option>
-                    <option value="nomina">nomina</option>
-                    <option value="gasolina">gasolina</option>
-                </select>
-
-                <input type="date" id="start" name="Calendario" value="2025-01-01" min="2010-01-01" max="2040-12-31"
-                       class="w-auto rounded border px-3 py-2 ml-6"/>
-
-                <div class="flex justify-end gap-3 border-t px-6 py-4">
-                    <button id="cancelForm" class="rounded border px-4 py-2 hover:bg-slate-100">Cancelar</button>
-                    <button type="submit" class="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">Guardar
-                    </button>
-                </div>
-            </form>
+            <div class="modal-body">
+                <form id="nuevoRegistro">
+                    <input id="inputTitulo" class="form-control mb-2" placeholder="Título" required>
+                    <input id="inputClienteId" class="form-control mb-2" placeholder="ID Cliente" required>
+                    <input id="inputMonto" type="number" step="0.01" class="form-control mb-2" placeholder="Monto" required>
+                    <select id="objeto" class="form-select mb-2">
+                        <option value="ingreso">Ingreso</option>
+                        <option value="gasto">Gasto</option>
+                    </select>
+                    <select id="tag" class="form-select mb-2">
+                        <option value="ocio">Ocio</option>
+                        <option value="comida">Comida</option>
+                        <option value="alquiler">Alquiler</option>
+                        <option value="nomina">Nómina</option>
+                        <option value="gasolina">Gasolina</option>
+                    </select>
+                    <input type="date" id="start" class="form-control mb-2" value="2025-01-01" min="2010-01-01" max="2040-12-31">
+                    <button type="submit" class="btn btn-primary w-100">Guardar</button>
+                </form>
+            </div>
         </div>
-    </dialog>
+    </div>
+</div>
 
-    <!-- Historial financiero moderno -->
-    <section class="mt-6 w-full max-w-4xl">
-        <h2 class="text-xl font-semibold mb-2 mt-5">Historial Financiero</h2>
-        <div class="flex items-center mb-4">
-            <input id="clienteId" placeholder="ID Cliente" class="border px-2 py-1 rounded"/>
-            <button onclick="verHistorial()" class="ml-2 px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">
-                Ver Historial
-            </button>
-        </div>
-
-        <div class="overflow-x-auto">
-            <table id="historialTabla" class="min-w-full divide-y divide-gray-200 border rounded-lg shadow">
-                <thead class="bg-gray-50">
-                <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Monto</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Descripción</th>
-                </tr>
-                </thead>
-                <tbody id="tablaCuerpo" class="bg-white divide-y divide-gray-200">
-                <!-- Filas dinámicas aquí -->
-                </tbody>
-            </table>
-        </div>
-    </section>
-
-</main>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // Modal
-    const dlg = document.getElementById('formDialog');
-    document.getElementById('openForm').addEventListener('click', () => dlg.showModal());
-    document.getElementById('closeForm').addEventListener('click', () => dlg.close());
-    document.getElementById('cancelForm').addEventListener('click', (e) => {
+    if(!localStorage.getItem("token")) window.location.href="login.html";
+
+    document.getElementById("logoutBtn").addEventListener("click", ()=>{
+        localStorage.removeItem("token");
+        window.location.href="login.html";
+    });
+
+    // Guardar movimiento
+    document.getElementById("nuevoRegistro").addEventListener("submit", async e=>{
         e.preventDefault();
-        dlg.close();
-    });
-    dlg.addEventListener('click', (e) => {
-        if (e.target === dlg) dlg.close();
-    });
-
-    // Formulario ingreso
-    const form = document.getElementById('nuevoRegistro');
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const clienteId = document.getElementById('inputClienteId').value;
-        const titulo = document.getElementById('inputTitulo').value;
-        const monto = parseFloat(document.getElementById('inputMonto').value);
-        const tipo = document.getElementById('objeto').value;
-        const tag = document.getElementById('tag').value;
-        const fecha = document.getElementById('start').value;
-
-        if (!clienteId || !titulo || !monto || !tipo) {
-            alert("Completa todos los campos");
-            return;
-        }
-
-        const res = await fetch('/movimientos', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({idCuenta: clienteId, tipo, monto, descripcion: `${titulo} - ${tag}`, fecha})
-        });
-        await res.json();
-        form.reset();
-        dlg.close();
+        const clienteId=document.getElementById("inputClienteId").value;
+        const titulo=document.getElementById("inputTitulo").value;
+        const monto=parseFloat(document.getElementById("inputMonto").value);
+        const tipo=document.getElementById("objeto").value;
+        const tag=document.getElementById("tag").value;
+        const fecha=document.getElementById("start").value;
+        await fetch('/movimientos',{method:'POST', headers:{"Content-Type":"application/json","Authorization":"Bearer "+localStorage.getItem("token")}, body:JSON.stringify({idCuenta:clienteId,tipo,monto,descripcion:`${titulo} - ${tag}`,fecha})});
+        document.getElementById("nuevoRegistro").reset();
+        var movModal = bootstrap.Modal.getInstance(document.getElementById('movModal'));
+        movModal.hide();
+        verHistorial();
     });
 
-    // Historial
-    async function verHistorial() {
-        const id = document.getElementById("clienteId").value;
-        if (!id) {
-            alert("Ingresa un ID de cliente");
-            return;
-        }
-
-        const res = await fetch(`/historial/${id}`);
-        const data = await res.json();
-        const tbody = document.getElementById("tablaCuerpo");
-        tbody.innerHTML = "";
-
-        if (data.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-gray-500">No hay registros</td></tr>`;
-            return;
-        }
-
-        data.forEach(m => {
-            const tr = document.createElement("tr");
-            tr.innerHTML = `
-                <td class="px-6 py-4 whitespace-nowrap">${m.tipo}</td>
-                <td class="px-6 py-4 whitespace-nowrap">$${m.monto.toFixed(2)}</td>
-                <td class="px-6 py-4 whitespace-nowrap">${new Date(m.fecha).toLocaleDateString()}</td>
-                <td class="px-6 py-4 whitespace-nowrap">${m.descripcion || ""}</td>
-            `;
+    // Ver historial
+    async function verHistorial(){
+        const id=document.getElementById("clienteId").value;
+        const res=await fetch(`/historial/${id}`,{headers:{"Authorization":"Bearer "+localStorage.getItem("token")}});
+        const data=await res.json();
+        const tbody=document.getElementById("tablaCuerpo"); tbody.innerHTML="";
+        if(data.length===0) tbody.innerHTML='<tr><td colspan="4" class="text-center">No hay registros</td></tr>';
+        data.forEach(m=>{
+            const tr=document.createElement("tr");
+            tr.innerHTML=`<td>${m.tipo}</td><td>$${m.monto.toFixed(2)}</td><td>${new Date(m.fecha).toLocaleDateString()}</td><td>${m.descripcion||""}</td>`;
             tbody.appendChild(tr);
         });
     }
 
-    // Botón exportar
-    document.getElementById("exportBtn").addEventListener("click", () => {
-        window.location.href = "http://localhost:3000/exportar";
-    });
+    // Exportar CSV
+    document.getElementById("exportBtn").addEventListener("click", ()=>window.location.href="/exportar");
 </script>
 </body>
 </html>
-
-
-

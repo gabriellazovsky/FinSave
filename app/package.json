@@ -2,18 +2,20 @@
   "name": "app",
   "version": "1.0.0",
   "description": "",
-  "main": "models.js",
+  "main": "public/models.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node public/server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "express": "^5.1.0",
     "json2csv": "^6.0.0-alpha.2",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.18.2"
   }
 }

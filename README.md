@@ -1,4 +1,15 @@
 # FinSave  
+# Guia instalacion
+
+>cd /Finsave/app
+
+npm i json2csv jsonwebtoken cookie-parser morgan dotenv
+npm run start
+
+
+
+
+
 _Ahorra jugando, aprende creciendo._
 
 <div align="center">

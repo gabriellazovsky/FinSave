@@ -302,3 +302,7 @@ public
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+node_modules/
+app/node_modules/
+public/node_modules/
+.env

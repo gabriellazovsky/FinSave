@@ -10,7 +10,7 @@ const PORT = 3000;
 const SECRET_KEY = "clave_super_segura";
 
 app.use(express.json());
-app.use(express.static(path.join(__dirname)));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Conexión a MongoDB
 mongoose.connect("mongodb://127.0.0.1:27017/finsave", {
@@ -79,8 +79,11 @@ app.get("/exportar", autenticarToken, async (req, res) => {
 });
 
 // Servir HTML
-app.get("/", (req, res) => res.sendFile(path.join(__dirname, "login.html")));
-app.get("/index.html", (req, res) => res.sendFile(path.join(__dirname, "index.html")));
+
+app.get('/', (req, res) =>
+    res.sendFile(path.join(__dirname, 'public', 'index.html'))
+);
+
 
 app.listen(PORT, () => console.log(`Servidor escuchando en http://localhost:${PORT}`));
 

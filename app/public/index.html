@@ -4,87 +4,73 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>FinSave – Historial</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .chart-container {
-            position: relative;
-            width: 250px;
-            height: 250px;
-            border-radius: 50%;
-            background: conic-gradient(#4CAF50 0% 60%, #2196F3 60% 85%, #FFC107 85% 100%);
-            margin: auto;
-        }
-        .center-label {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: bold;
-        }
-    </style>
-    <style>
-        body {
-            background-color: #f6f5f7;
-        }
 
-        .card {
-            border-radius: 1rem;
-        }
+    <!-- Tailwind (utility classes) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Bootstrap CSS (for tabs & some defaults) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        /* Donut chart */
+        .chart-container { position: relative; width: 250px; height: 250px; border-radius: 50%;
+            background: conic-gradient(#4CAF50 0% 60%, #2196F3 60% 85%, #FFC107 85% 100%); margin: auto; }
+        .center-label { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 100px; height: 100px; border-radius: 50%; background: white; display: flex;
+            justify-content: center; align-items: center; font-weight: bold; }
+
+        /* Page look */
+        body { background-color: #f6f5f7; }
+        .card { border-radius: 1rem; }
+
+        /* Legend */
+        .legend { display: grid; gap: .25rem; margin-top: 1rem; }
+        .legend-item { display: flex; align-items: center; gap: .5rem; font-size: .95rem; }
+        .legend-color { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+        .legend-color.ingresos { background:#4CAF50; }
+        .legend-color.gastos   { background:#2196F3; }
+        .legend-color.ahorro   { background:#FFC107; }
+
+        /* Utility override so it works without Tailwind processor */
+        .hidden { display: none !important; }
     </style>
-    <style>.hidden {
-        display: none !important
-    }</style>
 </head>
 
-
 <body class="bg-light">
-<!-- Seccion de LOGIN -->
+<!-- Sección de LOGIN -->
 <section id="login-pantalla" class="min-vh-100 d-flex align-items-center justify-content-center">
     <div class="card shadow p-4 mx-auto" style="max-width:400px; width:100%;">
         <div class="text-center mb-4">
-            <h2>FinSave</h2>
+            <h2 class="mb-0">FinSave</h2>
             <p class="text-muted">Administra tus finanzas fácilmente</p>
         </div>
 
         <ul class="nav nav-tabs mb-3" id="authTab" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#login"
-                        type="button">Login
-                </button>
+                <button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#login" type="button" aria-controls="login" aria-selected="true">Login</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="registro-tab" data-bs-toggle="tab" data-bs-target="#registro"
-                        type="button">Registro
-                </button>
+                <button class="nav-link" id="registro-tab" data-bs-toggle="tab" data-bs-target="#registro" type="button" aria-controls="registro" aria-selected="false">Registro</button>
             </li>
         </ul>
 
         <div class="tab-content">
             <!-- LOGIN -->
-            <div class="tab-pane fade show active" id="login">
-                <form id="loginForm">
+            <div class="tab-pane fade show active" id="login" role="tabpanel" aria-labelledby="login-tab">
+                <form id="loginForm" novalidate>
                     <div class="mb-3">
                         <input type="email" class="form-control" id="emailLogin" placeholder="Correo" required>
                     </div>
                     <div class="mb-3">
-                        <input type="password" class="form-control" id="passwordLogin" placeholder="Contraseña"
-                               required>
+                        <input type="password" class="form-control" id="passwordLogin" placeholder="Contraseña" required>
                     </div>
-                    <div class="mb-3 text-danger" id="loginMsg"></div>
+                    <div class="mb-3 text-danger" id="loginMsg" aria-live="polite"></div>
                     <button class="btn btn-primary w-100" type="submit">Entrar</button>
                 </form>
             </div>
 
             <!-- REGISTRO -->
-            <div class="tab-pane fade" id="registro">
-                <form id="registroForm">
+            <div class="tab-pane fade" id="registro" role="tabpanel" aria-labelledby="registro-tab">
+                <form id="registroForm" novalidate>
                     <div class="mb-3">
                         <input type="text" class="form-control" id="nombreRegistro" placeholder="Nombre" required>
                     </div>
@@ -92,10 +78,9 @@
                         <input type="email" class="form-control" id="emailRegistro" placeholder="Correo" required>
                     </div>
                     <div class="mb-3">
-                        <input type="password" class="form-control" id="passwordRegistro" placeholder="Contraseña"
-                               required>
+                        <input type="password" class="form-control" id="passwordRegistro" placeholder="Contraseña" required>
                     </div>
-                    <div class="mb-3 text-success" id="registroMsg"></div>
+                    <div class="mb-3 text-success" id="registroMsg" aria-live="polite"></div>
                     <button class="btn btn-success w-100" type="submit">Registrarse</button>
                 </form>
             </div>
@@ -104,189 +89,264 @@
 </section>
 
 <section id="website-pantalla" class="hidden">
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow mb-4">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">FinSave</a>
-            <button class="btn btn-outline-danger" id="logoutBtn">Cerrar sesión</button>
-        </div>
-    </nav>
+    <header class="w-full bg-white border-b">
+        <nav class="container mx-auto flex gap-6 px-4 py-3">
+            <a href="#empresa" class="hover:text-blue-600">Empresa</a>
+            <a href="#persona" class="hover:text-blue-600">Persona</a>
+            <a href="#consejo" class="hover:text-blue-600">Consejo</a>
+            <a href="#faq" class="hover:text-blue-600">FAQ</a>
+        </nav>
+    </header>
 
-    <div class="container">
-        <div class="text-center mb-4">
-            <h2>Gráfico de Finanzas</h2>
-            <div class="chart-container">
-                <div class="center-label">100%</div>
-            </div>
-            <div class="d-flex justify-content-around mt-3">
-                <span class="badge bg-success">Ingresos 60%</span>
-                <span class="badge bg-primary">Gastos 25%</span>
-                <span class="badge bg-warning text-dark">Ahorro 15%</span>
-            </div>
-        </div>
-
-        <div class="mb-3 text-center">
-            <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#movModal">Insertar movimiento
-            </button>
-            <button class="btn btn-success" id="exportBtn">Exportar CSV</button>
-        </div>
-
-        <div class="mb-3 d-flex">
-            <input id="clienteId" class="form-control me-2" placeholder="ID Cliente">
-            <button class="btn btn-secondary" onclick="verHistorial()">Ver Historial</button>
-        </div>
-
-        <table class="table table-striped table-bordered">
-            <thead>
-            <tr>
-                <th>Tipo</th>
-                <th>Monto</th>
-                <th>Fecha</th>
-                <th>Descripción</th>
-            </tr>
-            </thead>
-            <tbody id="tablaCuerpo"></tbody>
-        </table>
-    </div>
-
-    <!-- Modal Movimiento -->
-    <div class="modal fade" id="movModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Nuevo Movimiento</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    <main class="flex flex-col items-start justify-start min-h-screen p-8 gap-6">
+        <div class="flex-col gap-2 mt-4">
+            <div class="chart">
+                <h2 class="chart-title text-lg font-semibold">Gráfico</h2>
+                <div class="chart-container" role="img" aria-label="Distribución: Ingresos 60%, Gastos 25%, Ahorro 15%">
+                    <div class="center-label">100%</div>
                 </div>
-                <div class="modal-body">
-                    <form id="nuevoRegistro">
-                        <input id="inputTitulo" class="form-control mb-2" placeholder="Título" required>
-                        <input id="inputClienteId" class="form-control mb-2" placeholder="ID Cliente" required>
-                        <input id="inputMonto" type="number" step="0.01" class="form-control mb-2" placeholder="Monto"
-                               required>
-                        <select id="objeto" class="form-select mb-2">
-                            <option value="ingreso">Ingreso</option>
-                            <option value="gasto">Gasto</option>
-                        </select>
-                        <select id="tag" class="form-select mb-2">
-                            <option value="ocio">Ocio</option>
-                            <option value="comida">Comida</option>
-                            <option value="alquiler">Alquiler</option>
-                            <option value="nomina">Nómina</option>
-                            <option value="gasolina">Gasolina</option>
-                        </select>
-                        <input type="date" id="start" class="form-control mb-2" value="2025-01-01" min="2010-01-01"
-                               max="2040-12-31">
-                        <button type="submit" class="btn btn-primary w-100">Guardar</button>
-                    </form>
+                <div class="legend">
+                    <div class="legend-item"><span class="legend-color ingresos"></span> Ingresos - 60%</div>
+                    <div class="legend-item"><span class="legend-color gastos"></span> Gastos - 25%</div>
+                    <div class="legend-item"><span class="legend-color ahorro"></span> Ahorro - 15%</div>
                 </div>
             </div>
+
+            <!-- Botones -->
+            <div class="mt-4 flex gap-3">
+                <button id="openForm" type="button" class="inline-flex items-center gap-2 px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">Insertar</button>
+                <button id="exportBtn" type="button" class="inline-flex items-center gap-2 px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700">Exportar</button>
+            </div>
         </div>
-    </div>
+
+        <!-- Modal de ingreso -->
+        <dialog id="formDialog" class="rounded-lg p-0 backdrop:bg-black/40">
+            <div class="w-[32rem] max-w-[95vw] rounded-lg bg-white shadow-xl">
+                <div class="flex items-center justify-between border-b px-6 py-4">
+                    <h2 class="text-lg font-semibold text-slate-800">Nuevo registro</h2>
+                    <button id="closeForm" class="p-2 rounded hover:bg-slate-100" aria-label="Cerrar">✕</button>
+                </div>
+
+                <form id="nuevoRegistro" class="space-y-4 px-6 py-5" novalidate>
+                    <input id="inputTitulo" class="w-full rounded border px-3 py-2" placeholder="Título" required />
+                    <input id="inputClienteId" class="w-full rounded border px-3 py-2" placeholder="ID persona" required />
+                    <input id="inputMonto" class="w-full rounded border px-3 py-2" placeholder="0.00" type="number" step="0.01" inputmode="decimal" required />
+
+                    <label for="objeto" class="block text-sm">Ingreso/Gasto:</label>
+                    <select name="objetos" id="objeto" class="rounded border px-3 py-2">
+                        <option value="ingreso">ingreso</option>
+                        <option value="gasto">gasto</option>
+                    </select>
+
+                    <label for="tag" class="block text-sm">Tag:</label>
+                    <select name="tag" id="tag" class="rounded border px-3 py-2">
+                        <option value="ocio">ocio</option>
+                        <option value="comida">comida</option>
+                        <option value="alquiler">alquiler</option>
+                        <option value="nomina">nomina</option>
+                        <option value="gasolina">gasolina</option>
+                    </select>
+
+                    <label for="start" class="block text-sm">Fecha:</label>
+                    <input type="date" id="start" name="Calendario" value="2025-01-01" min="2010-01-01" max="2040-12-31" class="w-auto rounded border px-3 py-2" />
+
+                    <div class="flex justify-end gap-3 border-t px-6 py-4">
+                        <button id="cancelForm" type="button" class="rounded border px-4 py-2 hover:bg-slate-100">Cancelar</button>
+                        <button type="submit" class="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </dialog>
+
+        <!-- Historial financiero moderno -->
+        <section class="mt-6 w-full max-w-4xl">
+            <h2 class="text-xl font-semibold mb-2 mt-5">Historial Financiero</h2>
+            <div class="flex items-center mb-4 gap-2">
+                <input id="clienteId" placeholder="ID Cliente" class="border px-2 py-1 rounded"/>
+                <button id="btnVerHistorial" class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">Ver Historial</button>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table id="historialTabla" class="min-w-full divide-y divide-gray-200 border rounded-lg shadow">
+                    <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Monto</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Descripción</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tablaCuerpo" class="bg-white divide-y divide-gray-200">
+                    <!-- Filas dinámicas aquí -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
 </section>
 
-
+<!-- Bootstrap JS (required for tabs) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
-    const loginSection = document.getElementById("login-pantalla");
-    const appSection = document.getElementById("website-pantalla");
+    // ===== Helpers =====
+    const qs = (sel, scope=document) => scope.querySelector(sel);
+    const qsa = (sel, scope=document) => Array.from(scope.querySelectorAll(sel));
 
-    function showLogin() {
-        appSection.classList.add("hidden");
-        loginSection.classList.remove("hidden");
-        loginSection.setAttribute("aria-hidden", "false");
-        appSection.setAttribute("aria-hidden", "true");
-        appSection.inert = true;
-        loginSection.inert = false;
-    }
+    // ===== Login/Register demo (front-only) =====
+    const loginForm = qs('#loginForm');
+    const registroForm = qs('#registroForm');
+    const loginMsg = qs('#loginMsg');
+    const registroMsg = qs('#registroMsg');
+    const loginScreen = qs('#login-pantalla');
+    const appScreen = qs('#website-pantalla');
 
-    function showApp() {
-        loginSection.classList.add("hidden");
-        appSection.classList.remove("hidden");
-        loginSection.setAttribute("aria-hidden", "true");
-        appSection.setAttribute("aria-hidden", "false");
-        loginSection.inert = true;
-        appSection.inert = false;
-    }
-
-    // initial state (run immediately since scripts are at the end of <body>)
-    localStorage.getItem("token") ? showApp() : showLogin();
-
-
-    document.getElementById("logoutBtn").addEventListener("click", () => {
-        localStorage.removeItem("token");
-        showLogin();
-    });
-
-    // Guardar movimiento
-    document.getElementById("nuevoRegistro").addEventListener("submit", async e => {
+    loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        const clienteId = document.getElementById("inputClienteId").value;
-        const titulo = document.getElementById("inputTitulo").value;
-        const monto = parseFloat(document.getElementById("inputMonto").value);
-        const tipo = document.getElementById("objeto").value;
-        const tag = document.getElementById("tag").value;
-        const fecha = document.getElementById("start").value;
-        await fetch('/movimientos', {
-            method: 'POST',
-            headers: {"Content-Type": "application/json", "Authorization": "Bearer " + localStorage.getItem("token")},
-            body: JSON.stringify({idCuenta: clienteId, tipo, monto, descripcion: `${titulo} - ${tag}`, fecha})
-        });
-        document.getElementById("nuevoRegistro").reset();
-        var movModal = bootstrap.Modal.getInstance(document.getElementById('movModal'));
-        movModal.hide();
-        verHistorial();
+        const email = qs('#emailLogin').value.trim();
+        const pass = qs('#passwordLogin').value.trim();
+        if (!email || !pass) {
+            loginMsg.textContent = 'Completa tu correo y contraseña';
+            return;
+        }
+        // Aquí deberías hacer fetch a tu backend /login.
+        // En esta demo, cambiamos de pantalla directamente.
+        loginMsg.textContent = '';
+        loginScreen.classList.add('hidden');
+        appScreen.classList.remove('hidden');
     });
 
-    // Ver historial
+    registroForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const nombre = qs('#nombreRegistro').value.trim();
+        const email = qs('#emailRegistro').value.trim();
+        const pass = qs('#passwordRegistro').value.trim();
+        if (!nombre || !email || !pass) {
+            registroMsg.classList.remove('text-success');
+            registroMsg.classList.add('text-danger');
+            registroMsg.textContent = 'Completa todos los campos';
+            return;
+        }
+        // Aquí iría fetch a /registro en tu backend.
+        registroMsg.classList.remove('text-danger');
+        registroMsg.classList.add('text-success');
+        registroMsg.textContent = 'Registro correcto. Ahora puedes iniciar sesión.';
+    });
+
+    // ===== Modal =====
+    const dlg = qs('#formDialog');
+    qs('#openForm').addEventListener('click', () => dlg.showModal());
+    qs('#closeForm').addEventListener('click', () => dlg.close());
+    qs('#cancelForm').addEventListener('click', () => dlg.close());
+    dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+
+    // ===== Formulario ingreso =====
+    const form = qs('#nuevoRegistro');
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const clienteId = qs('#inputClienteId').value.trim();
+        const titulo = qs('#inputTitulo').value.trim();
+        const montoVal = qs('#inputMonto').value;
+        const monto = Number(montoVal);
+        const tipo = qs('#objeto').value;
+        const tag = qs('#tag').value;
+        const fecha = qs('#start').value;
+
+        if (!clienteId || !titulo || !Number.isFinite(monto) || montoVal === '' || !tipo) {
+            alert('Completa todos los campos con valores válidos');
+            return;
+        }
+
+        try {
+            const res = await fetch('/movimientos', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ idCuenta: clienteId, tipo, monto, descripcion: `${titulo} - ${tag}`, fecha })
+            });
+
+            if (!res.ok) {
+                const txt = await res.text();
+                throw new Error(`Error ${res.status}: ${txt || 'No se pudo guardar'}`);
+            }
+
+            // Intentar parsear JSON si existe
+            try { await res.json(); } catch (_) {}
+
+            form.reset();
+            dlg.close();
+            // Opcional: refrescar historial si estamos viendo el del mismo cliente
+            const actual = qs('#clienteId').value.trim();
+            if (actual && actual === clienteId) verHistorial();
+        } catch (err) {
+            console.error(err);
+            alert('No se pudo guardar el movimiento. Revisa la consola para más detalles.');
+        }
+    });
+
+    // ===== Historial =====
     async function verHistorial() {
-        const id = document.getElementById("clienteId").value;
-        const res = await fetch(`/historial/${id}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("token")}});
-        const data = await res.json();
-        const tbody = document.getElementById("tablaCuerpo");
-        tbody.innerHTML = "";
-        if (data.length === 0) tbody.innerHTML = '<tr><td colspan="4" class="text-center">No hay registros</td></tr>';
-        data.forEach(m => {
-            const tr = document.createElement("tr");
-            tr.innerHTML = `<td>${m.tipo}</td><td>$${m.monto.toFixed(2)}</td><td>${new Date(m.fecha).toLocaleDateString()}</td><td>${m.descripcion || ""}</td>`;
-            tbody.appendChild(tr);
-        });
+        const id = qs('#clienteId').value.trim();
+        const tbody = qs('#tablaCuerpo');
+        tbody.innerHTML = '';
+
+        if (!id) {
+            alert('Ingresa un ID de cliente');
+            return;
+        }
+
+        try {
+            const res = await fetch(`/historial/${encodeURIComponent(id)}`);
+            if (!res.ok) throw new Error(`Error ${res.status}`);
+            const data = await res.json();
+
+            if (!Array.isArray(data) || data.length === 0) {
+                const tr = document.createElement('tr');
+                const td = document.createElement('td');
+                td.colSpan = 4; td.className = 'text-center py-4 text-gray-500';
+                td.textContent = 'No hay registros';
+                tr.appendChild(td); tbody.appendChild(tr); return;
+            }
+
+            data.forEach((m) => {
+                const tr = document.createElement('tr');
+
+                const tdTipo = document.createElement('td');
+                tdTipo.className = 'px-6 py-4 whitespace-nowrap';
+                tdTipo.textContent = String(m.tipo || '');
+
+                const tdMonto = document.createElement('td');
+                tdMonto.className = 'px-6 py-4 whitespace-nowrap';
+                const num = Number(m.monto);
+                tdMonto.textContent = Number.isFinite(num) ? `$${num.toFixed(2)}` : '$—';
+
+                const tdFecha = document.createElement('td');
+                tdFecha.className = 'px-6 py-4 whitespace-nowrap';
+                const d = m.fecha ? new Date(m.fecha) : null;
+                tdFecha.textContent = d && !isNaN(d) ? d.toLocaleDateString('es-ES') : '';
+
+                const tdDesc = document.createElement('td');
+                tdDesc.className = 'px-6 py-4 whitespace-nowrap';
+                tdDesc.textContent = String(m.descripcion || '');
+
+                tr.append(tdTipo, tdMonto, tdFecha, tdDesc);
+                tbody.appendChild(tr);
+            });
+        } catch (err) {
+            console.error(err);
+            const tr = document.createElement('tr');
+            const td = document.createElement('td');
+            td.colSpan = 4; td.className = 'text-center py-4 text-red-600';
+            td.textContent = 'No se pudo cargar el historial.';
+            tr.appendChild(td); tbody.appendChild(tr);
+        }
     }
 
-    // Exportar CSV
-    document.getElementById("exportBtn").addEventListener("click", () => window.location.href = "/exportar");
-</script>
+    qs('#btnVerHistorial').addEventListener('click', verHistorial);
 
-<!-- Scripts de Login -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    document.getElementById("loginForm").addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const correo = document.getElementById("emailLogin").value;
-        const password = document.getElementById("passwordLogin").value;
-        const res = await fetch("/login", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({correo, password})
-        });
-        const loginMsg = document.getElementById("loginMsg");
-        if (res.ok) {
-            const data = await res.json();
-            localStorage.setItem("token", data.token);
-            showApp()
-        } else loginMsg.textContent = "Credenciales inválidas";
-    });
-
-    document.getElementById("registroForm").addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const nombre = document.getElementById("nombreRegistro").value;
-        const correo = document.getElementById("emailRegistro").value;
-        const password = document.getElementById("passwordRegistro").value;
-        const res = await fetch("/registro", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({nombre, correo, password})
-        });
-        const data = await res.json();
-        document.getElementById("registroMsg").textContent = data.message;
+    // ===== Botón exportar =====
+    qs('#exportBtn').addEventListener('click', () => {
+        // Usa ruta relativa para producción/desarrollo sin atar a localhost
+        window.location.href = '/exportar';
     });
 </script>
 </body>

@@ -306,3 +306,8 @@ node_modules/
 app/node_modules/
 public/node_modules/
 .env
+venv/
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/

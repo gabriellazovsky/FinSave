@@ -4,73 +4,286 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>FinSave – Historial</title>
-
-    <!-- Tailwind (utility classes) -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Bootstrap CSS (for tabs & some defaults) -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Donut chart */
-        .chart-container { position: relative; width: 250px; height: 250px; border-radius: 50%;
-            background: conic-gradient(#4CAF50 0% 60%, #2196F3 60% 85%, #FFC107 85% 100%); margin: auto; }
-        .center-label { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 100px; height: 100px; border-radius: 50%; background: white; display: flex;
-            justify-content: center; align-items: center; font-weight: bold; }
-
-        /* Page look */
-        body { background-color: #f6f5f7; }
-        .card { border-radius: 1rem; }
-
-        /* Legend */
-        .legend { display: grid; gap: .25rem; margin-top: 1rem; }
-        .legend-item { display: flex; align-items: center; gap: .5rem; font-size: .95rem; }
-        .legend-color { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
-        .legend-color.ingresos { background:#4CAF50; }
-        .legend-color.gastos   { background:#2196F3; }
-        .legend-color.ahorro   { background:#FFC107; }
-
-        /* Utility override so it works without Tailwind processor */
-        .hidden { display: none !important; }
+        .chart-container {
+            position: relative;
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            background: conic-gradient(#4CAF50 0% 60%, #2196F3 60% 85%, #FFC107 85% 100%);
+            margin: auto;
+        }
+        .center-label {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        /* Estilos para notificaciones de logros */
+        .achievement-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(to right, #28a745, #20c997);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1050;
+            max-width: 350px;
+            animation: slideIn 0.5s ease-out;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .achievement-notification .icon {
+            font-size: 24px;
+        }
+        
+        .achievement-notification .content {
+            flex: 1;
+        }
+        
+        .achievement-notification .title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        /* Estilos para la página de logros */
+        .achievements-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        .achievements-header {
+            background: linear-gradient(to right, #2c3e50, #4a6491);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        .achievements-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        
+        .achievements-table th {
+            background-color: #2c3e50;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-size: 1.1rem;
+        }
+        
+        .achievements-table td {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+        
+        .achievements-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        .achievements-table tr:hover {
+            background-color: #e9ecef;
+        }
+        
+        .achievement-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .achievement-status {
+            text-align: center;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+        
+        .completed {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .pending {
+            background-color: #ffc107;
+            color: #212529;
+        }
+        
+        .progress-container {
+            margin-top: 30px;
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .progress-title {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        
+        .progress-bar {
+            height: 25px;
+            background-color: #e9ecef;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, #28a745, #20c997);
+            border-radius: 12px;
+            width: 0%;
+            transition: width 1s ease-in-out;
+        }
+        
+        .progress-text {
+            text-align: center;
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        .achievements-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+        
+        .simulate-btn {
+            background: linear-gradient(to right, #007bff, #0056b3);
+            color: white;
+        }
+        
+        .simulate-btn:hover {
+            background: linear-gradient(to right, #0056b3, #004085);
+            transform: translateY(-2px);
+        }
+        
+        .reset-btn {
+            background: linear-gradient(to right, #6c757d, #495057);
+            color: white;
+        }
+        
+        .reset-btn:hover {
+            background: linear-gradient(to right, #495057, #343a40);
+            transform: translateY(-2px);
+        }
+        
+        @media (max-width: 768px) {
+            .achievements-table {
+                font-size: 0.9rem;
+            }
+            
+            .achievements-table th, 
+            .achievements-table td {
+                padding: 10px;
+            }
+            
+            .controls {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .achievements-btn {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 
 <body class="bg-light">
-<!-- Sección de LOGIN -->
+<!-- Seccion de LOGIN -->
 <section id="login-pantalla" class="min-vh-100 d-flex align-items-center justify-content-center">
     <div class="card shadow p-4 mx-auto" style="max-width:400px; width:100%;">
         <div class="text-center mb-4">
-            <h2 class="mb-0">FinSave</h2>
+            <h2>FinSave</h2>
             <p class="text-muted">Administra tus finanzas fácilmente</p>
         </div>
 
         <ul class="nav nav-tabs mb-3" id="authTab" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#login" type="button" aria-controls="login" aria-selected="true">Login</button>
+                <button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#login"
+                        type="button">Login
+                </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="registro-tab" data-bs-toggle="tab" data-bs-target="#registro" type="button" aria-controls="registro" aria-selected="false">Registro</button>
+                <button class="nav-link" id="registro-tab" data-bs-toggle="tab" data-bs-target="#registro"
+                        type="button">Registro
+                </button>
             </li>
         </ul>
 
         <div class="tab-content">
             <!-- LOGIN -->
-            <div class="tab-pane fade show active" id="login" role="tabpanel" aria-labelledby="login-tab">
-                <form id="loginForm" novalidate>
+            <div class="tab-pane fade show active" id="login">
+                <form id="loginForm">
                     <div class="mb-3">
                         <input type="email" class="form-control" id="emailLogin" placeholder="Correo" required>
                     </div>
                     <div class="mb-3">
-                        <input type="password" class="form-control" id="passwordLogin" placeholder="Contraseña" required>
+                        <input type="password" class="form-control" id="passwordLogin" placeholder="Contraseña"
+                               required>
                     </div>
-                    <div class="mb-3 text-danger" id="loginMsg" aria-live="polite"></div>
+                    <div class="mb-3 text-danger" id="loginMsg"></div>
                     <button class="btn btn-primary w-100" type="submit">Entrar</button>
                 </form>
             </div>
 
             <!-- REGISTRO -->
-            <div class="tab-pane fade" id="registro" role="tabpanel" aria-labelledby="registro-tab">
-                <form id="registroForm" novalidate>
+            <div class="tab-pane fade" id="registro">
+                <form id="registroForm">
                     <div class="mb-3">
                         <input type="text" class="form-control" id="nombreRegistro" placeholder="Nombre" required>
                     </div>
@@ -78,9 +291,10 @@
                         <input type="email" class="form-control" id="emailRegistro" placeholder="Correo" required>
                     </div>
                     <div class="mb-3">
-                        <input type="password" class="form-control" id="passwordRegistro" placeholder="Contraseña" required>
+                        <input type="password" class="form-control" id="passwordRegistro" placeholder="Contraseña"
+                               required>
                     </div>
-                    <div class="mb-3 text-success" id="registroMsg" aria-live="polite"></div>
+                    <div class="mb-3 text-success" id="registroMsg"></div>
                     <button class="btn btn-success w-100" type="submit">Registrarse</button>
                 </form>
             </div>
@@ -88,265 +302,447 @@
     </div>
 </section>
 
+<!-- PÁGINA PRINCIPAL -->
 <section id="website-pantalla" class="hidden">
     <header class="w-full bg-white border-b">
-        <nav class="container mx-auto flex gap-6 px-4 py-3">
-            <a href="#empresa" class="hover:text-blue-600">Empresa</a>
-            <a href="#persona" class="hover:text-blue-600">Persona</a>
-            <a href="#consejo" class="hover:text-blue-600">Consejo</a>
-            <a href="#faq" class="hover:text-blue-600">FAQ</a>
+        <nav class="container mx-auto flex justify-between items-center px-4 py-3">
+            <div class="flex gap-6">
+                <a href="#empresa" class="hover:text-blue-600">Empresa</a>
+                <a href="#persona" class="hover:text-blue-600">Persona</a>
+                <a href="#consejo" class="hover:text-blue-600">Consejo</a>
+                <a href="#faq" class="hover:text-blue-600">FAQ</a>
+                <!-- ENLACE A LOGROS -->
+                <a href="#" class="hover:text-blue-600 font-semibold" id="logrosLinkHeader">Logros</a>
+            </div>
+            
+            <!-- Botón de Cerrar Sesión -->
+            <button class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors" 
+                    id="logoutBtnHeader">
+                Cerrar Sesión
+            </button>
         </nav>
     </header>
 
-    <main class="flex flex-col items-start justify-start min-h-screen p-8 gap-6">
-        <div class="flex-col gap-2 mt-4">
-            <div class="chart">
-                <h2 class="chart-title text-lg font-semibold">Gráfico</h2>
-                <div class="chart-container" role="img" aria-label="Distribución: Ingresos 60%, Gastos 25%, Ahorro 15%">
-                    <div class="center-label">100%</div>
-                </div>
-                <div class="legend">
-                    <div class="legend-item"><span class="legend-color ingresos"></span> Ingresos - 60%</div>
-                    <div class="legend-item"><span class="legend-color gastos"></span> Gastos - 25%</div>
-                    <div class="legend-item"><span class="legend-color ahorro"></span> Ahorro - 15%</div>
-                </div>
+    <div class="container mt-8">
+        <div class="text-center mb-4">
+            <h2>Gráfico de Finanzas</h2>
+            <div class="chart-container">
+                <div class="center-label">100%</div>
             </div>
-
-            <!-- Botones -->
-            <div class="mt-4 flex gap-3">
-                <button id="openForm" type="button" class="inline-flex items-center gap-2 px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">Insertar</button>
-                <button id="exportBtn" type="button" class="inline-flex items-center gap-2 px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700">Exportar</button>
+            <div class="d-flex justify-content-around mt-3">
+                <span class="badge bg-success">Ingresos 60%</span>
+                <span class="badge bg-primary">Gastos 25%</span>
+                <span class="badge bg-warning text-dark">Ahorro 15%</span>
             </div>
         </div>
 
-        <!-- Modal de ingreso -->
-        <dialog id="formDialog" class="rounded-lg p-0 backdrop:bg-black/40">
-            <div class="w-[32rem] max-w-[95vw] rounded-lg bg-white shadow-xl">
-                <div class="flex items-center justify-between border-b px-6 py-4">
-                    <h2 class="text-lg font-semibold text-slate-800">Nuevo registro</h2>
-                    <button id="closeForm" class="p-2 rounded hover:bg-slate-100" aria-label="Cerrar">✕</button>
+        <div class="mb-3 text-center">
+            <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#movModal">Insertar movimiento
+            </button>
+            <button class="btn btn-success" id="exportBtn">Exportar CSV</button>
+        </div>
+
+        <div class="mb-3 d-flex">
+            <input id="clienteId" class="form-control me-2" placeholder="ID Cliente">
+            <button class="btn btn-secondary" onclick="verHistorial()">Ver Historial</button>
+        </div>
+
+        <table class="table table-striped table-bordered">
+            <thead>
+            <tr>
+                <th>Tipo</th>
+                <th>Monto</th>
+                <th>Fecha</th>
+                <th>Descripción</th>
+            </tr>
+            </thead>
+            <tbody id="tablaCuerpo"></tbody>
+        </table>
+    </div>
+
+    <!-- Modal Movimiento -->
+    <div class="modal fade" id="movModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Nuevo Movimiento</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-
-                <form id="nuevoRegistro" class="space-y-4 px-6 py-5" novalidate>
-                    <input id="inputTitulo" class="w-full rounded border px-3 py-2" placeholder="Título" required />
-                    <input id="inputClienteId" class="w-full rounded border px-3 py-2" placeholder="ID persona" required />
-                    <input id="inputMonto" class="w-full rounded border px-3 py-2" placeholder="0.00" type="number" step="0.01" inputmode="decimal" required />
-
-                    <label for="objeto" class="block text-sm">Ingreso/Gasto:</label>
-                    <select name="objetos" id="objeto" class="rounded border px-3 py-2">
-                        <option value="ingreso">ingreso</option>
-                        <option value="gasto">gasto</option>
-                    </select>
-
-                    <label for="tag" class="block text-sm">Tag:</label>
-                    <select name="tag" id="tag" class="rounded border px-3 py-2">
-                        <option value="ocio">ocio</option>
-                        <option value="comida">comida</option>
-                        <option value="alquiler">alquiler</option>
-                        <option value="nomina">nomina</option>
-                        <option value="gasolina">gasolina</option>
-                    </select>
-
-                    <label for="start" class="block text-sm">Fecha:</label>
-                    <input type="date" id="start" name="Calendario" value="2025-01-01" min="2010-01-01" max="2040-12-31" class="w-auto rounded border px-3 py-2" />
-
-                    <div class="flex justify-end gap-3 border-t px-6 py-4">
-                        <button id="cancelForm" type="button" class="rounded border px-4 py-2 hover:bg-slate-100">Cancelar</button>
-                        <button type="submit" class="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">Guardar</button>
-                    </div>
-                </form>
+                <div class="modal-body">
+                    <form id="nuevoRegistro">
+                        <input id="inputTitulo" class="form-control mb-2" placeholder="Título" required>
+                        <input id="inputClienteId" class="form-control mb-2" placeholder="ID Cliente" required>
+                        <input id="inputMonto" type="number" step="0.01" class="form-control mb-2" placeholder="Monto"
+                               required>
+                        <select id="objeto" class="form-select mb-2">
+                            <option value="ingreso">Ingreso</option>
+                            <option value="gasto">Gasto</option>
+                        </select>
+                        <select id="tag" class="form-select mb-2">
+                            <option value="ocio">Ocio</option>
+                            <option value="comida">Comida</option>
+                            <option value="alquiler">Alquiler</option>
+                            <option value="nomina">Nómina</option>
+                            <option value="gasolina">Gasolina</option>
+                        </select>
+                        <input type="date" id="start" class="form-control mb-2" value="2025-01-01" min="2010-01-01"
+                               max="2040-12-31">
+                        <button type="submit" class="btn btn-primary w-100">Guardar</button>
+                    </form>
+                </div>
             </div>
-        </dialog>
-
-        <!-- Historial financiero moderno -->
-        <section class="mt-6 w-full max-w-4xl">
-            <h2 class="text-xl font-semibold mb-2 mt-5">Historial Financiero</h2>
-            <div class="flex items-center mb-4 gap-2">
-                <input id="clienteId" placeholder="ID Cliente" class="border px-2 py-1 rounded"/>
-                <button id="btnVerHistorial" class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">Ver Historial</button>
-            </div>
-
-            <div class="overflow-x-auto">
-                <table id="historialTabla" class="min-w-full divide-y divide-gray-200 border rounded-lg shadow">
-                    <thead class="bg-gray-50">
-                    <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Monto</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Descripción</th>
-                    </tr>
-                    </thead>
-                    <tbody id="tablaCuerpo" class="bg-white divide-y divide-gray-200">
-                    <!-- Filas dinámicas aquí -->
-                    </tbody>
-                </table>
-            </div>
-        </section>
-    </main>
+        </div>
+    </div>
 </section>
 
-<!-- Bootstrap JS (required for tabs) -->
+<!-- PÁGINA DE LOGROS -->
+<section id="logros-pantalla" class="hidden">
+    <header class="w-full bg-white border-b">
+        <nav class="container mx-auto flex justify-between items-center px-4 py-3">
+            <div class="flex gap-6">
+                <a href="#" class="hover:text-blue-600 font-semibold" id="volverLink">← Volver al Dashboard</a>
+            </div>
+            
+            <!-- Botón de Cerrar Sesión -->
+            <button class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors" 
+                    id="logoutBtnLogros">
+                Cerrar Sesión
+            </button>
+        </nav>
+    </header>
+    
+    <div class="container mt-8">
+        <div class="achievements-container">
+            <div class="achievements-header">
+                <h1>Sistema de Logros</h1>
+                <p class="subtitle">Tu progreso en la gestión financiera</p>
+            </div>
+            
+            <div class="p-4">
+                <table class="achievements-table">
+                    <thead>
+                        <tr>
+                            <th>Logro</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="achievement-name">Ahorrar 100€</td>
+                            <td class="achievement-status">
+                                <span class="status-badge pending" id="achievement-1">Pendiente</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="achievement-name">Ahorrar 500€</td>
+                            <td class="achievement-status">
+                                <span class="status-badge pending" id="achievement-2">Pendiente</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="achievement-name">Registrar 10 movimientos</td>
+                            <td class="achievement-status">
+                                <span class="status-badge pending" id="achievement-3">Pendiente</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="achievement-name">Registrar 50 movimientos</td>
+                            <td class="achievement-status">
+                                <span class="status-badge pending" id="achievement-4">Pendiente</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="achievement-name">Primer gasto registrado</td>
+                            <td class="achievement-status">
+                                <span class="status-badge pending" id="achievement-5">Pendiente</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="achievement-name">Primer ingreso registrado</td>
+                            <td class="achievement-status">
+                                <span class="status-badge pending" id="achievement-6">Pendiente</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="achievement-name">Ahorrar 1000€</td>
+                            <td class="achievement-status">
+                                <span class="status-badge pending" id="achievement-7">Pendiente</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="achievement-name">Gasto en comida < 50€ en un mes</td>
+                            <td class="achievement-status">
+                                <span class="status-badge pending" id="achievement-8">Pendiente</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="achievement-name">3 meses consecutivos de ahorro</td>
+                            <td class="achievement-status">
+                                <span class="status-badge pending" id="achievement-9">Pendiente</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="achievement-name">Exportar tu historial a CSV</td>
+                            <td class="achievement-status">
+                                <span class="status-badge pending" id="achievement-10">Pendiente</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="progress-container">
+                    <h3 class="progress-title">Progreso General</h3>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                    <div class="progress-text" id="progress-text">0% Completado</div>
+                </div>
+                
+                <div class="controls">
+                    <button class="achievements-btn simulate-btn" id="simulate-btn">Simular Completar Logros</button>
+                    <button class="achievements-btn reset-btn" id="reset-btn">Reiniciar Logros</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
 <script>
-    // ===== Helpers =====
-    const qs = (sel, scope=document) => scope.querySelector(sel);
-    const qsa = (sel, scope=document) => Array.from(scope.querySelectorAll(sel));
+    // Elementos de la interfaz
+    const loginSection = document.getElementById("login-pantalla");
+    const appSection = document.getElementById("website-pantalla");
+    const logrosSection = document.getElementById("logros-pantalla");
 
-    // ===== Login/Register demo (front-only) =====
-    const loginForm = qs('#loginForm');
-    const registroForm = qs('#registroForm');
-    const loginMsg = qs('#loginMsg');
-    const registroMsg = qs('#registroMsg');
-    const loginScreen = qs('#login-pantalla');
-    const appScreen = qs('#website-pantalla');
+    // Estado inicial de los logros (todos pendientes)
+    let achievements = [
+        { id: 1, name: "Ahorrar 100€", completed: false },
+        { id: 2, name: "Ahorrar 500€", completed: false },
+        { id: 3, name: "Registrar 10 movimientos", completed: false },
+        { id: 4, name: "Registrar 50 movimientos", completed: false },
+        { id: 5, name: "Primer gasto registrado", completed: false },
+        { id: 6, name: "Primer ingreso registrado", completed: false },
+        { id: 7, name: "Ahorrar 1000€", completed: false },
+        { id: 8, name: "Gasto en comida < 50€ en un mes", completed: false },
+        { id: 9, name: "3 meses consecutivos de ahorro", completed: false },
+        { id: 10, name: "Exportar tu historial a CSV", completed: false }
+    ];
 
-    loginForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const email = qs('#emailLogin').value.trim();
-        const pass = qs('#passwordLogin').value.trim();
-        if (!email || !pass) {
-            loginMsg.textContent = 'Completa tu correo y contraseña';
-            return;
-        }
-        // Aquí deberías hacer fetch a tu backend /login.
-        // En esta demo, cambiamos de pantalla directamente.
-        loginMsg.textContent = '';
-        loginScreen.classList.add('hidden');
-        appScreen.classList.remove('hidden');
-    });
+    // Función para mostrar notificación de logro
+    function showAchievementNotification(achievementName) {
+        const notification = document.createElement('div');
+        notification.className = 'achievement-notification';
+        notification.innerHTML = `
+            <div class="icon">🏆</div>
+            <div class="content">
+                <div class="title">¡Logro Desbloqueado!</div>
+                <div>${achievementName}</div>
+            </div>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Eliminar la notificación después de 5 segundos
+        setTimeout(() => {
+            notification.remove();
+        }, 5000);
+    }
 
-    registroForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const nombre = qs('#nombreRegistro').value.trim();
-        const email = qs('#emailRegistro').value.trim();
-        const pass = qs('#passwordRegistro').value.trim();
-        if (!nombre || !email || !pass) {
-            registroMsg.classList.remove('text-success');
-            registroMsg.classList.add('text-danger');
-            registroMsg.textContent = 'Completa todos los campos';
-            return;
-        }
-        // Aquí iría fetch a /registro en tu backend.
-        registroMsg.classList.remove('text-danger');
-        registroMsg.classList.add('text-success');
-        registroMsg.textContent = 'Registro correcto. Ahora puedes iniciar sesión.';
-    });
-
-    // ===== Modal =====
-    const dlg = qs('#formDialog');
-    qs('#openForm').addEventListener('click', () => dlg.showModal());
-    qs('#closeForm').addEventListener('click', () => dlg.close());
-    qs('#cancelForm').addEventListener('click', () => dlg.close());
-    dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
-
-    // ===== Formulario ingreso =====
-    const form = qs('#nuevoRegistro');
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const clienteId = qs('#inputClienteId').value.trim();
-        const titulo = qs('#inputTitulo').value.trim();
-        const montoVal = qs('#inputMonto').value;
-        const monto = Number(montoVal);
-        const tipo = qs('#objeto').value;
-        const tag = qs('#tag').value;
-        const fecha = qs('#start').value;
-
-        if (!clienteId || !titulo || !Number.isFinite(monto) || montoVal === '' || !tipo) {
-            alert('Completa todos los campos con valores válidos');
-            return;
-        }
-
-        try {
-            const res = await fetch('/movimientos', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ idCuenta: clienteId, tipo, monto, descripcion: `${titulo} - ${tag}`, fecha })
-            });
-
-            if (!res.ok) {
-                const txt = await res.text();
-                throw new Error(`Error ${res.status}: ${txt || 'No se pudo guardar'}`);
+    // Función para actualizar la interfaz de logros
+    function updateAchievementsUI() {
+        // Actualizar estado de cada logro
+        achievements.forEach(achievement => {
+            const badge = document.getElementById(`achievement-${achievement.id}`);
+            if (achievement.completed) {
+                badge.textContent = "Completado";
+                badge.className = "status-badge completed";
+            } else {
+                badge.textContent = "Pendiente";
+                badge.className = "status-badge pending";
             }
+        });
+        
+        // Actualizar barra de progreso
+        const completedCount = achievements.filter(a => a.completed).length;
+        const progressPercentage = (completedCount / achievements.length) * 100;
+        const progressFill = document.getElementById('progress-fill');
+        const progressText = document.getElementById('progress-text');
+        
+        progressFill.style.width = `${progressPercentage}%`;
+        progressText.textContent = `${Math.round(progressPercentage)}% Completado (${completedCount}/${achievements.length})`;
+    }
 
-            // Intentar parsear JSON si existe
-            try { await res.json(); } catch (_) {}
-
-            form.reset();
-            dlg.close();
-            // Opcional: refrescar historial si estamos viendo el del mismo cliente
-            const actual = qs('#clienteId').value.trim();
-            if (actual && actual === clienteId) verHistorial();
-        } catch (err) {
-            console.error(err);
-            alert('No se pudo guardar el movimiento. Revisa la consola para más detalles.');
-        }
-    });
-
-    // ===== Historial =====
-    async function verHistorial() {
-        const id = qs('#clienteId').value.trim();
-        const tbody = qs('#tablaCuerpo');
-        tbody.innerHTML = '';
-
-        if (!id) {
-            alert('Ingresa un ID de cliente');
-            return;
-        }
-
-        try {
-            const res = await fetch(`/historial/${encodeURIComponent(id)}`);
-            if (!res.ok) throw new Error(`Error ${res.status}`);
-            const data = await res.json();
-
-            if (!Array.isArray(data) || data.length === 0) {
-                const tr = document.createElement('tr');
-                const td = document.createElement('td');
-                td.colSpan = 4; td.className = 'text-center py-4 text-gray-500';
-                td.textContent = 'No hay registros';
-                tr.appendChild(td); tbody.appendChild(tr); return;
+    // Función para simular la finalización de logros (para demostración)
+    function simulateAchievements() {
+        // Simular logros completados aleatoriamente
+        achievements.forEach(achievement => {
+            // 60% de probabilidad de completar cada logro
+            if (Math.random() < 0.6 && !achievement.completed) {
+                achievement.completed = true;
+                showAchievementNotification(achievement.name);
             }
+        });
+        
+        updateAchievementsUI();
+    }
 
-            data.forEach((m) => {
-                const tr = document.createElement('tr');
+    // Función para reiniciar todos los logros
+    function resetAchievements() {
+        achievements.forEach(achievement => {
+            achievement.completed = false;
+        });
+        
+        updateAchievementsUI();
+    }
 
-                const tdTipo = document.createElement('td');
-                tdTipo.className = 'px-6 py-4 whitespace-nowrap';
-                tdTipo.textContent = String(m.tipo || '');
-
-                const tdMonto = document.createElement('td');
-                tdMonto.className = 'px-6 py-4 whitespace-nowrap';
-                const num = Number(m.monto);
-                tdMonto.textContent = Number.isFinite(num) ? `$${num.toFixed(2)}` : '$—';
-
-                const tdFecha = document.createElement('td');
-                tdFecha.className = 'px-6 py-4 whitespace-nowrap';
-                const d = m.fecha ? new Date(m.fecha) : null;
-                tdFecha.textContent = d && !isNaN(d) ? d.toLocaleDateString('es-ES') : '';
-
-                const tdDesc = document.createElement('td');
-                tdDesc.className = 'px-6 py-4 whitespace-nowrap';
-                tdDesc.textContent = String(m.descripcion || '');
-
-                tr.append(tdTipo, tdMonto, tdFecha, tdDesc);
-                tbody.appendChild(tr);
-            });
-        } catch (err) {
-            console.error(err);
-            const tr = document.createElement('tr');
-            const td = document.createElement('td');
-            td.colSpan = 4; td.className = 'text-center py-4 text-red-600';
-            td.textContent = 'No se pudo cargar el historial.';
-            tr.appendChild(td); tbody.appendChild(tr);
+    // Función para completar un logro específico
+    function completeAchievement(id) {
+        const achievement = achievements.find(a => a.id === id);
+        if (achievement && !achievement.completed) {
+            achievement.completed = true;
+            showAchievementNotification(achievement.name);
+            updateAchievementsUI();
         }
     }
 
-    qs('#btnVerHistorial').addEventListener('click', verHistorial);
+    // Funciones de navegación
+    function showLogin() {
+        appSection.classList.add("hidden");
+        logrosSection.classList.add("hidden");
+        loginSection.classList.remove("hidden");
+    }
 
-    // ===== Botón exportar =====
-    qs('#exportBtn').addEventListener('click', () => {
-        // Usa ruta relativa para producción/desarrollo sin atar a localhost
-        window.location.href = '/exportar';
+    function showApp() {
+        loginSection.classList.add("hidden");
+        logrosSection.classList.add("hidden");
+        appSection.classList.remove("hidden");
+    }
+
+    function showLogros() {
+        loginSection.classList.add("hidden");
+        appSection.classList.add("hidden");
+        logrosSection.classList.remove("hidden");
+    }
+
+    // Estado inicial
+    if (localStorage.getItem("token")) {
+        showApp();
+    } else {
+        showLogin();
+    }
+
+    // Event Listeners
+    document.getElementById("logoutBtnHeader").addEventListener("click", () => {
+        localStorage.removeItem("token");
+        showLogin();
+    });
+
+    document.getElementById("logoutBtnLogros").addEventListener("click", () => {
+        localStorage.removeItem("token");
+        showLogin();
+    });
+
+    document.getElementById("logrosLinkHeader").addEventListener("click", (e) => {
+        e.preventDefault();
+        showLogros();
+    });
+
+    document.getElementById("volverLink").addEventListener("click", (e) => {
+        e.preventDefault();
+        showApp();
+    });
+
+    // Guardar movimiento
+    document.getElementById("nuevoRegistro").addEventListener("submit", async e => {
+        e.preventDefault();
+        
+        // Simplemente mostramos un mensaje de éxito ya que no tenemos backend
+        alert("Movimiento guardado exitosamente (simulación)");
+        
+        document.getElementById("nuevoRegistro").reset();
+        var movModal = bootstrap.Modal.getInstance(document.getElementById('movModal'));
+        movModal.hide();
+        
+        // Simular desbloqueo de logros al registrar movimientos
+        const tipo = document.getElementById("objeto").value;
+        if (tipo === "gasto") {
+            completeAchievement(5); // Primer gasto registrado
+        } else if (tipo === "ingreso") {
+            completeAchievement(6); // Primer ingreso registrado
+        }
+        
+        // Simular logro por número de movimientos
+        if (Math.random() < 0.3) {
+            completeAchievement(3); // Registrar 10 movimientos
+        }
+    });
+
+    // Ver historial
+    function verHistorial() {
+        const id = document.getElementById("clienteId").value;
+        if (!id) {
+            alert("Por favor, ingresa un ID de cliente");
+            return;
+        }
+        
+        // Simulamos datos de historial ya que no tenemos backend
+        const tbody = document.getElementById("tablaCuerpo");
+        tbody.innerHTML = "";
+        
+        // Datos de ejemplo
+        const datosEjemplo = [
+            { tipo: "ingreso", monto: 1000, fecha: "2024-01-15", descripcion: "Nómina" },
+            { tipo: "gasto", monto: 150, fecha: "2024-01-16", descripcion: "Comida - Supermercado" },
+            { tipo: "gasto", monto: 80, fecha: "2024-01-17", descripcion: "Ocio - Cine" }
+        ];
+        
+        datosEjemplo.forEach(m => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `<td>${m.tipo}</td><td>$${m.monto.toFixed(2)}</td><td>${new Date(m.fecha).toLocaleDateString()}</td><td>${m.descripcion || ""}</td>`;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // Exportar CSV
+    document.getElementById("exportBtn").addEventListener("click", () => {
+        alert("CSV exportado exitosamente (simulación)");
+        // Simular logro al exportar CSV
+        completeAchievement(10); // Exportar tu historial a CSV
+    });
+
+    // Inicializar la interfaz de logros
+    document.getElementById('simulate-btn').addEventListener('click', simulateAchievements);
+    document.getElementById('reset-btn').addEventListener('click', resetAchievements);
+    updateAchievementsUI();
+
+    // REGISTRO
+    document.getElementById("registroForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const nombre = document.getElementById("nombreRegistro").value;
+        const correo = document.getElementById("emailRegistro").value;
+        const password = document.getElementById("passwordRegistro").value;
+        
+        // Simulamos registro exitoso
+        const registroMsg = document.getElementById("registroMsg");
+        registroMsg.textContent = "¡Registro exitoso! Ahora puedes iniciar sesión.";
+        registroMsg.className = "mb-3 text-success";
+        
+        // Cambiamos a la pestaña de login
+        document.getElementById('login-tab').click();
+        
+        // Limpiamos el formulario
+        document.getElementById("registroForm").reset();
+    });
+
+    // LOGIN
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const correo = document.getElementById("emailLogin").value;
+        const password = document.getElementById("passwordLogin").value;
+        
+        // Simulamos login exitoso
+        localStorage.setItem("token", "simulated-token");
+        showApp();
     });
 </script>
 </body>

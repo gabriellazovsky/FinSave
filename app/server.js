@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
@@ -12,12 +13,16 @@ const SECRET_KEY = "clave_super_segura";
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Conexión a MongoDB
-mongoose.connect("mongodb://127.0.0.1:27017/finsave", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-}).then(() => console.log("MongoDB conectado"))
+const MONGODB_URI = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/finsave";
+mongoose.connect(MONGODB_URI)
+    .then(() => console.log("MongoDB conectado"))
     .catch(err => console.error("Error MongoDB:", err));
+
+
+app.get("/health/db", (req, res) => {
+    res.json({ state: mongoose.connection.readyState });
+});
+
 
 // Registro de usuario
 app.post("/registro", async (req, res) => {

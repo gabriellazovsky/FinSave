@@ -395,6 +395,70 @@
         }
     }
 
+    // Actualiza el gráfico circular a partir de un array de movimientos
+    // Agrupa por la primera palabra de la descripción (ej: 'Nómina', 'Comida', 'Ocio')
+    function updateChartFromMovements(movimientos) {
+        // Agrupar por primera palabra de descripcion
+        const groups = new Map();
+        movimientos.forEach(m => {
+            const desc = (m.descripcion || m.descripcion === 0) ? String(m.descripcion).trim() : '';
+            // extraer primera palabra antes de espacios o guiones
+            let first = '';
+            if (desc.length > 0) {
+                first = desc.split(/\s|-/)[0];
+                // quitar signos de puntuación al final/ principio
+                first = first.replace(/^[^\w\p{L}]+|[^\w\p{L}]+$/gu, '');
+            } else {
+                first = 'Otros';
+            }
+            if (!first) first = 'Otros';
+            const monto = Number(m.monto) || 0;
+            const key = first;
+            groups.set(key, (groups.get(key) || 0) + Math.abs(monto));
+        });
+
+        // convertir a array ordenado por monto descendente
+        const arr = Array.from(groups.entries()).sort((a, b) => b[1] - a[1]);
+        const total = arr.reduce((s, [, v]) => s + v, 0);
+
+        // paleta de colores (se repite si hay más categorías)
+        const palette = ['#4CAF50', '#2196F3', '#FFC107', '#9C27B0', '#FF5722', '#00BCD4', '#8BC34A'];
+
+        let gradientParts = [];
+        let cumulative = 0;
+        if (total > 0) {
+            arr.forEach(([label, amount], i) => {
+                const percent = (amount / total) * 100;
+                const start = cumulative;
+                const end = cumulative + percent;
+                const color = palette[i % palette.length];
+                gradientParts.push(`${color} ${start}% ${end}%`);
+                cumulative = end;
+            });
+        } else {
+            // fallback visual cuando no hay datos
+            gradientParts = ['#4CAF50 0% 60%', '#2196F3 60% 85%', '#FFC107 85% 100%'];
+        }
+
+        const chart = document.querySelector('.chart-container');
+        if (chart) chart.style.background = `conic-gradient(${gradientParts.join(', ')})`;
+
+        // etiqueta central: mostrar suma total
+        const center = document.querySelector('.center-label');
+        if (center) center.textContent = `$${(total).toFixed(2)}`;
+
+        // actualizar badges con las primeras 3 categorías (o fallback)
+        const ingresosBadge = document.querySelector('.badge.bg-success');
+        const gastosBadge = document.querySelector('.badge.bg-primary');
+        const ahorroBadge = document.querySelector('.badge.bg-warning');
+        const labels = arr.map(a => a[0]);
+        const percents = arr.map(a => Math.round((a[1] / Math.max(1, total)) * 100));
+        if (ingresosBadge) ingresosBadge.textContent = labels[0] ? `${labels[0]} ${percents[0]}%` : 'Sin datos';
+        if (gastosBadge) gastosBadge.textContent = labels[1] ? `${labels[1]} ${percents[1]}%` : (labels[0] ? '—' : 'Sin datos');
+        if (ahorroBadge) ahorroBadge.textContent = labels[2] ? `${labels[2]} ${percents[2]}%` : (labels[1] ? '—' : 'Sin datos');
+    }
+
+
     // Funciones de navegación
     function showLogin() {
         appSection.classList.add("hidden");
@@ -503,6 +567,9 @@
             tr.innerHTML = `<td>${m.tipo}</td><td>$${m.monto.toFixed(2)}</td><td>${new Date(m.fecha).toLocaleDateString()}</td><td>${m.descripcion || ""}</td>`;
             tbody.appendChild(tr);
         });
+
+        // Actualizar gráfico usando los datos de ejemplo
+        updateChartFromMovements(datosEjemplo);
     }
 
     // Exportar CSV

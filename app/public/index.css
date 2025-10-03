@@ -1,0 +1,235 @@
+        .chart-container {
+            position: relative;
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            background: conic-gradient(#4CAF50 0% 60%, #2196F3 60% 85%, #FFC107 85% 100%);
+            margin: auto;
+        }
+        .center-label {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        /* Estilos para notificaciones de logros */
+        .achievement-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(to right, #28a745, #20c997);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1050;
+            max-width: 350px;
+            animation: slideIn 0.5s ease-out;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .achievement-notification .icon {
+            font-size: 24px;
+        }
+        
+        .achievement-notification .content {
+            flex: 1;
+        }
+        
+        .achievement-notification .title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        /* Estilos para la página de logros */
+        .achievements-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        .achievements-header {
+            background: linear-gradient(to right, #2c3e50, #4a6491);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        .achievements-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        
+        .achievements-table th {
+            background-color: #2c3e50;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-size: 1.1rem;
+        }
+        
+        .achievements-table td {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+        
+        .achievements-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        .achievements-table tr:hover {
+            background-color: #e9ecef;
+        }
+        
+        .achievement-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .achievement-status {
+            text-align: center;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+        
+        .completed {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .pending {
+            background-color: #ffc107;
+            color: #212529;
+        }
+        
+        .progress-container {
+            margin-top: 30px;
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .progress-title {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        
+        .progress-bar {
+            height: 25px;
+            background-color: #e9ecef;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, #28a745, #20c997);
+            border-radius: 12px;
+            width: 0%;
+            transition: width 1s ease-in-out;
+        }
+        
+        .progress-text {
+            text-align: center;
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        .achievements-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+        
+        .simulate-btn {
+            background: linear-gradient(to right, #007bff, #0056b3);
+            color: white;
+        }
+        
+        .simulate-btn:hover {
+            background: linear-gradient(to right, #0056b3, #004085);
+            transform: translateY(-2px);
+        }
+        
+        .reset-btn {
+            background: linear-gradient(to right, #6c757d, #495057);
+            color: white;
+        }
+        
+        .reset-btn:hover {
+            background: linear-gradient(to right, #495057, #343a40);
+            transform: translateY(-2px);
+        }
+        
+        @media (max-width: 768px) {
+            .achievements-table {
+                font-size: 0.9rem;
+            }
+            
+            .achievements-table th, 
+            .achievements-table td {
+                padding: 10px;
+            }
+            
+            .controls {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .achievements-btn {
+                width: 100%;
+            }
+        }
+        .filtrosOcultos{display: none;}
+        .filtrosVisibles{ display: flex;flex-direction: column;gap:10px;padding: 15px;}

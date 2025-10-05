@@ -132,6 +132,8 @@
             <div id="precioFilterClass" class ="filtrosOcultos">
                 Precio: <input type="number" id="PrecioMínimo" placeholder="min">
                 <input type="number" id="PrecioMáximo" placeholder="max">
+                <button id="aplicarFiltro" class="btn btn-primary">Aplicar Filtros</button>
+                <button id="limpiarFiltro" class="btn btn-secondary">Limpiar Filtros</button>
             </div>
         </div>
 
@@ -596,6 +598,8 @@
     const btnFiltro = document.getElementById('botonFiltro');
     const filtroMonto = document.getElementById('montoFilterClass');
     const filtroPrecio = document.getElementById('precioFilterClass');
+    const aplicarFiltro = document.getElementById('aplicarFiltro');
+    const limpiarFiltro = document.getElementById('limpiarFiltro');
 
     function alternarFiltros() {
 
@@ -603,7 +607,50 @@
         filtroPrecio.classList.toggle('filtrosVisibles');
     }
 
+    function limpiarFiltros() {
+        document.getElementById('filtroMonto').value = 'predeterminado';
+        document.getElementById('PrecioMínimo').value = '';
+        document.getElementById('PrecioMáximo').value = '';
+        verHistorial();
+    }
+    function aplicarFiltros() {
+        const tipoSeleccionado = document.getElementById('filtroMonto').value;
+        const precioMinimo = parseFloat(document.getElementById('PrecioMínimo').value);
+        const precioMaximo = parseFloat(document.getElementById('PrecioMáximo').value);
+
+        const filas = document.querySelectorAll('#tablaCuerpo tr');
+        filas.forEach(fila => {
+            const descripcion = fila.cells[3].textContent.toLowerCase();
+            const monto = parseFloat(fila.cells[1].textContent.replace('$', ''));
+
+            let mostrarFila = true;
+
+
+            if (tipoSeleccionado !== 'predeterminado' && !descripcion.startsWith(tipoSeleccionado.toLowerCase())) {
+                mostrarFila = false;
+            }
+
+
+            if (!isNaN(precioMinimo) && monto < precioMinimo) {
+                mostrarFila = false;
+            }
+
+
+            if (!isNaN(precioMaximo) && monto > precioMaximo) {
+                mostrarFila = false;
+            }
+
+            if (mostrarFila) {
+                fila.style.display = '';
+            } else {
+                fila.style.display = 'none';
+            }
+        });
+    }
+
     btnFiltro.addEventListener('click', alternarFiltros);
+    limpiarFiltro.addEventListener('click', limpiarFiltros);
+    aplicarFiltro.addEventListener('click', aplicarFiltros);
 
     // Ver historial
     async function verHistorial() {

@@ -683,6 +683,56 @@
         localStorage.setItem("token", "simulated-token");
         showApp();
     });
+    // ===== ORDENAR TABLA POR COLUMNA =====
+    document.querySelectorAll("th").forEach((th, index) => {
+        th.style.cursor = "pointer";
+        th.addEventListener("click", () => {
+            const tbody = document.getElementById("tablaCuerpo");
+            const rows = Array.from(tbody.querySelectorAll("tr"));
+
+            // Detectar si ya está ordenado ascendente o descendente
+            const asc = th.classList.toggle("asc");
+
+            // Quitar indicadores y clases en otros encabezados
+            document.querySelectorAll("th").forEach(header => {
+                if (header !== th) {
+                    header.classList.remove("asc");
+                    header.textContent = header.textContent.replace(" ▲", "").replace(" ▼", "");
+                }
+            });
+
+            // Ordenar según el contenido de la columna
+            rows.sort((a, b) => {
+                const cellA = a.children[index].textContent.trim();
+                const cellB = b.children[index].textContent.trim();
+
+                // Intentar convertir a número o fecha
+                const numA = parseFloat(cellA.replace(/[^\d.-]/g, ""));
+                const numB = parseFloat(cellB.replace(/[^\d.-]/g, ""));
+                const dateA = new Date(cellA);
+                const dateB = new Date(cellB);
+
+                let valA = cellA, valB = cellB;
+
+                if (!isNaN(numA) && !isNaN(numB)) {
+                    valA = numA; valB = numB;
+                } else if (!isNaN(dateA) && !isNaN(dateB)) {
+                    valA = dateA; valB = dateB;
+                }
+
+                if (valA < valB) return asc ? -1 : 1;
+                if (valA > valB) return asc ? 1 : -1;
+                return 0;
+            });
+
+                th.textContent = th.textContent.replace(" ▲", "").replace(" ▼", "") + (asc ? " ▲" : " ▼");
+
+            // Reinsertar las filas ordenadas
+            tbody.innerHTML = "";
+            rows.forEach(row => tbody.appendChild(row));
+        });
+    });
+
 </script>
 </body>
 </html>

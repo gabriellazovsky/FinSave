@@ -304,6 +304,15 @@
     const appSection = document.getElementById("website-pantalla");
     const logrosSection = document.getElementById("logros-pantalla");
 
+    async function getCuentaIdFromCliente(clienteId) {
+        const res = await fetch(`/cuenta-por-cliente/${clienteId}`);
+        if (!res.ok) throw new Error('No se pudo obtener la cuenta');
+        const data = await res.json();
+        localStorage.setItem('cuentaId', data.cuentaId);
+        return data.cuentaId;
+    }
+
+
     // Estado inicial de los logros (todos pendientes)
     let achievements = [
         { id: 1, name: "Ahorrar 100€", completed: false },
@@ -507,29 +516,46 @@
     });
 
     // Guardar movimiento
-    document.getElementById("nuevoRegistro").addEventListener("submit", async e => {
+    document.getElementById("nuevoRegistro").addEventListener("submit", async (e) => {
         e.preventDefault();
-        
-        // Simplemente mostramos un mensaje de éxito ya que no tenemos backend
-        alert("Movimiento guardado exitosamente (simulación)");
-        
-        document.getElementById("nuevoRegistro").reset();
-        var movModal = bootstrap.Modal.getInstance(document.getElementById('movModal'));
-        movModal.hide();
-        
-        // Simular desbloqueo de logros al registrar movimientos
-        const tipo = document.getElementById("objeto").value;
-        if (tipo === "gasto") {
-            completeAchievement(5); // Primer gasto registrado
-        } else if (tipo === "ingreso") {
-            completeAchievement(6); // Primer ingreso registrado
-        }
-        
-        // Simular logro por número de movimientos
-        if (Math.random() < 0.3) {
-            completeAchievement(3); // Registrar 10 movimientos
+        try {
+            const clienteId = document.getElementById("inputClienteId").value.trim();
+            if (!clienteId) return alert("Falta ID Cliente");
+
+            // Get or create a default account for this client
+            const cuentaId = await getCuentaIdFromCliente(clienteId);
+
+            const monto = parseFloat(document.getElementById("inputMonto").value);
+            const tipo  = document.getElementById("objeto").value; // 'ingreso' | 'gasto'
+            const titulo = document.getElementById("inputTitulo").value.trim();
+            const tag = document.getElementById("tag").value;
+            const fecha = document.getElementById("start").value;
+
+            // Build a description that your chart grouper will understand (first word is the category)
+            const descripcion = `${tag} - ${titulo}`;
+
+            const res = await fetch('/movimientos', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ idCuenta: cuentaId, tipo, monto, descripcion, fecha })
+            });
+
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({}));
+                throw new Error(err.message || 'No se pudo guardar el movimiento');
+            }
+
+            // Close modal and refresh history + chart
+            e.target.reset();
+            bootstrap.Modal.getInstance(document.getElementById('movModal')).hide();
+
+            await verHistorial(); // will use the same clienteId field
+
+        } catch (err) {
+            alert(err.message || 'Error al guardar');
         }
     });
+
     // ===== FiltroTipo =====
     const btnFiltro = document.getElementById('botonFiltro');
     const filtroMonto = document.getElementById('montoFilterClass');
@@ -544,33 +570,41 @@
     btnFiltro.addEventListener('click', alternarFiltros);
 
     // Ver historial
-    function verHistorial() {
-        const id = document.getElementById("clienteId").value;
-        if (!id) {
-            alert("Por favor, ingresa un ID de cliente");
-            return;
-        }
-        
-        // Simulamos datos de historial ya que no tenemos backend
-        const tbody = document.getElementById("tablaCuerpo");
-        tbody.innerHTML = "";
-        
-        // Datos de ejemplo
-        const datosEjemplo = [
-            { tipo: "ingreso", monto: 1000, fecha: "2024-01-15", descripcion: "Nómina" },
-            { tipo: "gasto", monto: 150, fecha: "2024-01-16", descripcion: "Comida - Supermercado" },
-            { tipo: "gasto", monto: 80, fecha: "2024-01-17", descripcion: "Ocio - Cine" }
-        ];
-        
-        datosEjemplo.forEach(m => {
-            const tr = document.createElement("tr");
-            tr.innerHTML = `<td>${m.tipo}</td><td>$${m.monto.toFixed(2)}</td><td>${new Date(m.fecha).toLocaleDateString()}</td><td>${m.descripcion || ""}</td>`;
-            tbody.appendChild(tr);
-        });
+    async function verHistorial() {
+        try {
+            const clienteIdInput = document.getElementById("clienteId");
+            const clienteId = clienteIdInput.value.trim();
+            if (!clienteId) return alert("Por favor, ingresa un ID de cliente");
 
-        // Actualizar gráfico usando los datos de ejemplo
-        updateChartFromMovements(datosEjemplo);
+            // Ensure we have a cuentaId
+            const cuentaId = await getCuentaIdFromCliente(clienteId);
+
+            // Fetch movements for this account
+            const res = await fetch(`/historial/${cuentaId}`);
+            if (!res.ok) throw new Error('Error al cargar historial');
+
+            const movimientos = await res.json();
+
+            // Paint the table
+            const tbody = document.getElementById("tablaCuerpo");
+            tbody.innerHTML = "";
+            movimientos.forEach(m => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+        <td>${m.tipo}</td>
+        <td>$${Number(m.monto).toFixed(2)}</td>
+        <td>${new Date(m.fecha).toLocaleDateString()}</td>
+        <td>${m.descripcion || ""}</td>`;
+                tbody.appendChild(tr);
+            });
+
+            // Update the chart with the real data
+            updateChartFromMovements(movimientos);
+        } catch (err) {
+            alert(err.message || 'Error al cargar historial');
+        }
     }
+
 
     // Exportar CSV
     document.getElementById("exportBtn").addEventListener("click", () => {

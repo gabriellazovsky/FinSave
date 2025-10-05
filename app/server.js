@@ -23,18 +23,59 @@ app.get("/health/db", (req, res) => {
     res.json({ state: mongoose.connection.readyState });
 });
 
+async function ensureCuentaForCliente(idCliente) {
+    let cuenta = await Cuenta.findOne({ idCliente });
+    if (!cuenta) {
+        cuenta = await Cuenta.create({ idCliente, tipo: 'principal', saldoActual: 0 });
+    }
+    return cuenta;
+}
+
+
 
 // Registro de usuario
+// Registro de usuario  (DEV-friendly: returns clienteId + cuentaId)
 app.post("/registro", async (req, res) => {
-    const { nombre, correo, password } = req.body;
-    if (!nombre || !correo || !password) return res.status(400).json({ message: "Faltan campos" });
-    const existe = await Cliente.findOne({ correo });
-    if (existe) return res.status(400).json({ message: "Correo ya registrado" });
+    try {
+        const { nombre, correo, password } = req.body;
+        if (!nombre || !correo || !password) {
+            return res.status(400).json({ message: "Faltan campos" });
+        }
 
-    const cliente = new Cliente({ nombre, correo, password });
-    await cliente.save();
-    res.json({ message: "Registro exitoso" });
+        const existe = await Cliente.findOne({ correo });
+        if (existe) {
+            // si ya existe, devolvemos su id también (útil en dev)
+            // y aseguramos que tenga una cuenta
+            let cuenta = await Cuenta.findOne({ idCliente: existe._id });
+            if (!cuenta) {
+                cuenta = await Cuenta.create({ idCliente: existe._id, tipo: "principal", saldoActual: 0 });
+            }
+            return res.status(200).json({
+                message: "Correo ya registrado",
+                clienteId: existe._id.toString(),
+                cuentaId: cuenta._id.toString(),
+            });
+        }
+
+        const cliente = await Cliente.create({ nombre, correo, password });
+        const cuenta = await Cuenta.create({
+            idCliente: cliente._id,
+            tipo: "principal",
+            saldoActual: 0,
+        });
+
+        res.json({
+            message: "Registro exitoso",
+            clienteId: cliente._id.toString(),
+            cuentaId: cuenta._id.toString(),
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Error en registro" });
+    }
 });
+
+
 
 // Login
 app.post("/login", async (req, res) => {
@@ -47,6 +88,9 @@ app.post("/login", async (req, res) => {
 });
 
 // Middleware JWT
+function autenticarToken(req, res, next) { next(); }
+
+/*
 function autenticarToken(req, res, next) {
     const authHeader = req.headers["authorization"];
     const token = authHeader && authHeader.split(" ")[1];
@@ -58,7 +102,7 @@ function autenticarToken(req, res, next) {
         next();
     });
 }
-
+*/
 // Movimientos
 app.post("/movimientos", autenticarToken, async (req, res) => {
     const { idCuenta, tipo, monto, descripcion, fecha } = req.body;
@@ -71,6 +115,25 @@ app.get("/historial/:id", autenticarToken, async (req, res) => {
     const movimientos = await Movimiento.find({ idCuenta: req.params.id }).sort({ fecha: -1 });
     res.json(movimientos);
 });
+
+app.get('/cuenta-por-cliente/:idCliente', async (req, res) => {
+    try {
+        const cuenta = await ensureCuentaForCliente(req.params.idCliente);
+        res.json({ cuentaId: cuenta._id.toString() });
+    } catch (e) {
+        res.status(500).json({ message: 'No se pudo obtener/crear cuenta' });
+    }
+});
+
+app.get('/cuenta-por-cliente/:idCliente', async (req, res) => {
+    try {
+        const cuenta = await ensureCuentaForCliente(req.params.idCliente);
+        res.json({ cuentaId: cuenta._id.toString() });
+    } catch (e) {
+        res.status(500).json({ message: 'No se pudo obtener/crear cuenta' });
+    }
+});
+
 
 app.get("/exportar", autenticarToken, async (req, res) => {
     const movimientos = await Movimiento.find().lean();

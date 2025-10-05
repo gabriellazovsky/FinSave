@@ -19,7 +19,7 @@ const cuentaSchema = new mongoose.Schema({
 
 // Movimientos
 const movimientoSchema = new mongoose.Schema({
-    idCuenta: String, //{ type: mongoose.Schema.Types.ObjectId, ref: "Cuenta" },
+    idCuenta: { type: mongoose.Schema.Types.ObjectId, ref: "Cuenta" },
     tipo: String, // abono, cargo, interes
     monto: Number,
     fecha: { type: Date, default: Date.now },

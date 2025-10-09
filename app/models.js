@@ -1,29 +1,37 @@
 const mongoose = require("mongoose");
 
-// Clientes
+// --- Cliente (User) ---
 const clienteSchema = new mongoose.Schema({
-    nombre: String,
+    nombre: { type: String, required: true, trim: true },
     identificacion: String,
-    correo: String,
+    correo: {
+        type: String,
+        required: true,
+        trim: true,
+        lowercase: true,
+        unique: true,
+        index: true,
+    },
     fechaRegistro: { type: Date, default: Date.now },
-    password: String // para login
+    // NOTE: plain text for now (not secure; for learning only)
+    password: { type: String, required: true },
 });
 
-// Cuentas
+// --- Cuenta (Account) ---
 const cuentaSchema = new mongoose.Schema({
-    idCliente: { type: mongoose.Schema.Types.ObjectId, ref: "Cliente" },
-    tipo: String, // prestamo, credito, inversion
-    saldoActual: Number,
-    fechaApertura: { type: Date, default: Date.now }
+    idCliente: { type: mongoose.Schema.Types.ObjectId, ref: "Cliente", required: true },
+    tipo: { type: String, default: "principal" }, // prestamo, credito, inversion, principal
+    saldoActual: { type: Number, default: 0 },
+    fechaApertura: { type: Date, default: Date.now },
 });
 
-// Movimientos
+// --- Movimiento (Transaction) ---
 const movimientoSchema = new mongoose.Schema({
-    idCuenta: { type: mongoose.Schema.Types.ObjectId, ref: "Cuenta" },
-    tipo: String, // abono, cargo, interes
-    monto: Number,
+    idCuenta: { type: mongoose.Schema.Types.ObjectId, ref: "Cuenta", required: true },
+    tipo: { type: String, required: true }, // abono, cargo, interes
+    monto: { type: Number, required: true },
     fecha: { type: Date, default: Date.now },
-    descripcion: String
+    descripcion: String,
 });
 
 const Cliente = mongoose.model("Cliente", clienteSchema);

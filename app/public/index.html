@@ -7,11 +7,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="index.css"/>
-    
 </head>
 
 <body class="bg-light">
-<!-- Seccion de LOGIN -->
+<!-- =================== LOGIN =================== -->
 <section id="login-pantalla" class="min-vh-100 d-flex align-items-center justify-content-center">
     <div class="card shadow p-4 mx-auto" style="max-width:400px; width:100%;">
         <div class="text-center mb-4">
@@ -21,14 +20,10 @@
 
         <ul class="nav nav-tabs mb-3" id="authTab" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#login"
-                        type="button">Login
-                </button>
+                <button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#login" type="button">Login</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="registro-tab" data-bs-toggle="tab" data-bs-target="#registro"
-                        type="button">Registro
-                </button>
+                <button class="nav-link" id="registro-tab" data-bs-toggle="tab" data-bs-target="#registro" type="button">Registro</button>
             </li>
         </ul>
 
@@ -40,8 +35,7 @@
                         <input type="email" class="form-control" id="emailLogin" placeholder="Correo" required>
                     </div>
                     <div class="mb-3">
-                        <input type="password" class="form-control" id="passwordLogin" placeholder="Contraseña"
-                               required>
+                        <input type="password" class="form-control" id="passwordLogin" placeholder="Contraseña" required>
                     </div>
                     <div class="mb-3 text-danger" id="loginMsg"></div>
                     <button class="btn btn-primary w-100" type="submit">Entrar</button>
@@ -58,10 +52,9 @@
                         <input type="email" class="form-control" id="emailRegistro" placeholder="Correo" required>
                     </div>
                     <div class="mb-3">
-                        <input type="password" class="form-control" id="passwordRegistro" placeholder="Contraseña"
-                               required>
+                        <input type="password" class="form-control" id="passwordRegistro" placeholder="Contraseña" required>
                     </div>
-                    <div class="mb-3 text-success" id="registroMsg"></div>
+                    <div class="mb-3" id="registroMsg"></div>
                     <button class="btn btn-success w-100" type="submit">Registrarse</button>
                 </form>
             </div>
@@ -69,7 +62,7 @@
     </div>
 </section>
 
-<!-- PÁGINA PRINCIPAL -->
+<!-- =================== APP PRINCIPAL =================== -->
 <section id="website-pantalla" class="hidden">
     <header class="w-full bg-white border-b">
         <nav class="container mx-auto flex justify-between items-center px-4 py-3">
@@ -78,24 +71,17 @@
                 <a href="#persona" class="hover:text-blue-600">Persona</a>
                 <a href="#consejo" class="hover:text-blue-600">Consejo</a>
                 <a href="#faq" class="hover:text-blue-600">FAQ</a>
-                <!-- ENLACE A LOGROS -->
                 <a href="#" class="hover:text-blue-600 font-semibold" id="logrosLinkHeader">Logros</a>
                 <a href="#contacto" class="hover:text-blue-600 font-semibold">Contáctanos</a>
             </div>
-            
-            <!-- Botón de Cerrar Sesión -->
-            <button class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors" 
-                    id="logoutBtnHeader">
-                Cerrar Sesión
-            </button>
+            <button class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors" id="logoutBtnHeader">Cerrar Sesión</button>
         </nav>
     </header>
 
     <div class="container mt-8">
         <div class="text-center mb-4">
             <h2>Gráfico de Finanzas</h2>
-            <div class="chart-container">
-            </div>
+            <div class="chart-container"></div>
             <div class="d-flex justify-content-around mt-3">
                 <span class="badge bg-success">Ingresos 60%</span>
                 <span class="badge bg-primary">Gastos 25%</span>
@@ -104,23 +90,22 @@
         </div>
 
         <div class="mb-3 text-center">
-            <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#movModal">Insertar movimiento
-            </button>
+            <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#movModal">Insertar movimiento</button>
             <button class="btn btn-success" id="exportBtn">Exportar CSV</button>
         </div>
 
         <div class="mb-3 d-flex">
             <input id="clienteId" class="form-control me-2" placeholder="ID Cliente">
-            <button class="btn btn-secondary" onclick="verHistorial()">Ver Historial</button>
+            <button class="btn btn-secondary" id="btnVerHistorial">Ver Historial</button>
         </div>
-        <!-- Seleccionador -->
-        <div>
 
+        <!-- Filtros -->
+        <div>
             <button id="botonFiltro" class="btn btn-info border border-dark px-4 py-2 rounded shadow-sm">Filtrar tabla</button>
 
-
-            <div id="montoFilterClass" class="filtrosOcultos">
-                Monto: <select name="Montos" id="filtroMonto">
+            <div id="montoFilterClass" class="filtrosOcultos mt-2">
+                Monto:
+                <select name="Montos" id="filtroMonto">
                     <option value="predeterminado">predeterminado</option>
                     <option value="ocio">ocio</option>
                     <option value="comida">comida</option>
@@ -130,17 +115,17 @@
                 </select>
             </div>
 
-            <div id="precioFilterClass" class ="filtrosOcultos">
-                Precio: <input type="number" id="PrecioMínimo" placeholder="min">
+            <div id="precioFilterClass" class="filtrosOcultos mt-2">
+                Precio:
+                <input type="number" id="PrecioMínimo" placeholder="min">
                 <input type="number" id="PrecioMáximo" placeholder="max">
-                <button id="aplicarFiltro" class="btn btn-primary">Aplicar Filtros</button>
-                <button id="limpiarFiltro" class="btn btn-secondary">Limpiar Filtros</button>
+                <button id="aplicarFiltro" class="btn btn-primary btn-sm">Aplicar Filtros</button>
+                <button id="limpiarFiltro" class="btn btn-secondary btn-sm">Limpiar Filtros</button>
             </div>
         </div>
 
-        <!-- Fin de seleccionador -->
-
-        <br><table class="table table-striped table-bordered">
+        <br>
+        <table class="table table-striped table-bordered">
             <thead>
             <tr>
                 <th>Tipo</th>
@@ -165,8 +150,7 @@
                     <form id="nuevoRegistro">
                         <input id="inputTitulo" class="form-control mb-2" placeholder="Título" required>
                         <input id="inputClienteId" class="form-control mb-2" placeholder="ID Cliente" required>
-                        <input id="inputMonto" type="number" step="0.01" class="form-control mb-2" placeholder="Monto"
-                               required>
+                        <input id="inputMonto" type="number" step="0.01" class="form-control mb-2" placeholder="Monto" required>
                         <select id="objeto" class="form-select mb-2">
                             <option value="ingreso">Ingreso</option>
                             <option value="gasto">Gasto</option>
@@ -178,8 +162,7 @@
                             <option value="nomina">Nómina</option>
                             <option value="gasolina">Gasolina</option>
                         </select>
-                        <input type="date" id="start" class="form-control mb-2" value="2025-01-01" min="2010-01-01"
-                               max="2040-12-31">
+                        <input type="date" id="start" class="form-control mb-2" value="2025-01-01" min="2010-01-01" max="2040-12-31">
                         <button type="submit" class="btn btn-primary w-100">Guardar</button>
                     </form>
                 </div>
@@ -188,110 +171,49 @@
     </div>
 </section>
 
-
-<!---------------------------- PÁGINA DE LOGROS ------------------------------->
+<!-- =================== LOGROS =================== -->
 <section id="logros-pantalla" class="hidden">
     <header class="w-full bg-white border-b">
         <nav class="container mx-auto flex justify-between items-center px-4 py-3">
             <div class="flex gap-6">
                 <a href="#" class="hover:text-blue-600 font-semibold" id="volverLink">← Volver al Dashboard</a>
             </div>
-            
-            <!-- Botón de Cerrar Sesión -->
-            <button class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors" 
-                    id="logoutBtnLogros">
-                Cerrar Sesión
-            </button>
+            <button class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors" id="logoutBtnLogros">Cerrar Sesión</button>
         </nav>
     </header>
-    
+
     <div class="container mt-8">
         <div class="achievements-container">
             <div class="achievements-header">
                 <h1>Sistema de Logros</h1>
                 <p class="subtitle">Tu progreso en la gestión financiera</p>
             </div>
-            
+
             <div class="p-4">
                 <table class="achievements-table">
                     <thead>
-                        <tr>
-                            <th>Logro</th>
-                            <th>Estado</th>
-                        </tr>
+                    <tr><th>Logro</th><th>Estado</th></tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td class="achievement-name">Ahorrar 100€</td>
-                            <td class="achievement-status">
-                                <span class="status-badge pending" id="achievement-1">Pendiente</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="achievement-name">Ahorrar 500€</td>
-                            <td class="achievement-status">
-                                <span class="status-badge pending" id="achievement-2">Pendiente</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="achievement-name">Registrar 10 movimientos</td>
-                            <td class="achievement-status">
-                                <span class="status-badge pending" id="achievement-3">Pendiente</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="achievement-name">Registrar 50 movimientos</td>
-                            <td class="achievement-status">
-                                <span class="status-badge pending" id="achievement-4">Pendiente</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="achievement-name">Primer gasto registrado</td>
-                            <td class="achievement-status">
-                                <span class="status-badge pending" id="achievement-5">Pendiente</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="achievement-name">Primer ingreso registrado</td>
-                            <td class="achievement-status">
-                                <span class="status-badge pending" id="achievement-6">Pendiente</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="achievement-name">Ahorrar 1000€</td>
-                            <td class="achievement-status">
-                                <span class="status-badge pending" id="achievement-7">Pendiente</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="achievement-name">Gasto en comida < 50€ en un mes</td>
-                            <td class="achievement-status">
-                                <span class="status-badge pending" id="achievement-8">Pendiente</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="achievement-name">3 meses consecutivos de ahorro</td>
-                            <td class="achievement-status">
-                                <span class="status-badge pending" id="achievement-9">Pendiente</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="achievement-name">Exportar tu historial a CSV</td>
-                            <td class="achievement-status">
-                                <span class="status-badge pending" id="achievement-10">Pendiente</span>
-                            </td>
-                        </tr>
+                    <tr><td class="achievement-name">Ahorrar 100€</td><td class="achievement-status"><span class="status-badge pending" id="achievement-1">Pendiente</span></td></tr>
+                    <tr><td class="achievement-name">Ahorrar 500€</td><td class="achievement-status"><span class="status-badge pending" id="achievement-2">Pendiente</span></td></tr>
+                    <tr><td class="achievement-name">Registrar 10 movimientos</td><td class="achievement-status"><span class="status-badge pending" id="achievement-3">Pendiente</span></td></tr>
+                    <tr><td class="achievement-name">Registrar 50 movimientos</td><td class="achievement-status"><span class="status-badge pending" id="achievement-4">Pendiente</span></td></tr>
+                    <tr><td class="achievement-name">Primer gasto registrado</td><td class="achievement-status"><span class="status-badge pending" id="achievement-5">Pendiente</span></td></tr>
+                    <tr><td class="achievement-name">Primer ingreso registrado</td><td class="achievement-status"><span class="status-badge pending" id="achievement-6">Pendiente</span></td></tr>
+                    <tr><td class="achievement-name">Ahorrar 1000€</td><td class="achievement-status"><span class="status-badge pending" id="achievement-7">Pendiente</span></td></tr>
+                    <tr><td class="achievement-name">Gasto en comida < 50€ en un mes</td><td class="achievement-status"><span class="status-badge pending" id="achievement-8">Pendiente</span></td></tr>
+                    <tr><td class="achievement-name">3 meses consecutivos de ahorro</td><td class="achievement-status"><span class="status-badge pending" id="achievement-9">Pendiente</span></td></tr>
+                    <tr><td class="achievement-name">Exportar tu historial a CSV</td><td class="achievement-status"><span class="status-badge pending" id="achievement-10">Pendiente</span></td></tr>
                     </tbody>
                 </table>
-                
+
                 <div class="progress-container">
                     <h3 class="progress-title">Progreso General</h3>
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="progress-fill"></div>
-                    </div>
+                    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
                     <div class="progress-text" id="progress-text">0% Completado</div>
                 </div>
-                
+
                 <div class="controls">
                     <button class="achievements-btn simulate-btn" id="simulate-btn">Simular Completar Logros</button>
                     <button class="achievements-btn reset-btn" id="reset-btn">Reiniciar Logros</button>
@@ -301,46 +223,45 @@
     </div>
 </section>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-
-    
+<!-- =================== CONTACTO =================== -->
 <section id="contacto" class="py-16 bg-gray-50 flex justify-center items-center">
-  <div class="bg-white p-8 rounded-xl shadow-md w-full max-w-md text-center">
-    <h2 class="text-2xl font-semibold mb-4">Enviar Feedback</h2>
-    <form id="feedbackForm">
-      <textarea 
-        class="w-full border border-gray-300 rounded-md p-3 mb-4 resize-none focus:outline-none focus:border-blue-500"
-        placeholder="Escribe aquí tu comentario..." required></textarea>
-      <button 
-        type="submit"
-        class="w-full bg-blue-600 text-white font-semibold py-2 rounded-md hover:bg-blue-700 transition">
-        Enviar
-      </button>
-    </form>
-    <p class="mensaje text-green-600 font-semibold mt-4 hidden" id="mensaje">
-      ¡Gracias por tu comentario 😊!
-    </p>
-  </div>
+    <div class="bg-white p-8 rounded-xl shadow-md w-full max-w-md text-center">
+        <h2 class="text-2xl font-semibold mb-4">Enviar Feedback</h2>
+        <form id="feedbackForm">
+      <textarea class="w-full border border-gray-300 rounded-md p-3 mb-4 resize-none focus:outline-none focus:border-blue-500"
+                placeholder="Escribe aquí tu comentario..." required></textarea>
+            <button type="submit" class="w-full bg-blue-600 text-white font-semibold py-2 rounded-md hover:bg-blue-700 transition">
+                Enviar
+            </button>
+        </form>
+        <p class="mensaje text-green-600 font-semibold mt-4 hidden" id="mensaje">¡Gracias por tu comentario 😊!</p>
+    </div>
 </section>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // ---------------- Helpers ----------------
+    const getToken = () => localStorage.getItem("token");
+    const setToken = (t) => localStorage.setItem("token", t);
+    const clearToken = () => localStorage.removeItem("token");
+    const authHeaders = () => {
+        const t = getToken();
+        return t ? { Authorization: `Bearer ${t}` } : {};
+    };
+    const readJson = async (res) => { try { return await res.json(); } catch { return {}; } };
 
-    
-    // Elementos de la interfaz
+    // ---------------- UI Sections ----------------
     const loginSection = document.getElementById("login-pantalla");
     const appSection = document.getElementById("website-pantalla");
     const logrosSection = document.getElementById("logros-pantalla");
 
-    async function getCuentaIdFromCliente(clienteId) {
-        const res = await fetch(`/cuenta-por-cliente/${clienteId}`);
-        if (!res.ok) throw new Error('No se pudo obtener la cuenta');
-        const data = await res.json();
-        localStorage.setItem('cuentaId', data.cuentaId);
-        return data.cuentaId;
-    }
+    function showLogin() { appSection.classList.add("hidden"); logrosSection.classList.add("hidden"); loginSection.classList.remove("hidden"); }
+    function showApp()   { loginSection.classList.add("hidden"); logrosSection.classList.add("hidden"); appSection.classList.remove("hidden"); }
+    function showLogros(){ loginSection.classList.add("hidden"); appSection.classList.add("hidden"); logrosSection.classList.remove("hidden"); }
 
+    if (getToken()) showApp(); else showLogin();
 
-    // Estado inicial de los logros (todos pendientes)
+    // ---------------- Achievements (unchanged core) ----------------
     let achievements = [
         { id: 1, name: "Ahorrar 100€", completed: false },
         { id: 2, name: "Ahorrar 500€", completed: false },
@@ -354,171 +275,71 @@
         { id: 10, name: "Exportar tu historial a CSV", completed: false }
     ];
 
-    // Función para mostrar notificación de logro
     function showAchievementNotification(achievementName) {
-    const notification = document.createElement('div');
-    notification.className = 'achievement-notification';
-    notification.style.position = 'fixed';
-    notification.style.top = '20px';
-    notification.style.right = '20px';
-    notification.style.background = '#28a745'; /* verde Bootstrap */
-    notification.style.color = 'white';
-    notification.style.border = '2px solid #1e7e34';
-    notification.style.padding = '14px 18px';
-    notification.style.borderRadius = '10px';
-    notification.style.boxShadow = '0 2px 10px rgba(0,0,0,0.25)';
-    notification.style.display = 'flex';
-    notification.style.alignItems = 'center';
-    notification.style.gap = '10px';
-    notification.style.zIndex = '9999';
-    notification.style.minWidth = '260px';
-    notification.style.fontFamily = 'system-ui, sans-serif';
-    notification.style.position = 'fixed';
-
-    notification.innerHTML = `
-        <div class="icon" style="font-size:24px;">🏆</div>
-        <div class="content" style="flex-grow:1;">
-            <div class="title" style="font-weight:bold;">¡Logro Desbloqueado!</div>
-            <div>${achievementName}</div>
-        </div>
-        <button class="close-btn" style="
-            background:none;
-            border:none;
-            font-size:20px;
-            font-weight:bold;
-            color:white;
-            cursor:pointer;
-            position:absolute;
-            top:6px;
-            right:10px;
-        ">&times;</button>
+        const notification = document.createElement('div');
+        notification.className = 'achievement-notification';
+        Object.assign(notification.style, {
+            position: 'fixed', top: '20px', right: '20px', background: '#28a745', color: 'white', border: '2px solid #1e7e34',
+            padding: '14px 18px', borderRadius: '10px', boxShadow: '0 2px 10px rgba(0,0,0,0.25)', display: 'flex',
+            alignItems: 'center', gap: '10px', zIndex: '9999', minWidth: '260px', fontFamily: 'system-ui, sans-serif'
+        });
+        notification.innerHTML = `
+      <div class="icon" style="font-size:24px;">🏆</div>
+      <div class="content" style="flex-grow:1;">
+        <div class="title" style="font-weight:bold;">¡Logro Desbloqueado!</div>
+        <div>${achievementName}</div>
+      </div>
+      <button class="close-btn" style="background:none;border:none;font-size:20px;font-weight:bold;color:white;cursor:pointer;position:absolute;top:6px;right:10px;">&times;</button>
     `;
-
-    // Botón para cerrar manualmente
-    const closeBtn = notification.querySelector('.close-btn');
-    closeBtn.addEventListener('click', () => {
-        notification.remove();
-    });
-
-    document.body.appendChild(notification);
-
-    // Eliminar automáticamente después de 5 segundos
-    setTimeout(() => {
-        notification.remove();
-    }, 5000);
+        notification.querySelector('.close-btn').addEventListener('click', () => notification.remove());
+        document.body.appendChild(notification);
+        setTimeout(() => notification.remove(), 5000);
     }
 
-
-    // Función para actualizar la interfaz de logros
     function updateAchievementsUI() {
-        // Actualizar estado de cada logro
-        achievements.forEach(achievement => {
-            const badge = document.getElementById(`achievement-${achievement.id}`);
-            if (achievement.completed) {
-                badge.textContent = "Completado";
-                badge.className = "status-badge completed";
-            } else {
-                badge.textContent = "Pendiente";
-                badge.className = "status-badge pending";
-            }
+        achievements.forEach(a => {
+            const badge = document.getElementById(`achievement-${a.id}`);
+            if (!badge) return;
+            badge.textContent = a.completed ? "Completado" : "Pendiente";
+            badge.className = `status-badge ${a.completed ? 'completed' : 'pending'}`;
         });
-        
-        // Actualizar barra de progreso
         const completedCount = achievements.filter(a => a.completed).length;
-        const progressPercentage = (completedCount / achievements.length) * 100;
-        const progressFill = document.getElementById('progress-fill');
-        const progressText = document.getElementById('progress-text');
-        
-        progressFill.style.width = `${progressPercentage}%`;
-        progressText.textContent = `${Math.round(progressPercentage)}% Completado (${completedCount}/${achievements.length})`;
+        const pct = Math.round((completedCount / achievements.length) * 100);
+        document.getElementById('progress-fill').style.width = `${pct}%`;
+        document.getElementById('progress-text').textContent = `${pct}% Completado (${completedCount}/${achievements.length})`;
     }
 
-    // Función para simular la finalización de logros (para demostración)
-    function simulateAchievements() {
-        // Simular logros completados aleatoriamente
-        achievements.forEach(achievement => {
-            // 60% de probabilidad de completar cada logro
-            if (Math.random() < 0.6 && !achievement.completed) {
-                achievement.completed = true;
-                showAchievementNotification(achievement.name);
-            }
-        });
-        
-        updateAchievementsUI();
-    }
+    function simulateAchievements() { achievements.forEach(a => { if (Math.random() < 0.6 && !a.completed) { a.completed = true; showAchievementNotification(a.name); } }); updateAchievementsUI(); }
+    function resetAchievements() { achievements.forEach(a => a.completed = false); updateAchievementsUI(); }
+    function completeAchievement(id) { const a = achievements.find(x => x.id === id); if (a && !a.completed) { a.completed = true; showAchievementNotification(a.name); updateAchievementsUI(); } }
 
-    // Función para reiniciar todos los logros
-    function resetAchievements() {
-        achievements.forEach(achievement => {
-            achievement.completed = false;
-        });
-        
-        updateAchievementsUI();
-    }
-
-    // Función para completar un logro específico
-    function completeAchievement(id) {
-        const achievement = achievements.find(a => a.id === id);
-        if (achievement && !achievement.completed) {
-            achievement.completed = true;
-            showAchievementNotification(achievement.name);
-            updateAchievementsUI();
-        }
-    }
-
-    // Actualiza el gráfico circular a partir de un array de movimientos
-    // Agrupa por la primera palabra de la descripción (ej: 'Nómina', 'Comida', 'Ocio')
+    // ---------------- Chart helper ----------------
     function updateChartFromMovements(movimientos) {
-        // Agrupar por primera palabra de descripcion
         const groups = new Map();
         movimientos.forEach(m => {
             const desc = (m.descripcion || m.descripcion === 0) ? String(m.descripcion).trim() : '';
-            // extraer primera palabra antes de espacios o guiones
-            let first = '';
-            if (desc.length > 0) {
-                first = desc.split(/\s|-/)[0];
-                // quitar signos de puntuación al final/ principio
-                first = first.replace(/^[^\w\p{L}]+|[^\w\p{L}]+$/gu, '');
-            } else {
-                first = 'Otros';
-            }
+            let first = desc ? desc.split(/\s|-/)[0].replace(/^[^\w\p{L}]+|[^\w\p{L}]+$/gu, '') : 'Otros';
             if (!first) first = 'Otros';
             const monto = Number(m.monto) || 0;
-            const key = first;
-            groups.set(key, (groups.get(key) || 0) + Math.abs(monto));
+            groups.set(first, (groups.get(first) || 0) + Math.abs(monto));
         });
-
-        // convertir a array ordenado por monto descendente
         const arr = Array.from(groups.entries()).sort((a, b) => b[1] - a[1]);
         const total = arr.reduce((s, [, v]) => s + v, 0);
-
-        // paleta de colores (se repite si hay más categorías)
         const palette = ['#4CAF50', '#2196F3', '#FFC107', '#9C27B0', '#FF5722', '#00BCD4', '#8BC34A'];
 
         let gradientParts = [];
         let cumulative = 0;
         if (total > 0) {
-            arr.forEach(([label, amount], i) => {
+            arr.forEach(([, amount], i) => {
                 const percent = (amount / total) * 100;
-                const start = cumulative;
-                const end = cumulative + percent;
-                const color = palette[i % palette.length];
-                gradientParts.push(`${color} ${start}% ${end}%`);
-                cumulative = end;
+                gradientParts.push(`${palette[i % palette.length]} ${cumulative}% ${cumulative + percent}%`);
+                cumulative += percent;
             });
         } else {
-            // fallback visual cuando no hay datos
             gradientParts = ['#4CAF50 0% 60%', '#2196F3 60% 85%', '#FFC107 85% 100%'];
         }
+        const chart = document.querySelector('.chart-container'); if (chart) chart.style.background = `conic-gradient(${gradientParts.join(', ')})`;
 
-        const chart = document.querySelector('.chart-container');
-        if (chart) chart.style.background = `conic-gradient(${gradientParts.join(', ')})`;
-
-        // etiqueta central: mostrar suma total
-        const center = document.querySelector('.center-label');
-        if (center) center.textContent = `$${(total).toFixed(2)}`;
-
-        // actualizar badges con las primeras 3 categorías (o fallback)
         const ingresosBadge = document.querySelector('.badge.bg-success');
         const gastosBadge = document.querySelector('.badge.bg-primary');
         const ahorroBadge = document.querySelector('.badge.bg-warning');
@@ -529,109 +350,93 @@
         if (ahorroBadge) ahorroBadge.textContent = labels[2] ? `${labels[2]} ${percents[2]}%` : (labels[1] ? '—' : 'Sin datos');
     }
 
-
-    // Funciones de navegación
-    function showLogin() {
-        appSection.classList.add("hidden");
-        logrosSection.classList.add("hidden");
-        loginSection.classList.remove("hidden");
+    // ---------------- API helpers ----------------
+    async function getCuentaIdFromCliente(clienteId) {
+        const res = await fetch(`/cuenta-por-cliente/${clienteId}`, { headers: { ...authHeaders() } });
+        if (!res.ok) throw new Error('No se pudo obtener la cuenta');
+        const data = await res.json();
+        localStorage.setItem('cuentaId', data.cuentaId);
+        return data.cuentaId;
     }
 
-    function showApp() {
-        loginSection.classList.add("hidden");
-        logrosSection.classList.add("hidden");
-        appSection.classList.remove("hidden");
+    async function verHistorial() {
+        try {
+            const clienteIdInput = document.getElementById("clienteId");
+            const clienteId = clienteIdInput.value.trim();
+            if (!clienteId) return alert("Por favor, ingresa un ID de cliente");
+            const cuentaId = await getCuentaIdFromCliente(clienteId);
+
+            const res = await fetch(`/historial/${cuentaId}`, { headers: { ...authHeaders() } });
+            if (!res.ok) throw new Error('Error al cargar historial');
+            const movimientos = await res.json();
+
+            const tbody = document.getElementById("tablaCuerpo");
+            tbody.innerHTML = "";
+            movimientos.forEach(m => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+          <td>${m.tipo}</td>
+          <td>$${Number(m.monto).toFixed(2)}</td>
+          <td>${new Date(m.fecha).toLocaleDateString()}</td>
+          <td>${m.descripcion || ""}</td>
+        `;
+                tbody.appendChild(tr);
+            });
+            updateChartFromMovements(movimientos);
+        } catch (err) {
+            alert(err.message || 'Error al cargar historial');
+        }
     }
 
-    function showLogros() {
-        loginSection.classList.add("hidden");
-        appSection.classList.add("hidden");
-        logrosSection.classList.remove("hidden");
-    }
+    // ---------------- Events: nav/logout ----------------
+    document.getElementById("logoutBtnHeader").addEventListener("click", () => { clearToken(); showLogin(); });
+    document.getElementById("logoutBtnLogros").addEventListener("click", () => { clearToken(); showLogin(); });
+    document.getElementById("logrosLinkHeader").addEventListener("click", (e) => { e.preventDefault(); showLogros(); });
+    document.getElementById("volverLink").addEventListener("click", (e) => { e.preventDefault(); showApp(); });
+    document.getElementById("btnVerHistorial").addEventListener("click", verHistorial);
 
-    // Estado inicial
-    if (localStorage.getItem("token")) {
-        showApp();
-    } else {
-        showLogin();
-    }
-
-    // Event Listeners
-    document.getElementById("logoutBtnHeader").addEventListener("click", () => {
-        localStorage.removeItem("token");
-        showLogin();
-    });
-
-    document.getElementById("logoutBtnLogros").addEventListener("click", () => {
-        localStorage.removeItem("token");
-        showLogin();
-    });
-
-    document.getElementById("logrosLinkHeader").addEventListener("click", (e) => {
-        e.preventDefault();
-        showLogros();
-    });
-
-    document.getElementById("volverLink").addEventListener("click", (e) => {
-        e.preventDefault();
-        showApp();
-    });
-
-    // Guardar movimiento
+    // ---------------- Eventos: nuevo movimiento (PROTEGIDO) ----------------
     document.getElementById("nuevoRegistro").addEventListener("submit", async (e) => {
         e.preventDefault();
         try {
             const clienteId = document.getElementById("inputClienteId").value.trim();
             if (!clienteId) return alert("Falta ID Cliente");
-
-            // Get or create a default account for this client
             const cuentaId = await getCuentaIdFromCliente(clienteId);
 
             const monto = parseFloat(document.getElementById("inputMonto").value);
-            const tipo  = document.getElementById("objeto").value; // 'ingreso' | 'gasto'
+            const tipo  = document.getElementById("objeto").value;
             const titulo = document.getElementById("inputTitulo").value.trim();
             const tag = document.getElementById("tag").value;
             const fecha = document.getElementById("start").value;
-
-            // Build a description that your chart grouper will understand (first word is the category)
             const descripcion = `${tag} - ${titulo}`;
 
             const res = await fetch('/movimientos', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', ...authHeaders() },
                 body: JSON.stringify({ idCuenta: cuentaId, tipo, monto, descripcion, fecha })
             });
-
             if (!res.ok) {
-                const err = await res.json().catch(() => ({}));
+                const err = await readJson(res);
                 throw new Error(err.message || 'No se pudo guardar el movimiento');
             }
 
-            // Close modal and refresh history + chart
             e.target.reset();
             bootstrap.Modal.getInstance(document.getElementById('movModal')).hide();
-
-            await verHistorial(); // will use the same clienteId field
-
+            await verHistorial();
         } catch (err) {
             alert(err.message || 'Error al guardar');
         }
     });
 
-    // ===== FiltroTipo =====
+    // ---------------- Filtros de tabla ----------------
     const btnFiltro = document.getElementById('botonFiltro');
     const filtroMonto = document.getElementById('montoFilterClass');
     const filtroPrecio = document.getElementById('precioFilterClass');
-    const aplicarFiltro = document.getElementById('aplicarFiltro');
-    const limpiarFiltro = document.getElementById('limpiarFiltro');
+    const btnAplicarFiltro = document.getElementById('aplicarFiltro');
+    const btnLimpiarFiltro = document.getElementById('limpiarFiltro');
 
-    function alternarFiltros() {
-
-        filtroMonto.classList.toggle('filtrosVisibles');
-        filtroPrecio.classList.toggle('filtrosVisibles');
-    }
-
-    function limpiarFiltros() {
+    function alternarFiltros() { filtroMonto.classList.toggle('filtrosVisibles'); filtroPrecio.classList.toggle('filtrosVisibles'); }
+    function limpiarFiltrosUI() {
         document.getElementById('filtroMonto').value = 'predeterminado';
         document.getElementById('PrecioMínimo').value = '';
         document.getElementById('PrecioMáximo').value = '';
@@ -647,176 +452,129 @@
             const descripcion = fila.cells[3].textContent.toLowerCase();
             const monto = parseFloat(fila.cells[1].textContent.replace('$', ''));
 
-            let mostrarFila = true;
+            let mostrar = true;
+            if (tipoSeleccionado !== 'predeterminado' && !descripcion.startsWith(tipoSeleccionado.toLowerCase())) mostrar = false;
+            if (!isNaN(precioMinimo) && monto < precioMinimo) mostrar = false;
+            if (!isNaN(precioMaximo) && monto > precioMaximo) mostrar = false;
 
-
-            if (tipoSeleccionado !== 'predeterminado' && !descripcion.startsWith(tipoSeleccionado.toLowerCase())) {
-                mostrarFila = false;
-            }
-
-
-            if (!isNaN(precioMinimo) && monto < precioMinimo) {
-                mostrarFila = false;
-            }
-
-
-            if (!isNaN(precioMaximo) && monto > precioMaximo) {
-                mostrarFila = false;
-            }
-
-            if (mostrarFila) {
-                fila.style.display = '';
-            } else {
-                fila.style.display = 'none';
-            }
+            fila.style.display = mostrar ? '' : 'none';
         });
     }
-
     btnFiltro.addEventListener('click', alternarFiltros);
-    limpiarFiltro.addEventListener('click', limpiarFiltros);
-    aplicarFiltro.addEventListener('click', aplicarFiltros);
+    btnAplicarFiltro.addEventListener('click', aplicarFiltros);
+    btnLimpiarFiltro.addEventListener('click', limpiarFiltrosUI);
 
-    // Ver historial
-    async function verHistorial() {
-        try {
-            const clienteIdInput = document.getElementById("clienteId");
-            const clienteId = clienteIdInput.value.trim();
-            if (!clienteId) return alert("Por favor, ingresa un ID de cliente");
-
-            // Ensure we have a cuentaId
-            const cuentaId = await getCuentaIdFromCliente(clienteId);
-
-            // Fetch movements for this account
-            const res = await fetch(`/historial/${cuentaId}`);
-            if (!res.ok) throw new Error('Error al cargar historial');
-
-            const movimientos = await res.json();
-
-            // Paint the table
-            const tbody = document.getElementById("tablaCuerpo");
-            tbody.innerHTML = "";
-            movimientos.forEach(m => {
-                const tr = document.createElement("tr");
-                tr.innerHTML = `
-        <td>${m.tipo}</td>
-        <td>$${Number(m.monto).toFixed(2)}</td>
-        <td>${new Date(m.fecha).toLocaleDateString()}</td>
-        <td>${m.descripcion || ""}</td>`;
-                tbody.appendChild(tr);
-            });
-
-            // Update the chart with the real data
-            updateChartFromMovements(movimientos);
-        } catch (err) {
-            alert(err.message || 'Error al cargar historial');
-        }
-    }
-
-
-    // Exportar CSV
-    document.getElementById("exportBtn").addEventListener("click", () => {
-        alert("CSV exportado exitosamente (simulación)");
-        // Simular logro al exportar CSV
-        completeAchievement(10); // Exportar tu historial a CSV
-    });
-
-    // Inicializar la interfaz de logros
-    document.getElementById('simulate-btn').addEventListener('click', simulateAchievements);
-    document.getElementById('reset-btn').addEventListener('click', resetAchievements);
-    updateAchievementsUI();
-
-    // REGISTRO
-    document.getElementById("registroForm").addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const nombre = document.getElementById("nombreRegistro").value;
-        const correo = document.getElementById("emailRegistro").value;
-        const password = document.getElementById("passwordRegistro").value;
-        
-        // Simulamos registro exitoso
-        const registroMsg = document.getElementById("registroMsg");
-        registroMsg.textContent = "¡Registro exitoso! Ahora puedes iniciar sesión.";
-        registroMsg.className = "mb-3 text-success";
-        
-        // Cambiamos a la pestaña de login
-        document.getElementById('login-tab').click();
-        
-        // Limpiamos el formulario
-        document.getElementById("registroForm").reset();
-    });
-
-    // LOGIN
-    document.getElementById("loginForm").addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const correo = document.getElementById("emailLogin").value;
-        const password = document.getElementById("passwordLogin").value;
-        
-        // Simulamos login exitoso
-        localStorage.setItem("token", "simulated-token");
-        showApp();
-    });
-
-//--FEEDBACK--
-  const form = document.getElementById('feedbackForm');
-  const mensaje = document.getElementById('mensaje');
-
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    mensaje.classList.remove('hidden');
-    form.reset();
-  });
-
-
-    
-    // ===== ORDENAR TABLA POR COLUMNA =====
+    // ---------------- Ordenar tabla ----------------
     document.querySelectorAll("th").forEach((th, index) => {
         th.style.cursor = "pointer";
         th.addEventListener("click", () => {
             const tbody = document.getElementById("tablaCuerpo");
             const rows = Array.from(tbody.querySelectorAll("tr"));
-
-            // Detectar si ya está ordenado ascendente o descendente
             const asc = th.classList.toggle("asc");
 
-            // Quitar indicadores y clases en otros encabezados
-            document.querySelectorAll("th").forEach(header => {
-                if (header !== th) {
-                    header.classList.remove("asc");
-                    header.textContent = header.textContent.replace(" ▲", "").replace(" ▼", "");
+            document.querySelectorAll("th").forEach(h => {
+                if (h !== th) {
+                    h.classList.remove("asc");
+                    h.textContent = h.textContent.replace(" ▲", "").replace(" ▼", "");
                 }
             });
 
-            // Ordenar según el contenido de la columna
             rows.sort((a, b) => {
                 const cellA = a.children[index].textContent.trim();
                 const cellB = b.children[index].textContent.trim();
-
-                // Intentar convertir a número o fecha
                 const numA = parseFloat(cellA.replace(/[^\d.-]/g, ""));
                 const numB = parseFloat(cellB.replace(/[^\d.-]/g, ""));
                 const dateA = new Date(cellA);
                 const dateB = new Date(cellB);
 
-                let valA = cellA, valB = cellB;
-
-                if (!isNaN(numA) && !isNaN(numB)) {
-                    valA = numA; valB = numB;
-                } else if (!isNaN(dateA) && !isNaN(dateB)) {
-                    valA = dateA; valB = dateB;
-                }
+                let valA = (!isNaN(numA)) ? numA : (!isNaN(dateA) ? dateA : cellA);
+                let valB = (!isNaN(numB)) ? numB : (!isNaN(dateB) ? dateB : cellB);
 
                 if (valA < valB) return asc ? -1 : 1;
                 if (valA > valB) return asc ? 1 : -1;
                 return 0;
             });
 
-                th.textContent = th.textContent.replace(" ▲", "").replace(" ▼", "") + (asc ? " ▲" : " ▼");
-
-            // Reinsertar las filas ordenadas
+            th.textContent = th.textContent.replace(" ▲", "").replace(" ▼", "") + (asc ? " ▲" : " ▼");
             tbody.innerHTML = "";
             rows.forEach(row => tbody.appendChild(row));
         });
     });
 
+    // ---------------- Exportar CSV (simulación + logro) ----------------
+    document.getElementById("exportBtn").addEventListener("click", () => {
+        alert("CSV exportado exitosamente (simulación)");
+        completeAchievement(10);
+    });
+
+    // ---------------- Logros: botones ----------------
+    document.getElementById('simulate-btn').addEventListener('click', simulateAchievements);
+    document.getElementById('reset-btn').addEventListener('click', resetAchievements);
+    updateAchievementsUI();
+
+    // ---------------- Registro (real) ----------------
+    document.getElementById("registroForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const nombre = document.getElementById("nombreRegistro").value.trim();
+        const correo = document.getElementById("emailRegistro").value.trim().toLowerCase();
+        const password = document.getElementById("passwordRegistro").value;
+        const msg = document.getElementById("registroMsg");
+
+        const res = await fetch("/registro", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ nombre, correo, password })
+        });
+        const data = await readJson(res);
+
+        if (res.status === 201) {
+            msg.textContent = "¡Registro exitoso! Ahora puedes iniciar sesión.";
+            msg.className = "mb-3 text-success";
+            e.target.reset();
+            document.getElementById('login-tab').click();
+        } else if (res.status === 409) {
+            msg.textContent = "Ese correo ya está registrado.";
+            msg.className = "mb-3 text-danger";
+        } else {
+            msg.textContent = data.message || "Error en registro";
+            msg.className = "mb-3 text-danger";
+        }
+    });
+
+    // ---------------- Login (real) ----------------
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const correo = document.getElementById("emailLogin").value.trim().toLowerCase();
+        const password = document.getElementById("passwordLogin").value;
+        const loginMsg = document.getElementById("loginMsg");
+
+        const res = await fetch("/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ correo, password })
+        });
+        const data = await readJson(res);
+
+        if (!res.ok) {
+            loginMsg.textContent = data.message || "Credenciales inválidas";
+            loginMsg.className = "mb-3 text-danger";
+            return;
+        }
+        setToken(data.token);
+        loginMsg.textContent = "";
+        showApp();
+    });
+
+    // ---------------- Feedback form ----------------
+    (function initFeedback() {
+        const form = document.getElementById('feedbackForm');
+        const mensaje = document.getElementById('mensaje');
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            mensaje.classList.remove('hidden');
+            form.reset();
+        });
+    })();
 </script>
 </body>
 </html>

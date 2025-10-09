@@ -1,10 +1,10 @@
 
 # Guia instalacion
 
-cd /Finsave/app
-npm install
+cd /Finsave/app<br>
+npm install<br>
 npm i json2csv jsonwebtoken cookie-parser morgan dotenv<br>
-npm run start
+npm run dev<br> 
 
 
 

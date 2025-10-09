@@ -23,3 +23,4 @@ Planner / Tracker [Excel](https://ceu365-my.sharepoint.com/:x:/g/personal/gabrie
 User Stories [US](https://ceu365-my.sharepoint.com/:x:/g/personal/gabriel_lazovskyigual_usp_ceu_es/EWb1pyBopRxLh-Lyw6ZotAgBfAv7Ny9QGAhdEXcQ0_AqCQ?e=PEez7y)
 
 ---
+ CI test Thu Oct  9 13:52:12 CEST 2025

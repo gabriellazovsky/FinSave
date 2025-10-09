@@ -1,163 +1,265 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>FinSave – Consejos y Educación Financiera</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>FinSave – Consejos Financieros</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="index.css"/>
+    <link rel="stylesheet" href="index.css">
+    <style>
+        /* Colores de fondo por categoría */
+        body.categoria-ahorro { background-color: #f0f9ff; }        /* azul claro */
+        body.categoria-inversion { background-color: #ecfdf5; }     /* verde agua */
+        body.categoria-presupuesto { background-color: #fef9c3; }   /* amarillo claro */
+        body.categoria-otros { background-color: #f5f5f5; }         /* gris claro */
+
+        .categoria-btn.active {
+            font-weight: bold;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+        }
+
+        .card-contenido {
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+            cursor: pointer;
+            border: 1px solid #ddd;
+            background-color: #fff;
+        }
+        .card-contenido:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
+        /* Dimensiones variables */
+        .card-small { grid-column: span 1; }
+        .card-medium { grid-column: span 1; }
+        .card-large { grid-column: span 2; }
+
+        /* Modal emergente */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 50;
+            padding-top: 100px;
+            left: 0; top: 0; width: 100%; height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background-color: #fff;
+            margin: auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        .close-modal {
+            float: right;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            color: #333;
+        }
+        .close-modal:hover { color: #ff0000; }
+    </style>
 </head>
+<body class="categoria-ahorro">
 
-<body class="bg-gray-50">
-
-<!-- 🔸 Header con Logout -->
-<header class="w-full bg-white border-b">
+<header class="w-full bg-white shadow-sm">
     <nav class="container mx-auto flex justify-between items-center px-4 py-3">
         <a href="index.html" class="hover:text-blue-600 font-semibold">← Volver al Dashboard</a>
-        <h1 class="text-xl font-bold">Consejos y Educación Financiera</h1>
-        <button class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors" id="logoutBtnConsejo">Cerrar Sesión</button>
+        <h1 class="text-xl font-bold text-gray-800">Centro Educativo</h1>
+        <button id="logoutBtnConsejo" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors">
+            Cerrar Sesión
+        </button>
     </nav>
 </header>
 
-<!-- 🔸 Bloque de Consejos Financieros -->
-<section class="container mx-auto mt-8 mb-8">
-    <div class="p-6 bg-white rounded-xl shadow-md">
-        <h2 class="text-2xl font-semibold mb-4">Consejos para mejorar tus finanzas</h2>
-        <ul class="list-disc list-inside space-y-2 text-gray-700">
-            <li>Establece un presupuesto mensual y cúmplelo.</li>
-            <li>Separa tus ingresos en ahorro, gasto y emergencia.</li>
-            <li>Invierte de manera segura según tu perfil de riesgo.</li>
-            <li>Evita deudas innecesarias y paga tarjetas a tiempo.</li>
-            <li>Revisa tus movimientos semanalmente para identificar gastos innecesarios.</li>
-        </ul>
+<section class="container mx-auto mt-8 px-4">
+    <div class="flex flex-wrap gap-3 justify-center">
+        <button class="category-btn bg-blue-100 text-blue-700 px-4 py-2 rounded-md hover:bg-blue-200 transition" data-category="ahorro">Ahorro</button>
+        <button class="category-btn bg-green-100 text-green-700 px-4 py-2 rounded-md hover:bg-green-200 transition" data-category="inversion">Inversión</button>
+        <button class="category-btn bg-yellow-100 text-yellow-700 px-4 py-2 rounded-md hover:bg-yellow-200 transition" data-category="presupuesto">Presupuesto</button>
+        <button class="category-btn bg-purple-100 text-purple-700 px-4 py-2 rounded-md hover:bg-purple-200 transition" data-category="otros">Otros</button>
     </div>
 </section>
 
-<!-- 🔸 Sección Educativa con Categorías -->
-<main class="container mx-auto mt-4">
-    <h2 class="text-2xl font-semibold mb-4 text-center">Explora más sobre Educación Financiera</h2>
+<section class="container mx-auto mt-8 px-4">
+    <div id="contentContainer" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+    <p id="emptyMessage" class="text-center text-gray-500 mt-6 hidden">No hay contenido en esta categoría aún.</p>
+</section>
 
-    <!-- Menú de categorías -->
-    <div class="flex flex-wrap gap-3 mb-6 justify-center">
-        <button class="categoria-btn bg-blue-600 text-white px-4 py-2 rounded-md" data-cat="ahorro">Ahorro</button>
-        <button class="categoria-btn bg-blue-600 text-white px-4 py-2 rounded-md" data-cat="inversion">Inversión</button>
-        <button class="categoria-btn bg-blue-600 text-white px-4 py-2 rounded-md" data-cat="presupuesto">Presupuesto</button>
-        <button class="categoria-btn bg-blue-600 text-white px-4 py-2 rounded-md" data-cat="videos">Videos</button>
-        <button class="categoria-btn bg-blue-600 text-white px-4 py-2 rounded-md" data-cat="podcasts">Podcast</button>
-        <button class="categoria-btn bg-blue-600 text-white px-4 py-2 rounded-md" data-cat="links">Links</button>
+<!-- Modal para artículos -->
+<div id="modalArticulo" class="modal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h2 id="modalTitulo" class="text-xl font-bold mb-3"></h2>
+        <p id="modalTexto" class="text-gray-700"></p>
     </div>
+</div>
 
-    <!-- Contenido dinámico -->
-    <div id="contenido" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <!-- Aquí se cargan los artículos dinámicamente -->
-    </div>
-
-    <!-- Mensaje de vacío -->
-    <div id="mensaje-vacio" class="text-center text-gray-500 mt-6 hidden">
-        No hay contenido en esta categoría aún.
-    </div>
-</main>
-
-<!-- 🔸 Footer -->
-<footer class="text-center mt-10 mb-4 text-gray-500">
+<footer class="text-center mt-8 mb-4 text-gray-500">
     &copy; 2025 FinSave. Todos los derechos reservados.
 </footer>
 
-<!-- 🔸 Script -->
 <script>
-    // 🔐 Sesión
+    // Validación de sesión
     const getToken = () => localStorage.getItem("token");
     const clearToken = () => localStorage.removeItem("token");
-
     document.getElementById("logoutBtnConsejo").addEventListener("click", () => {
         clearToken();
         alert("Sesión cerrada.");
         window.location.href = "index.html";
     });
-
     if (!getToken()) {
         alert("Debes iniciar sesión primero.");
         window.location.href = "index.html";
     }
 
-    // 📚 Datos simulados (puedes conectar esto a tu backend más adelante)
-    const contenidoEducativo = {
+    const contenido = {
         ahorro: [
-            { tipo: 'articulo', titulo: 'Cómo empezar a ahorrar', texto: 'Empieza separando al menos un 10% de tus ingresos...' },
-            { tipo: 'articulo', titulo: 'Fondo de emergencia', texto: 'Crea un fondo que cubra de 3 a 6 meses de gastos.' }
+            {
+                tipo: "articulo",
+                titulo: "5 formas reales de ahorrar cada mes",
+                texto: "1. Automatiza tus ahorros\n2. Reduce gastos innecesarios\n3. Compra con lista\n4. Evita deudas costosas\n5. Revisa tus suscripciones"
+            },
+            {
+                tipo: "link",
+                titulo: "Ahorradoras",
+                descripcion: "Portal de ahorro y comunidad educativa.",
+                link: "https://www.ahorradoras.com/"
+            },
+            {
+                tipo: "podcast",
+                titulo: "Al día en finanzas",
+                descripcion: "Podcast de EFPA España sobre finanzas actuales.",
+                link: "https://podcasts.apple.com/es/podcast/al-d%C3%ADa-en-finanzas/id1683812662"
+            }
         ],
         inversion: [
-            { tipo: 'articulo', titulo: 'Inversiones seguras', texto: 'Diversificar es la clave para minimizar riesgos.' }
+            {
+                tipo: "articulo",
+                titulo: "Invertir mis Ahorros",
+                texto: "Comienza diversificando, invierte a largo plazo y evita decisiones impulsivas."
+            },
+            {
+                tipo: "video",
+                titulo: "Guía para empezar a invertir",
+                descripcion: "Tutorial en vídeo para principiantes.",
+                link: "https://www.youtube.com/watch?v=someVideoId"
+            }
         ],
-        presupuesto: [],
-        videos: [
-            { tipo: 'video', titulo: 'Video: Presupuesto inteligente', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ' }
+        presupuesto: [
+            {
+                tipo: "articulo",
+                titulo: "Cómo organizar tu presupuesto mensual",
+                texto: "1. Calcula tus ingresos\n2. Lista tus gastos\n3. Prioriza necesidades\n4. Asigna ahorro\n5. Revisa mensualmente"
+            }
         ],
-        podcasts: [
-            { tipo: 'podcast', titulo: 'Podcast: Finanzas para principiantes', url: 'https://www.example.com/podcast.mp3' }
-        ],
-        links: [
-            { tipo: 'link', titulo: 'Simulador de presupuesto', url: 'https://www.example.com' }
+        otros: [
+            {
+                tipo: "link",
+                titulo: "Finanzas con EFE",
+                descripcion: "Podcast educativo por EFE y CaixaBank.",
+                link: "https://www.radio.es/podcast/finanzas-con-efe"
+            }
         ]
     };
 
-    const contenidoDiv = document.getElementById('contenido');
-    const mensajeVacio = document.getElementById('mensaje-vacio');
+    const icons = {
+        articulo: "📝",
+        video: "🎥",
+        podcast: "🎧",
+        link: "🔗"
+    };
 
-    function cargarContenido(categoria) {
-        contenidoDiv.innerHTML = '';
-        const items = contenidoEducativo[categoria];
+    const contentContainer = document.getElementById("contentContainer");
+    const emptyMessage = document.getElementById("emptyMessage");
+    const btns = document.querySelectorAll(".category-btn");
 
-        if (!items || items.length === 0) {
-            mensajeVacio.classList.remove('hidden');
+    const modal = document.getElementById("modalArticulo");
+    const modalTitulo = document.getElementById("modalTitulo");
+    const modalTexto = document.getElementById("modalTexto");
+    const closeModal = document.querySelector(".close-modal");
+    closeModal.onclick = () => { modal.style.display = "none"; };
+    window.onclick = (e) => { if(e.target === modal) modal.style.display = "none"; };
+
+    function actualizarFondo(categoria) {
+        document.body.classList.remove(
+            "categoria-ahorro",
+            "categoria-inversion",
+            "categoria-presupuesto",
+            "categoria-otros"
+        );
+        document.body.classList.add(`categoria-${categoria}`);
+    }
+
+    function mostrarContenido(categoria) {
+        contentContainer.innerHTML = "";
+        const items = contenido[categoria] || [];
+
+        actualizarFondo(categoria);
+
+        btns.forEach(b => { b.classList.remove("active"); });
+        document.querySelector(`.category-btn[data-category="${categoria}"]`)?.classList.add("active");
+
+        if (items.length === 0) {
+            emptyMessage.classList.remove("hidden");
             return;
         } else {
-            mensajeVacio.classList.add('hidden');
+            emptyMessage.classList.add("hidden");
         }
 
         items.forEach(item => {
-            let card = document.createElement('div');
-            card.className = 'bg-white p-4 rounded-lg shadow-md';
+            const card = document.createElement("div");
+            card.className = "card-contenido";
 
-            if (item.tipo === 'articulo') {
-                card.innerHTML = `
-          <h3 class="text-lg font-bold mb-2">${item.titulo}</h3>
-          <p class="text-gray-700">${item.texto}</p>
-        `;
-            } else if (item.tipo === 'video') {
-                card.innerHTML = `
-          <h3 class="text-lg font-bold mb-2">${item.titulo}</h3>
-          <iframe width="100%" height="200" src="${item.url}" frameborder="0" allowfullscreen></iframe>
-        `;
-            } else if (item.tipo === 'podcast') {
-                card.innerHTML = `
-          <h3 class="text-lg font-bold mb-2">${item.titulo}</h3>
-          <audio controls class="w-full">
-            <source src="${item.url}" type="audio/mpeg">
-            Tu navegador no soporta audio.
-          </audio>
-        `;
-            } else if (item.tipo === 'link') {
-                card.innerHTML = `
-          <h3 class="text-lg font-bold mb-2">${item.titulo}</h3>
-          <a href="${item.url}" target="_blank" class="text-blue-600 hover:underline">Visitar enlace</a>
-        `;
+            // Dimensiones variables
+            if(item.tipo === "articulo") card.classList.add("card-large");
+            else if(item.tipo === "video") card.classList.add("card-medium");
+            else card.classList.add("card-small");
+
+            card.innerHTML = `
+                <div class="text-4xl mb-2">${icons[item.tipo] || "📘"}</div>
+                <h3 class="text-lg font-semibold mb-2">${item.titulo}</h3>
+                ${item.descripcion ? `<p class="text-gray-600 mb-3">${item.descripcion}</p>` : ""}
+            `;
+
+            if(item.tipo === "articulo") {
+                card.addEventListener("click", () => {
+                    modalTitulo.textContent = item.titulo;
+                    modalTexto.textContent = item.texto;
+                    modal.style.display = "block";
+                });
+                const hint = document.createElement("p");
+                hint.textContent = "Haz click aquí para saber más";
+                hint.className = "text-gray-500 text-sm mt-auto";
+                card.appendChild(hint);
+            } else {
+                const linkElem = document.createElement("a");
+                linkElem.href = item.link;
+                linkElem.target = "_blank";
+                linkElem.rel = "noopener noreferrer";
+                linkElem.className = "text-blue-600 font-medium hover:underline mt-auto";
+                linkElem.textContent = "Ver más";
+                card.appendChild(linkElem);
             }
 
-            contenidoDiv.appendChild(card);
+            contentContainer.appendChild(card);
         });
     }
 
-    // 🧭 Botones de categorías
-    document.querySelectorAll('.categoria-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            cargarContenido(btn.dataset.cat);
-        });
+    btns.forEach(btn => {
+        btn.addEventListener("click", () => mostrarContenido(btn.dataset.category));
     });
 
-    // Cargar “Ahorro” por defecto
-    cargarContenido('ahorro');
+    mostrarContenido("ahorro");
 </script>
 
 </body>

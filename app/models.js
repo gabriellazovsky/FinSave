@@ -25,6 +25,8 @@ const cuentaSchema = new mongoose.Schema({
     fechaApertura: { type: Date, default: Date.now },
 });
 
+
+
 // --- Movimiento (Transaction) ---
 const movimientoSchema = new mongoose.Schema({
     idCuenta: { type: mongoose.Schema.Types.ObjectId, ref: "Cuenta", required: true },
@@ -34,8 +36,34 @@ const movimientoSchema = new mongoose.Schema({
     descripcion: String,
 });
 
+// --- Feedback (Comentarios de usuarios) ---
+const feedbackSchema = new mongoose.Schema({
+    idCliente: { 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: "Cliente", 
+        required: true 
+    },
+    comentario: { 
+        type: String, 
+        required: true,
+        trim: true 
+    },
+    fecha: { 
+        type: Date, 
+        default: Date.now 
+    },
+    estado: { 
+        type: String, 
+        enum: ["pendiente", "leido", "respondido"], 
+        default: "pendiente" 
+    }
+});
+
+
 const Cliente = mongoose.model("Cliente", clienteSchema);
 const Cuenta = mongoose.model("Cuenta", cuentaSchema);
 const Movimiento = mongoose.model("Movimiento", movimientoSchema);
+const Feedback = mongoose.model("Feedback", feedbackSchema);
 
-module.exports = { Cliente, Cuenta, Movimiento };
+
+module.exports = { Cliente, Cuenta, Movimiento, Feedback };

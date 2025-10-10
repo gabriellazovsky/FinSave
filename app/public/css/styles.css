@@ -7,4 +7,4 @@ main { padding:20px; text-align:left; }
 .chart { max-width:800px; margin:0 auto; padding:20px; }
 .chart-title { font-size:26px; font-weight:bold; }
 .chart-container { position:relative; padding-left:5%; width:250px; height:250px; border-radius:50%; background:conic-gradient(#4CAF50 0% 60%, #2196F3 60% 85%, #FFC107 85% 100%); box-shadow:0 0 15px rgba(0,0,0,0.2); }
-.center-label { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:white; width:100px; height:100px; border-radius:50%; display:flex
+.center-label { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:white; width:100px; height:100px; border-radius:50%; display:flex}

@@ -71,43 +71,34 @@ function simulateAchievements() { achievements.forEach(a => { if (Math.random() 
 function resetAchievements() { achievements.forEach(a => a.completed = false); updateAchievementsUI(); }
 function completeAchievement(id) { const a = achievements.find(x => x.id === id); if (a && !a.completed) { a.completed = true; showAchievementNotification(a.name); updateAchievementsUI(); } }
 
-// ---------------- Chart helper (dinámico: ingreso, gasto, ahorro) ----------------
+// ---------------- Chart helper ----------------
 function updateChartFromMovements(movimientos) {
-    let totales = { ingreso: 0, gasto: 0, ahorro: 0 };
-
+    const totals = { ingreso: 0, gasto: 0, ahorro: 0 };
     movimientos.forEach(m => {
-        const tipo = (m.tipo || '').toLowerCase();
-        if (tipo === 'ingreso') totales.ingreso += Number(m.monto) || 0;
-        else if (tipo === 'gasto') totales.gasto += Number(m.monto) || 0;
-        else totales.ahorro += Number(m.monto) || 0;
+        const tipo = (m.tipo || "").toLowerCase();
+        if (tipo === "ingreso") totals.ingreso += Number(m.monto) || 0;
+        else if (tipo === "gasto") totals.gasto += Number(m.monto) || 0;
     });
+    totals.ahorro = totals.ingreso - totals.gasto;
 
-    const total = totales.ingreso + totales.gasto + totales.ahorro || 1;
-
-    const pctIngreso = Math.round((totales.ingreso / total) * 100);
-    const pctGasto = Math.round((totales.gasto / total) * 100);
-    const pctAhorro = Math.round((totales.ahorro / total) * 100);
-
-    // Actualizar gráfico
+    const total = totals.ingreso + totals.gasto + totals.ahorro;
+    const palette = ['#4CAF50','#2196F3','#FFC107'];
     const chart = document.querySelector('.chart-container');
     if (chart) {
-        chart.style.background = `
-            conic-gradient(
-                #4CAF50 0% ${pctIngreso}%,
-                #2196F3 ${pctIngreso}% ${pctIngreso + pctGasto}%,
-                #FFC107 ${pctIngreso + pctGasto}% 100%
-            )
-        `;
+        const gradientParts = total > 0 ? [
+            `${palette[0]} 0% ${(totals.ingreso/total)*100}%`,
+            `${palette[1]} ${(totals.ingreso/total)*100}% ${(totals.ingreso+totals.gasto)/total*100}%`,
+            `${palette[2]} ${(totals.ingreso+totals.gasto)/total*100}% 100%`
+        ] : ['#4CAF50 0% 60%', '#2196F3 60% 85%', '#FFC107 85% 100%'];
+        chart.style.background = `conic-gradient(${gradientParts.join(',')})`;
     }
 
-    // Actualizar etiquetas dinámicas
     const ingresosBadge = document.querySelector('.badge.bg-success');
     const gastosBadge = document.querySelector('.badge.bg-primary');
     const ahorroBadge = document.querySelector('.badge.bg-warning');
-
-    if (ingresosBadge) ingresosBadge.textContent = `Ingreso ${pctIngreso}%`;
-    if (gastosBadge) gastosBadge.textContent = `Gasto ${pctGasto}%`;
-    if (ahorroBadge) ahorroBadge.textContent = `Ahorro ${pctAhorro}%`;
+    if (ingresosBadge) ingresosBadge.textContent = `Ingreso ${Math.round((totals.ingreso/total)*100)||0}%`;
+    if (gastosBadge) gastosBadge.textContent = `Gasto ${Math.round((totals.gasto/total)*100)||0}%`;
+    if (ahorroBadge) ahorroBadge.textContent = `Ahorro ${Math.round((totals.ahorro/total)*100)||0}%`;
 }
 
 // ---------------- API helpers ----------------
@@ -250,7 +241,10 @@ document.querySelectorAll("th").forEach((th, index) => {
         const asc = th.classList.toggle("asc");
 
         document.querySelectorAll("th").forEach(h => {
-            if (h !== th) { h.classList.remove("asc"); h.textContent = h.textContent.replace(" ▲", "").replace(" ▼", ""); }
+            if (h !== th) {
+                h.classList.remove("asc");
+                h.textContent = h.textContent.replace(" ▲", "").replace(" ▼", "");
+            }
         });
 
         rows.sort((a, b) => {
@@ -283,7 +277,6 @@ document.getElementById('exportBtn').addEventListener('click', async () => {
         if (!clienteId) return alert("Por favor, ingresa un ID de cliente");
 
         const cuentaId = await getCuentaIdFromCliente(clienteId);
-
         const res = await fetch(`/historial/${cuentaId}`, { headers: { ...authHeaders() } });
         if (!res.ok) throw new Error('No se pudo obtener el historial');
         const movimientos = await res.json();
@@ -367,10 +360,11 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
     showApp();
 });
 
-// ---------------- Feedback form ----------------
+// ---------------- Feedback form (FIXED) ----------------
 (function initFeedback() {
     const form = document.getElementById('feedbackForm');
     const mensaje = document.getElementById('mensaje');
+    if (!form || !mensaje) return;
     form.addEventListener('submit', (e) => {
         e.preventDefault();
         mensaje.classList.remove('hidden');
@@ -397,7 +391,6 @@ window.onload = function () {
     );
 };
 
-// Maneja la respuesta de Google
 async function handleCredentialResponse(response) {
     try {
         const jwt = response.credential;

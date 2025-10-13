@@ -169,6 +169,13 @@ document.getElementById("nuevoRegistro").addEventListener("submit", async (e) =>
         const fecha = document.getElementById("start").value;
         const descripcion = `${tag} - ${titulo}`;
 
+        if(monto >= 10000 & tipo === "ingreso") { 
+            animacion1();
+        }
+        if(monto >= 10000 & tipo === "gasto") {
+            animacion2();   
+        }
+
         let res = await fetch('/movimientos', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', ...authHeaders() },
@@ -181,7 +188,9 @@ document.getElementById("nuevoRegistro").addEventListener("submit", async (e) =>
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', ...authHeaders() },
                 body: JSON.stringify({ idCuenta: cuentaId, tipo, monto, descripcion, fecha, force: true })
+                
             });
+
         }
         if (!res.ok) {
             const err = await readJson(res);
@@ -195,6 +204,81 @@ document.getElementById("nuevoRegistro").addEventListener("submit", async (e) =>
         alert(err.message || 'Error al guardar');
     }
 });
+
+//Animación de bicho azul boliforme
+    const img1 = new Image();
+    const img2 = new Image();
+    const img3 = new Image();
+    const img4 = new Image();
+    const img5 = new Image();
+    const img6 = new Image();
+    const img7 = new Image();
+    const img8 = new Image();
+    const img9 = new Image();
+    const img10 = new Image();
+    const img11 = new Image();
+    const img12 = new Image();
+
+    img1.src = "animation/finsavePet1.png";
+    img2.src = "animation/finsavePet2.png";
+    img3.src = "animation/finsavePet3.png";
+    img4.src = "animation/finsavePet4.png";
+    img5.src = "animation/finsavePet5.png";
+    img6.src = "animation/finsavePet6.png";
+    img7.src = "animation/finsavePet7.png";
+    img8.src = "animation/finsavePet8.png";
+    img9.src = "animation/finsavePet9.png";
+    img10.src = "animation/finsavePet10.png";
+    img11.src = "animation/finsavePet11.png";
+    img12.src = "animation/finsavePet12.png";
+
+    function animacion1() {
+      let frames = [img1, img2, img3, img4, img5, img6, img7, img8];
+      let index = 0;
+      const frameRate = 8; // frames por segundo
+
+      function draw() {
+        if (index >= frames.length) return; // termina
+
+        const img = frames[index];
+        if (img.complete) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          index++;
+          setTimeout(() => requestAnimationFrame(draw), 1000 / frameRate);
+        } else {
+          // Esperar a que cargue
+          img.onload = () => draw();
+        }
+      }
+
+      draw();
+    }
+
+    function animacion2() {
+      let frames = [img1, img2, img3, img4, img10, img11, img12];
+      let index = 0;
+      const frameRate = 8; // frames por segundo
+
+      function draw() {
+        if (index >= frames.length) return; // termina
+
+        const img = frames[index];
+        if (img.complete) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          index++;
+          setTimeout(() => requestAnimationFrame(draw), 1000 / frameRate);
+        } else {
+          // Esperar a que cargue
+          img.onload = () => draw();
+        }
+      }
+
+      draw();
+    }
+
+
 
 // ---------------- Filtros de tabla ----------------
 const btnFiltro = document.getElementById('botonFiltro');

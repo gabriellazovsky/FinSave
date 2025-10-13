@@ -206,6 +206,8 @@ document.getElementById("nuevoRegistro").addEventListener("submit", async (e) =>
 });
 
 //Animación de bicho azul boliforme
+    const canvas = document.getElementById("lienzo");
+    const ctx = canvas.getContext("2d");
     const img1 = new Image();
     const img2 = new Image();
     const img3 = new Image();

@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const path = require("path");
 const jwt = require("jsonwebtoken");
 const { Parser } = require("json2csv");
-const { Cliente, Cuenta, Movimiento } = require("./models");
+const { Cliente, Cuenta, Movimiento, Feedback } = require("./models");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -126,6 +126,69 @@ app.get("/cuenta-por-cliente/:idCliente", async (req, res) => {
     } catch {
         res.status(500).json({ message: "No se pudo obtener/crear cuenta" });
     }
+});
+
+// RUTAS DE FEEDBACK //
+app.post("/api/feedback", autenticarToken, async (req, res) => {
+  try {
+    const { comentario } = req.body;
+    const idCliente = req.user.id;
+
+    if (!comentario || comentario.trim().length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: 'El comentario no puede estar vacío'
+      });
+    }
+
+    if (/^\d+$/.test(comentario.trim())) {
+      return res.status(400).json({
+        success: false,
+        error: 'El comentario no puede contener solo números'
+      });
+    }
+
+    const feedback = new Feedback({
+      idCliente,
+      comentario: comentario.trim()
+    });
+
+    await feedback.save();
+
+    res.status(201).json({
+      success: true,
+      message: 'Feedback enviado correctamente'
+    });
+
+  } catch (error) {
+    console.error('Error al guardar feedback:', error);
+    
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({
+        success: false,
+        error: Object.values(error.errors)[0].message
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      error: 'Error del servidor'
+    });
+  }
+});
+
+app.get("/api/feedback", autenticarToken, async (req, res) => {
+  try {
+    const idCliente = req.user.id;
+    const feedbacks = await Feedback.find({ idCliente }).sort({ fecha: -1 });
+    res.json(feedbacks);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al obtener feedbacks' });
+  }
+});
+
+app.get("/feedback", (_req, res) => {
+  res.sendFile(path.join(__dirname, "public", "feedback.html"));
 });
 
 app.get("/", (_req, res) => res.sendFile(path.join(__dirname, "public", "index.html")));

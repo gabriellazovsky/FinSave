@@ -147,15 +147,15 @@
     }
 
     // ---------------- Events: nav/logout ----------------
-    document.getElementById("logoutBtnHeader").addEventListener("click", () => { 
-        clearToken(); 
-        google.accounts.id.disableAutoSelect(); 
-        showLogin(); 
+    document.getElementById("logoutBtnHeader").addEventListener("click", () => {
+        clearToken();
+        google.accounts.id.disableAutoSelect();
+        showLogin();
     });
-    document.getElementById("logoutBtnLogros").addEventListener("click", () => { 
-    clearToken(); 
-    google.accounts.id.disableAutoSelect(); 
-    showLogin(); 
+    document.getElementById("logoutBtnLogros").addEventListener("click", () => {
+    clearToken();
+    google.accounts.id.disableAutoSelect();
+    showLogin();
     });
     document.getElementById("logrosLinkHeader").addEventListener("click", (e) => { e.preventDefault(); showLogros(); });
     document.getElementById("volverLink").addEventListener("click", (e) => { e.preventDefault(); showApp(); });
@@ -280,11 +280,44 @@
         });
     });
 
-    // ---------------- Exportar CSV (simulación + logro) ----------------
-    document.getElementById("exportBtn").addEventListener("click", () => {
-        alert("CSV exportado exitosamente (simulación)");
-        completeAchievement(10);
-    });
+// =================== EXPORTAR TODO EL HISTORIAL A CSV ===================
+document.getElementById('exportBtn').addEventListener('click', async () => {
+    try {
+        // Obtener el clienteId (último usado o del input)
+        let clienteId = document.getElementById("clienteId").value.trim();
+        if (!clienteId) clienteId = localStorage.getItem("ultimoClienteId");
+        if (!clienteId) return alert("Por favor, ingresa un ID de cliente");
+
+        const cuentaId = await getCuentaIdFromCliente(clienteId);
+
+        // Traer todos los movimientos del servidor
+        const res = await fetch(`/historial/${cuentaId}`, { headers: { ...authHeaders() } });
+        if (!res.ok) throw new Error('No se pudo obtener el historial');
+        const movimientos = await res.json();
+
+        // Crear CSV
+        let csvContent = 'Tipo,Monto,Fecha,Descripción\n';
+        movimientos.forEach(m => {
+            csvContent += `"${m.tipo}","${Number(m.monto).toFixed(2)}","${new Date(m.fecha).toLocaleDateString()}","${m.descripcion || ''}"\n`;
+        });
+
+        // Descargar CSV
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'historial_completo.csv';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        completeAchievement(10); // desbloquea logro de exportar
+    } catch (err) {
+        alert(err.message || "Error al exportar historial");
+    }
+});
+
 
     // ---------------- Logros: botones ----------------
     document.getElementById('simulate-btn').addEventListener('click', simulateAchievements);
@@ -354,7 +387,31 @@
             form.reset();
         });
     })();
-    // ---------------- Google Sign-In ----------------
+
+// =================== EXPORTAR A CSV ===================
+document.getElementById('exportBtn').addEventListener('click', () => {
+    const rows = document.querySelectorAll('table tr');
+    let csvContent = '';
+
+    rows.forEach(row => {
+        const cols = row.querySelectorAll('th, td');
+        const rowData = Array.from(cols).map(col => `"${col.textContent.trim()}"`);
+        csvContent += rowData.join(',') + '\n';
+    });
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'historial_finanzas.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+});
+
+// ---------------- Google Sign-In ----------------
     window.onload = function () {
         google.accounts.id.initialize({
         client_id: "805821028145-30k2eot8omv2nf5rq0bm7ua2k6apvob0.apps.googleusercontent.com",

@@ -176,11 +176,24 @@
             const fecha = document.getElementById("start").value;
             const descripcion = `${tag} - ${titulo}`;
 
-            const res = await fetch('/movimientos', {
+            let res = await fetch('/movimientos', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', ...authHeaders() },
                 body: JSON.stringify({ idCuenta: cuentaId, tipo, monto, descripcion, fecha })
             });
+            if (res.status === 409) {
+                // duplicado detectado, le pregunta al usuario si quere añadirlo o no
+                const ok = confirm('Este movimiento ya existe. ¿Está seguro de querer añadirlo?');
+                if (!ok) { // si no le da a aceptar no hace nada
+                    return;
+                }
+                // si no lo reenvía forzandolo a que se guarde igual
+                res = await fetch('/movimientos', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', ...authHeaders() },
+                    body: JSON.stringify({ idCuenta: cuentaId, tipo, monto, descripcion, fecha, force: true })
+                });
+            }
             if (!res.ok) {
                 const err = await readJson(res);
                 throw new Error(err.message || 'No se pudo guardar el movimiento');

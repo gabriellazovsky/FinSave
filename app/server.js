@@ -5,6 +5,7 @@ const path = require("path");
 const jwt = require("jsonwebtoken");
 const { Parser } = require("json2csv");
 const { Cliente, Cuenta, Movimiento, Feedback } = require("./models");
+const { isDuplicateMovement } = require("./duplicateCheck");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -109,9 +110,21 @@ app.post("/login", async (req, res) => {
 
 /* ------------ Protected examples ------------ */
 app.post("/movimientos", autenticarToken, async (req, res) => {
-    const { idCuenta, tipo, monto, descripcion, fecha } = req.body;
+  try {
+    const { idCuenta, tipo, monto, descripcion, fecha, force } = req.body;
+
+    // check duplicate unless client explicitly forces insert
+    if (!force) {
+      const isDup = await isDuplicateMovement({ idCuenta, tipo, monto, descripcion, fecha });
+      if (isDup) return res.status(409).json({ message: 'Movimiento duplicado' });
+    }
+
     const mov = await Movimiento.create({ idCuenta, tipo, monto, descripcion, fecha });
-    res.json(mov);
+    res.status(201).json(mov);
+  } catch (err) {
+    console.error('Error creando movimiento:', err);
+    res.status(500).json({ message: 'Error creando movimiento' });
+  }
 });
 
 app.get("/historial/:id", autenticarToken, async (req, res) => {

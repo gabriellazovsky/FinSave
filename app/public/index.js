@@ -234,50 +234,58 @@ document.getElementById("nuevoRegistro").addEventListener("submit", async (e) =>
     img11.src = "animation/finsavePet11.png";
     img12.src = "animation/finsavePet12.png";
 
-    function animacion1() {
-      let frames = [img1, img2, img3, img4, img5, img6, img7, img8];
-      let index = 0;
-      const frameRate = 8; // frames por segundo
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
-      function draw() {
-        if (index >= frames.length) return; // termina
+    async function animacion1() {
+        let frames = [img1, img2, img3, img4, img5, img6, img7, img8];
+        let index = 0;
+        const frameRate = 2; // frames por segundo
 
-        const img = frames[index];
-        if (img.complete) {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-          index++;
-          setTimeout(() => requestAnimationFrame(draw), 1000 / frameRate);
-        } else {
-          // Esperar a que cargue
-          img.onload = () => draw();
+        function draw() {
+            if (index >= frames.length) return; // termina
+
+            const img = frames[index];
+            if (img.complete) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                index++;
+                setTimeout(() => requestAnimationFrame(draw), 1000 / frameRate);
+            } else {
+                // Esperar a que cargue
+                img.onload = () => draw();
+            }
         }
-      }
 
-      draw();
+        draw();
+        await delay(3000);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
 
-    function animacion2() {
-      let frames = [img1, img2, img3, img4, img10, img11, img12];
-      let index = 0;
-      const frameRate = 8; // frames por segundo
+    async function animacion2() {
+        let frames = [img1, img2, img3, img4, img10, img11, img12];
+        let index = 0;
+        const frameRate = 2; // frames por segundo
 
-      function draw() {
-        if (index >= frames.length) return; // termina
+        function draw() {
+            if (index >= frames.length) return; // termina
 
-        const img = frames[index];
-        if (img.complete) {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-          index++;
-          setTimeout(() => requestAnimationFrame(draw), 1000 / frameRate);
-        } else {
-          // Esperar a que cargue
-          img.onload = () => draw();
+            const img = frames[index];
+            if (img.complete) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                index++;
+                setTimeout(() => requestAnimationFrame(draw), 1000 / frameRate);
+            } else {
+                // Esperar a que cargue
+                img.onload = () => draw();
+            }
         }
-      }
 
-      draw();
+        draw();
+        await delay(3000);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
 
 

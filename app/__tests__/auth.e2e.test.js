@@ -67,7 +67,7 @@ test('register → login → protected route', async () => {
             descripcion: 'test movimiento',
             fecha: new Date().toISOString(),
         })
-        .expect(200);
+        .expect(201);
 
     expect(mov.body._id).toBeDefined();
 

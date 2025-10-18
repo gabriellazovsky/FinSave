@@ -18,6 +18,9 @@ function showApp()   { loginSection.classList.add("hidden"); logrosSection.class
 function showLogros(){ loginSection.classList.add("hidden"); appSection.classList.add("hidden"); logrosSection.classList.remove("hidden"); }
 
 if (getToken()) showApp(); else showLogin();
+if (getToken() && localStorage.getItem("userName")) {
+    mostrarBienvenida();
+}
 
 // ---------------- Achievements (unchanged core) ----------------
 let achievements = [
@@ -142,11 +145,16 @@ async function verHistorial() {
 // ---------------- Events: nav/logout ----------------
 document.getElementById("logoutBtnHeader").addEventListener("click", () => {
     clearToken();
+     localStorage.removeItem("userName"); 
     google.accounts.id.disableAutoSelect();
     showLogin();
+
+      const span = document.getElementById("welcome-user");
+    if (span) span.remove();
 });
 document.getElementById("logoutBtnLogros").addEventListener("click", () => {
     clearToken();
+      localStorage.removeItem("userName");
     google.accounts.id.disableAutoSelect();
     showLogin();
 });
@@ -450,9 +458,35 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
         return;
     }
     setToken(data.token);
-    loginMsg.textContent = "";
+       localStorage.setItem("userName", data.nombre);
+       loginMsg.textContent = "";
     showApp();
+
+       mostrarBienvenida();
+    } catch (err) {
+        loginMsg.textContent = "Error de conexión con el servidor";
+    }
 });
+
+// ---------------- BIENVENIDA ----------------
+function mostrarBienvenida() {
+    const nombre = localStorage.getItem("userName") || "Usuario";
+    const navbar = document.querySelector("header nav");
+
+    
+    if (!document.getElementById("welcome-user")) {
+        const span = document.createElement("span");
+        span.id = "welcome-user";
+        span.textContent = `Welcome, ${nombre}!`;
+        span.classList.add("text-blue-600", "font-semibold", "ml-4");
+        navbar.appendChild(span);
+    } else {
+        
+        document.getElementById("welcome-user").textContent = `Welcome, ${nombre}!`;
+    }
+}
+
+
 
 // ---------------- Feedback form (FIXED) ----------------
 (function initFeedback() {

@@ -96,18 +96,17 @@
         </div>
 
         <div class="mb-3 text-center">
-            <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#movModal">Insertar movimiento</button>
+            <button class="btn btn-primary me-2" id="openMovBtn" data-bs-toggle="modal" data-bs-target="#movModal">Insertar movimiento</button>
             <button class="btn btn-success" id="exportBtn">Exportar CSV</button>
         </div>
 
-        <div class="mb-3 d-flex">
-            <input id="clienteId" class="form-control me-2" placeholder="ID Cliente">
-            <button class="btn btn-secondary" id="btnVerHistorial">Ver Historial</button>
-        </div>
 
         <!-- Filtros -->
         <div>
-            <button id="botonFiltro" class="btn btn-info border border-dark px-4 py-2 rounded shadow-sm">Filtrar tabla</button>
+            <div class="mb-3 d-flex gap-2">
+                <button id="botonFiltro" class="btn btn-info border border-dark px-4 py-2 rounded shadow-sm">Filtrar tabla</button>
+                <button class="btn btn-secondary" id="btnVerHistorial">Ver Historial</button>
+            </div>
 
             <div id="montoFilterClass" class="filtrosOcultos mt-2">
                 Monto:
@@ -155,7 +154,7 @@
                 <div class="modal-body">
                     <form id="nuevoRegistro">
                         <input id="inputTitulo" class="form-control mb-2" placeholder="Título" required>
-                        <input id="inputClienteId" class="form-control mb-2" placeholder="ID Cliente" required>
+
                         <input id="inputMonto" type="number" step="0.01" class="form-control mb-2" placeholder="Monto" required>
                         <select id="objeto" class="form-select mb-2">
                             <option value="ingreso">Ingreso</option>

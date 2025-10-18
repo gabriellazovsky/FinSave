@@ -105,22 +105,23 @@ function updateChartFromMovements(movimientos) {
 }
 
 // ---------------- API helpers ----------------
-async function getCuentaIdFromCliente(clienteId) {
-    const res = await fetch(`/cuenta-por-cliente/${clienteId}`, { headers: { ...authHeaders() } });
-    if (!res.ok) throw new Error('No se pudo obtener la cuenta');
+async function getCuentaIdFromEmail(email) {
+    const res = await fetch(`/cuenta-por-email/${encodeURIComponent(email)}`, {
+        headers: { ...authHeaders() }
+    });
+    if (!res.ok) {
+        const err = await readJson(res);
+        throw new Error(err.message || 'No se pudo obtener la cuenta por email');
+    }
     const data = await res.json();
     localStorage.setItem('cuentaId', data.cuentaId);
+    localStorage.setItem('clienteId', data.clienteId);
     return data.cuentaId;
 }
 
 async function verHistorial() {
     try {
-        const clienteIdInput = document.getElementById("clienteId");
-        const clienteId = clienteIdInput.value.trim();
-        if (!clienteId) return alert("Por favor, ingresa un ID de cliente");
-        const cuentaId = await getCuentaIdFromCliente(clienteId);
-
-        const res = await fetch(`/historial/${cuentaId}`, { headers: { ...authHeaders() } });
+        const res = await fetch('/historial-mio', { headers: { ...authHeaders() } });
         if (!res.ok) throw new Error('Error al cargar historial');
         const movimientos = await res.json();
 
@@ -129,11 +130,11 @@ async function verHistorial() {
         movimientos.forEach(m => {
             const tr = document.createElement("tr");
             tr.innerHTML = `
-          <td>${m.tipo}</td>
-          <td>$${Number(m.monto).toFixed(2)}</td>
-          <td>${new Date(m.fecha).toLocaleDateString()}</td>
-          <td>${m.descripcion || ""}</td>
-        `;
+        <td>${m.tipo}</td>
+        <td>$${Number(m.monto).toFixed(2)}</td>
+        <td>${new Date(m.fecha).toLocaleDateString()}</td>
+        <td>${m.descripcion || ""}</td>
+      `;
             tbody.appendChild(tr);
         });
         updateChartFromMovements(movimientos);
@@ -141,6 +142,7 @@ async function verHistorial() {
         alert(err.message || 'Error al cargar historial');
     }
 }
+
 
 // ---------------- Events: nav/logout ----------------
 document.getElementById("logoutBtnHeader").addEventListener("click", () => {
@@ -166,9 +168,10 @@ document.getElementById("btnVerHistorial").addEventListener("click", verHistoria
 document.getElementById("nuevoRegistro").addEventListener("submit", async (e) => {
     e.preventDefault();
     try {
-        const clienteId = document.getElementById("inputClienteId").value.trim();
-        if (!clienteId) return alert("Falta ID Cliente");
-        const cuentaId = await getCuentaIdFromCliente(clienteId);
+        // get my account id from token
+        const rCuenta = await fetch('/cuenta-mia', { headers: { ...authHeaders() } });
+        if (!rCuenta.ok) throw new Error('No se pudo obtener la cuenta');
+        const { cuentaId } = await rCuenta.json();
 
         const monto = parseFloat(document.getElementById("inputMonto").value);
         const tipo  = document.getElementById("objeto").value;
@@ -177,18 +180,15 @@ document.getElementById("nuevoRegistro").addEventListener("submit", async (e) =>
         const fecha = document.getElementById("start").value;
         const descripcion = `${tag} - ${titulo}`;
 
-        if(monto >= 10000 & tipo === "ingreso") { 
-            animacion1();
-        }
-        if(monto >= 10000 & tipo === "gasto") {
-            animacion2();   
-        }
+        if (monto >= 10000 && tipo === "ingreso") animacion1();
+        if (monto >= 10000 && tipo === "gasto")   animacion2();
 
         let res = await fetch('/movimientos', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', ...authHeaders() },
             body: JSON.stringify({ idCuenta: cuentaId, tipo, monto, descripcion, fecha })
         });
+
         if (res.status === 409) {
             const ok = confirm('Este movimiento ya existe. ¿Está seguro de querer añadirlo?');
             if (!ok) return;
@@ -196,10 +196,9 @@ document.getElementById("nuevoRegistro").addEventListener("submit", async (e) =>
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', ...authHeaders() },
                 body: JSON.stringify({ idCuenta: cuentaId, tipo, monto, descripcion, fecha, force: true })
-                
             });
-
         }
+
         if (!res.ok) {
             const err = await readJson(res);
             throw new Error(err.message || 'No se pudo guardar el movimiento');
@@ -207,11 +206,12 @@ document.getElementById("nuevoRegistro").addEventListener("submit", async (e) =>
 
         e.target.reset();
         bootstrap.Modal.getInstance(document.getElementById('movModal')).hide();
-        await verHistorial();
+        await verHistorial(); // reload table for the logged-in user
     } catch (err) {
         alert(err.message || 'Error al guardar');
     }
 });
+
 
 //Animación de bicho azul boliforme
     const canvas = document.getElementById("lienzo");
@@ -374,12 +374,7 @@ document.querySelectorAll("th").forEach((th, index) => {
 // =================== EXPORTAR TODO EL HISTORIAL A CSV ===================
 document.getElementById('exportBtn').addEventListener('click', async () => {
     try {
-        let clienteId = document.getElementById("clienteId").value.trim();
-        if (!clienteId) clienteId = localStorage.getItem("ultimoClienteId");
-        if (!clienteId) return alert("Por favor, ingresa un ID de cliente");
-
-        const cuentaId = await getCuentaIdFromCliente(clienteId);
-        const res = await fetch(`/historial/${cuentaId}`, { headers: { ...authHeaders() } });
+        const res = await fetch('/historial-mio', { headers: { ...authHeaders() } });
         if (!res.ok) throw new Error('No se pudo obtener el historial');
         const movimientos = await res.json();
 
@@ -403,6 +398,7 @@ document.getElementById('exportBtn').addEventListener('click', async () => {
         alert(err.message || "Error al exportar historial");
     }
 });
+
 
 // ---------------- Logros: botones ----------------
 document.getElementById('simulate-btn').addEventListener('click', simulateAchievements);

@@ -206,6 +206,18 @@ app.get("/feedback", (_req, res) => {
 
 app.get("/", (_req, res) => res.sendFile(path.join(__dirname, "public", "index.html")));
 
+app.get("/cuenta-mia", autenticarToken, async (req, res) => {
+    const cuenta = await ensureCuentaForCliente(req.user.id);
+    res.json({ cuentaId: cuenta._id.toString() });
+});
+
+app.get("/historial-mio", autenticarToken, async (req, res) => {
+    const cuenta = await ensureCuentaForCliente(req.user.id);
+    const movimientos = await Movimiento.find({ idCuenta: cuenta._id }).sort({ fecha: -1 });
+    res.json(movimientos);
+});
+
+
 module.exports = { app };
 if (require.main === module) {
     app.listen(PORT, () => console.log(`Servidor escuchando en http://localhost:${PORT}`));

@@ -100,7 +100,7 @@ app.post("/login", async (req, res) => {
 
         // Issue JWT
         const token = jwt.sign({ id: cliente._id, correo: cliente.correo }, SECRET_KEY, { expiresIn: "1h" });
-        return res.json({ ok: true, token });
+        return res.json({ ok: true, token, nombre: cliente.nombre });
     } catch (err) {
         console.error(err);
         return res.status(500).json({ message: "Error en login" });

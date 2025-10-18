@@ -445,28 +445,31 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
     const password = document.getElementById("passwordLogin").value;
     const loginMsg = document.getElementById("loginMsg");
 
-    const res = await fetch("/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ correo, password })
-    });
-    const data = await readJson(res);
+    try {
+        const res = await fetch("/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ correo, password })
+        });
+        const data = await readJson(res);
 
-    if (!res.ok) {
-        loginMsg.textContent = data.message || "Credenciales inválidas";
-        loginMsg.className = "mb-3 text-danger";
-        return;
-    }
-    setToken(data.token);
-       localStorage.setItem("userName", data.nombre);
-       loginMsg.textContent = "";
-    showApp();
+        if (!res.ok) {
+            loginMsg.textContent = data.message || "Credenciales inválidas";
+            loginMsg.className = "mb-3 text-danger";
+            return;
+        }
 
-       mostrarBienvenida();
+        setToken(data.token);
+        localStorage.setItem("userName", data.nombre);
+        loginMsg.textContent = "";
+        showApp();
+        mostrarBienvenida();
     } catch (err) {
         loginMsg.textContent = "Error de conexión con el servidor";
+        loginMsg.className = "mb-3 text-danger";
     }
 });
+
 
 // ---------------- BIENVENIDA ----------------
 function mostrarBienvenida() {

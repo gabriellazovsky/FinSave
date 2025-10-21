@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 const { app } = require('../server');
 const { Cliente, Cuenta, Movimiento } = require('../models');
 
-
 const email = `e2e_${Date.now()}@test.com`;
 const password = '123';
 
@@ -13,7 +12,6 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-
     await Movimiento.deleteMany({});
     await Cuenta.deleteMany({});
     await Cliente.deleteMany({ correo: email });
@@ -21,8 +19,7 @@ afterAll(async () => {
 });
 
 test('register → login → protected route', async () => {
-
-    const reg = await request(app)
+    await request(app)
         .post('/registro')
         .send({ nombre: 'E2E', correo: email, password })
         .expect(res => {
@@ -31,12 +28,10 @@ test('register → login → protected route', async () => {
             }
         });
 
-
     await request(app)
         .post('/login')
-        .send({ correo: email, password: 'wrong' })
+        .send({ correo: email, password: 'contrasenaIncorrecta' })
         .expect(401);
-
 
     const login = await request(app)
         .post('/login')
@@ -46,16 +41,17 @@ test('register → login → protected route', async () => {
     expect(login.body.token).toBeDefined();
     const token = login.body.token;
 
+    await request(app)
+        .get('/historial/someId')
+        .expect(401);
 
-    await request(app).get('/historial/someId').expect(401);
-
-
-    const cliente = await Cliente.findOne({ correo: email }).lean();
     const cuentaRes = await request(app)
-        .get(`/cuenta-por-cliente/${cliente._id}`)
+        .get('/cuenta-mia')
+        .set('Authorization', `Bearer ${token}`)
         .expect(200);
-    const cuentaId = cuentaRes.body.cuentaId;
 
+    const cuentaId = cuentaRes.body.cuentaId;
+    expect(cuentaId).toBeDefined();
 
     const mov = await request(app)
         .post('/movimientos')
@@ -70,7 +66,6 @@ test('register → login → protected route', async () => {
         .expect(201);
 
     expect(mov.body._id).toBeDefined();
-
 
     const hist = await request(app)
         .get(`/historial/${cuentaId}`)

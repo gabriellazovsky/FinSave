@@ -26,7 +26,6 @@ const cuentaSchema = new mongoose.Schema({
 });
 
 
-
 // --- Movimiento (Transaction) ---
 const movimientoSchema = new mongoose.Schema({
     idCuenta: { type: mongoose.Schema.Types.ObjectId, ref: "Cuenta", required: true },
@@ -59,6 +58,7 @@ const feedbackSchema = new mongoose.Schema({
     }
 });
 
+cuentaSchema.index({ idCliente: 1 }, { unique: true });
 
 const Cliente = mongoose.model("Cliente", clienteSchema);
 const Cuenta = mongoose.model("Cuenta", cuentaSchema);

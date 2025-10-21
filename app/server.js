@@ -16,14 +16,17 @@ app.use(express.static(path.join(__dirname, "public")));
 
 function autenticarToken(req, res, next) {
     const authHeader = req.headers["authorization"];
-    const token = authHeader && authHeader.split(" ")[1]; // expects "Bearer <jwt>"
+    const token = authHeader && authHeader.split(" ")[1]; // "Bearer <jwt>"
     if (!token) return res.sendStatus(401);
-    jwt.verify(SECRET_KEY ? token : "", SECRET_KEY, (err, user) => {
+
+    jwt.verify(token, SECRET_KEY, (err, user) => {
         if (err) return res.sendStatus(403);
+
         req.user = user;
         next();
     });
 }
+
 
 const MONGODB_URI = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/finsave";
 if (process.env.NODE_ENV !== "test") {
@@ -110,36 +113,60 @@ app.post("/login", async (req, res) => {
 
 /* ------------ Protected examples ------------ */
 app.post("/movimientos", autenticarToken, async (req, res) => {
-  try {
-    const { idCuenta, tipo, monto, descripcion, fecha, force } = req.body;
+    try {
+        const { idCuenta, tipo, monto, descripcion, fecha, force } = req.body;
 
-    // check duplicate unless client explicitly forces insert
-    if (!force) {
-      const isDup = await isDuplicateMovement({ idCuenta, tipo, monto, descripcion, fecha });
-      if (isDup) return res.status(409).json({ message: 'Movimiento duplicado' });
+        // 1) Verify the account belongs to the logged-in user
+        const cuenta = await Cuenta.findOne({ _id: idCuenta, idCliente: req.user.id }).lean();
+        if (!cuenta) {
+            return res.status(403).json({ message: "Cuenta no pertenece al usuario" });
+        }
+
+        // 2) Duplicate check scoped to this account
+        if (!force) {
+            const isDup = await isDuplicateMovement({ idCuenta: cuenta._id, tipo, monto, descripcion, fecha });
+            if (isDup) return res.status(409).json({ message: "Movimiento duplicado" });
+        }
+
+        // 3) Persist using the verified account id (never trust the body blindly)
+        const mov = await Movimiento.create({
+            idCuenta: cuenta._id,
+            tipo,
+            monto,
+            descripcion,
+            fecha
+        });
+
+        res.status(201).json(mov);
+    } catch (err) {
+        console.error("Error creando movimiento:", err);
+        res.status(500).json({ message: "Error creando movimiento" });
     }
-
-    const mov = await Movimiento.create({ idCuenta, tipo, monto, descripcion, fecha });
-    res.status(201).json(mov);
-  } catch (err) {
-    console.error('Error creando movimiento:', err);
-    res.status(500).json({ message: 'Error creando movimiento' });
-  }
 });
 
+
 app.get("/historial/:id", autenticarToken, async (req, res) => {
-    const movimientos = await Movimiento.find({ idCuenta: req.params.id }).sort({ fecha: -1 });
+    // Confirm the account is the caller's
+    const cuenta = await Cuenta.findOne({ _id: req.params.id, idCliente: req.user.id }).lean();
+    if (!cuenta) return res.status(403).json({ message: "Cuenta no pertenece al usuario" });
+
+    const movimientos = await Movimiento.find({ idCuenta: cuenta._id }).sort({ fecha: -1 });
     res.json(movimientos);
 });
 
-app.get("/cuenta-por-cliente/:idCliente", async (req, res) => {
+
+app.get("/cuenta-por-cliente/:idCliente", autenticarToken, async (req, res) => {
     try {
-        const cuenta = await ensureCuentaForCliente(req.params.idCliente);
+        if (req.params.idCliente !== req.user.id) {
+            return res.status(403).json({ message: "Prohibido" });
+        }
+        const cuenta = await ensureCuentaForCliente(req.user.id);
         res.json({ cuentaId: cuenta._id.toString() });
     } catch {
         res.status(500).json({ message: "No se pudo obtener/crear cuenta" });
     }
 });
+
 
 // RUTAS DE FEEDBACK //
 app.post("/api/feedback", autenticarToken, async (req, res) => {

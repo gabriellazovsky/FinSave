@@ -151,7 +151,7 @@ document.getElementById("logoutBtnHeader").addEventListener("click", () => {
     google.accounts.id.disableAutoSelect();
     showLogin();
 
-      const span = document.getElementById("welcome-user");
+      const span = document.getElementById("bienvenido-user");
     if (span) span.remove();
 });
 document.getElementById("logoutBtnLogros").addEventListener("click", () => {
@@ -455,11 +455,13 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
             return;
         }
 
+        clearToken();
         setToken(data.token);
         localStorage.setItem("userName", data.nombre);
         loginMsg.textContent = "";
         showApp();
         mostrarBienvenida();
+        verHistorial();
     } catch (err) {
         loginMsg.textContent = "Error de conexión con el servidor";
         loginMsg.className = "mb-3 text-danger";
@@ -473,15 +475,15 @@ function mostrarBienvenida() {
     const navbar = document.querySelector("header nav");
 
     
-    if (!document.getElementById("welcome-user")) {
+    if (!document.getElementById("bienvenido-user")) {
         const span = document.createElement("span");
-        span.id = "welcome-user";
-        span.textContent = `Welcome, ${nombre}!`;
+        span.id = "bienvenido-user";
+        span.textContent = `Bienvenido, ${nombre}!`;
         span.classList.add("text-blue-600", "font-semibold", "ml-4");
         navbar.appendChild(span);
     } else {
         
-        document.getElementById("welcome-user").textContent = `Welcome, ${nombre}!`;
+        document.getElementById("bienvenido-user").textContent = `Bienvenido, ${nombre}!`;
     }
 }
 
@@ -529,3 +531,5 @@ async function handleCredentialResponse(response) {
         alert("Error en autenticación con Google");
     }
 }
+
+

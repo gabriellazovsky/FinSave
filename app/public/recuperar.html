@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperar Contraseña</title>
+    <link rel="stylesheet" href="recuperar.css">
+</head>
+<body>
+<div class="container">
+    <h1>Recuperar Contraseña</h1>
+
+    <!-- Paso 1: Solicitar código -->
+    <div id="step1" class="step active">
+        <input type="email" id="email" placeholder="Correo electrónico">
+        <button id="requestCode" class="btn">Solicitar código</button>
+        <div id="step1Msg" class="msg"></div>
+    </div>
+
+    <!-- Paso 2: Confirmar código -->
+    <div id="step2" class="step">
+        <input type="text" id="code" placeholder="Código recibido">
+        <input type="password" id="newPassword" placeholder="Nueva contraseña">
+        <button id="confirmReset" class="btn">Restablecer contraseña</button>
+        <div id="step2Msg" class="msg"></div>
+    </div>
+
+    <button id="goHome" class="btn home-btn">Volver a inicio</button>
+</div>
+
+<script src="recuperar.js"></script>
+</body>
+</html>

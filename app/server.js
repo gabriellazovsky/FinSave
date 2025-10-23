@@ -6,27 +6,31 @@ const jwt = require("jsonwebtoken");
 const { Parser } = require("json2csv");
 const { Cliente, Cuenta, Movimiento, Feedback } = require("./models");
 const { isDuplicateMovement } = require("./duplicateCheck");
+const axios = require("axios");
+const crypto = require("crypto");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const SECRET_KEY = process.env.JWT_SECRET || "change_me";
+
+function generarCodigo(length = 6) {
+    return Math.floor(100000 + Math.random() * 900000).toString();
+}
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
 function autenticarToken(req, res, next) {
     const authHeader = req.headers["authorization"];
-    const token = authHeader && authHeader.split(" ")[1]; // "Bearer <jwt>"
+    const token = authHeader && authHeader.split(" ")[1];
     if (!token) return res.sendStatus(401);
 
     jwt.verify(token, SECRET_KEY, (err, user) => {
         if (err) return res.sendStatus(403);
-
         req.user = user;
         next();
     });
 }
-
 
 const MONGODB_URI = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/finsave";
 if (process.env.NODE_ENV !== "test") {
@@ -46,25 +50,18 @@ async function ensureCuentaForCliente(idCliente) {
     return cuenta;
 }
 
-/* ------------ REGISTER (no encryption) ------------ */
+/* ------------ REGISTER ------------ */
 app.post("/registro", async (req, res) => {
     try {
         const { nombre, correo, password } = req.body || {};
         if (!nombre || !correo || !password) {
             return res.status(400).json({ message: "Faltan campos" });
         }
-
         const norm = String(correo).toLowerCase().trim();
-
-        // check duplicate
         const exists = await Cliente.findOne({ correo: norm }).lean();
         if (exists) return res.status(409).json({ message: "Correo ya registrado" });
-
-        // store password in plain text (learning only)
         const cliente = await Cliente.create({ nombre, correo: norm, password });
-
         const cuenta = await ensureCuentaForCliente(cliente._id);
-
         return res.status(201).json({
             ok: true,
             message: "Registro exitoso",
@@ -78,30 +75,17 @@ app.post("/registro", async (req, res) => {
     }
 });
 
-/* ------------ LOGIN (match by pair) ------------ */
+/* ------------ LOGIN ------------ */
 app.post("/login", async (req, res) => {
     try {
         const { correo, password } = req.body || {};
-
-        // Validate
         if (typeof correo !== "string" || typeof password !== "string") {
             return res.status(400).json({ message: "Faltan campos" });
         }
         const email = correo.trim().toLowerCase();
-        if (!email || !password) {
-            return res.status(400).json({ message: "Faltan campos" });
-        }
-
-        // Find by email only
         const cliente = await Cliente.findOne({ correo: email }).lean();
         if (!cliente) return res.status(401).json({ message: "Credenciales inválidas" });
-
-        // Compare plain passwords (learning only)
-        if (cliente.password !== password) {
-            return res.status(401).json({ message: "Credenciales inválidas" });
-        }
-
-        // Issue JWT
+        if (cliente.password !== password) return res.status(401).json({ message: "Credenciales inválidas" });
         const token = jwt.sign({ id: cliente._id, correo: cliente.correo }, SECRET_KEY, { expiresIn: "1h" });
         return res.json({ ok: true, token, nombre: cliente.nombre });
     } catch (err) {
@@ -110,33 +94,17 @@ app.post("/login", async (req, res) => {
     }
 });
 
-
 /* ------------ Protected examples ------------ */
 app.post("/movimientos", autenticarToken, async (req, res) => {
     try {
         const { idCuenta, tipo, monto, descripcion, fecha, force } = req.body;
-
-        // 1) Verify the account belongs to the logged-in user
         const cuenta = await Cuenta.findOne({ _id: idCuenta, idCliente: req.user.id }).lean();
-        if (!cuenta) {
-            return res.status(403).json({ message: "Cuenta no pertenece al usuario" });
-        }
-
-        // 2) Duplicate check scoped to this account
+        if (!cuenta) return res.status(403).json({ message: "Cuenta no pertenece al usuario" });
         if (!force) {
             const isDup = await isDuplicateMovement({ idCuenta: cuenta._id, tipo, monto, descripcion, fecha });
             if (isDup) return res.status(409).json({ message: "Movimiento duplicado" });
         }
-
-        // 3) Persist using the verified account id (never trust the body blindly)
-        const mov = await Movimiento.create({
-            idCuenta: cuenta._id,
-            tipo,
-            monto,
-            descripcion,
-            fecha
-        });
-
+        const mov = await Movimiento.create({ idCuenta: cuenta._id, tipo, monto, descripcion, fecha });
         res.status(201).json(mov);
     } catch (err) {
         console.error("Error creando movimiento:", err);
@@ -144,22 +112,16 @@ app.post("/movimientos", autenticarToken, async (req, res) => {
     }
 });
 
-
 app.get("/historial/:id", autenticarToken, async (req, res) => {
-    // Confirm the account is the caller's
     const cuenta = await Cuenta.findOne({ _id: req.params.id, idCliente: req.user.id }).lean();
     if (!cuenta) return res.status(403).json({ message: "Cuenta no pertenece al usuario" });
-
     const movimientos = await Movimiento.find({ idCuenta: cuenta._id }).sort({ fecha: -1 });
     res.json(movimientos);
 });
 
-
 app.get("/cuenta-por-cliente/:idCliente", autenticarToken, async (req, res) => {
     try {
-        if (req.params.idCliente !== req.user.id) {
-            return res.status(403).json({ message: "Prohibido" });
-        }
+        if (req.params.idCliente !== req.user.id) return res.status(403).json({ message: "Prohibido" });
         const cuenta = await ensureCuentaForCliente(req.user.id);
         res.json({ cuentaId: cuenta._id.toString() });
     } catch {
@@ -167,68 +129,37 @@ app.get("/cuenta-por-cliente/:idCliente", autenticarToken, async (req, res) => {
     }
 });
 
-
-// RUTAS DE FEEDBACK //
+// RUTAS DE FEEDBACK
 app.post("/api/feedback", autenticarToken, async (req, res) => {
-  try {
-    const { comentario } = req.body;
-    const idCliente = req.user.id;
-
-    if (!comentario || comentario.trim().length === 0) {
-      return res.status(400).json({
-        success: false,
-        error: 'El comentario no puede estar vacío'
-      });
+    try {
+        const { comentario } = req.body;
+        const idCliente = req.user.id;
+        if (!comentario || comentario.trim().length === 0) return res.status(400).json({ success: false, error: 'El comentario no puede estar vacío' });
+        if (/^\d+$/.test(comentario.trim())) return res.status(400).json({ success: false, error: 'El comentario no puede contener solo números' });
+        const feedback = new Feedback({ idCliente, comentario: comentario.trim() });
+        await feedback.save();
+        res.status(201).json({ success: true, message: 'Feedback enviado correctamente' });
+    } catch (error) {
+        console.error('Error al guardar feedback:', error);
+        if (error.name === 'ValidationError') {
+            return res.status(400).json({ success: false, error: Object.values(error.errors)[0].message });
+        }
+        res.status(500).json({ success: false, error: 'Error del servidor' });
     }
-
-    if (/^\d+$/.test(comentario.trim())) {
-      return res.status(400).json({
-        success: false,
-        error: 'El comentario no puede contener solo números'
-      });
-    }
-
-    const feedback = new Feedback({
-      idCliente,
-      comentario: comentario.trim()
-    });
-
-    await feedback.save();
-
-    res.status(201).json({
-      success: true,
-      message: 'Feedback enviado correctamente'
-    });
-
-  } catch (error) {
-    console.error('Error al guardar feedback:', error);
-    
-    if (error.name === 'ValidationError') {
-      return res.status(400).json({
-        success: false,
-        error: Object.values(error.errors)[0].message
-      });
-    }
-
-    res.status(500).json({
-      success: false,
-      error: 'Error del servidor'
-    });
-  }
 });
 
 app.get("/api/feedback", autenticarToken, async (req, res) => {
-  try {
-    const idCliente = req.user.id;
-    const feedbacks = await Feedback.find({ idCliente }).sort({ fecha: -1 });
-    res.json(feedbacks);
-  } catch (error) {
-    res.status(500).json({ error: 'Error al obtener feedbacks' });
-  }
+    try {
+        const idCliente = req.user.id;
+        const feedbacks = await Feedback.find({ idCliente }).sort({ fecha: -1 });
+        res.json(feedbacks);
+    } catch (error) {
+        res.status(500).json({ error: 'Error al obtener feedbacks' });
+    }
 });
 
 app.get("/feedback", (_req, res) => {
-  res.sendFile(path.join(__dirname, "public", "feedback.html"));
+    res.sendFile(path.join(__dirname, "public", "feedback.html"));
 });
 
 app.get("/", (_req, res) => res.sendFile(path.join(__dirname, "public", "index.html")));
@@ -244,8 +175,54 @@ app.get("/historial-mio", autenticarToken, async (req, res) => {
     res.json(movimientos);
 });
 
+/* ------------ OLVIDE CONTRASEÑA / 2FA ------------ */
+const resetTokens = {}; // temporal en memoria
+
+app.post("/password-reset/request", async (req, res) => {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ message: "Email requerido" });
+
+    const cliente = await Cliente.findOne({ correo: email.toLowerCase().trim() }).lean();
+    if (!cliente) return res.status(404).json({ message: "Email no encontrado" });
+
+    const codigo = generarCodigo();
+    resetTokens[email] = { code: codigo, expires: Date.now() + 15*60*1000 };
+    console.log("Código de restablecimiento:", codigo);
+
+    try {
+        const resp = await axios.get("https://api.testmail.app/api/json", {
+            params: {
+                apikey: process.env.TESTMAIL_API_KEY,
+                namespace: process.env.TESTMAIL_NAMESPACE,
+                to: email,
+                subject: "Restablecer contraseña - FinSave",
+                body: `Tu código es: ${codigo} (válido 15 minutos)`,
+                pretty: true
+            }
+        });
+        if (resp.data.result !== "success") throw new Error(resp.data.message);
+        return res.status(202).json({ message: "Correo enviado" });
+    } catch (err) {
+        console.error("Error enviando correo:", err.message);
+        return res.status(500).json({ message: "Error enviando correo" });
+    }
+});
+
+app.post("/password-reset/confirm", async (req, res) => {
+    const { email, code, password } = req.body;
+    if (!email || !code || !password) return res.status(400).json({ message: "Faltan campos" });
+
+    const tokenData = resetTokens[email];
+    if (!tokenData) return res.status(400).json({ message: "Código inválido o expirado" });
+    if (tokenData.code !== code || Date.now() > tokenData.expires) return res.status(400).json({ message: "Código inválido o expirado" });
+
+    await Cliente.updateOne({ correo: email.toLowerCase().trim() }, { $set: { password } });
+    delete resetTokens[email];
+    return res.status(200).json({ message: "Contraseña restablecida correctamente" });
+});
 
 module.exports = { app };
+
 if (require.main === module) {
     app.listen(PORT, () => console.log(`Servidor escuchando en http://localhost:${PORT}`));
 }

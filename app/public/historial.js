@@ -1,3 +1,5 @@
+// historial.js (Modificado)
+
 const listaFeedbacks = document.getElementById('lista-feedbacks');
 const loadingDiv = document.getElementById('loading');
 const errorDiv = document.getElementById('errorMessage');
@@ -29,27 +31,40 @@ function cargarHistorial() {
     }
 }
 
-// Función para mostrar los feedbacks en la lista
+// Función para mostrar los feedbacks en la tabla
 function mostrarFeedbacks(feedbacks) {
-    if (feedbacks.length === 0) {
-        listaFeedbacks.innerHTML = `
-            <div class="text-center text-gray-500 py-8">
+    // Mostrar el más reciente primero
+    const reversedFeedbacks = [...feedbacks].reverse(); 
+    listaFeedbacks.innerHTML = ''; // Limpiar el tbody
+
+    if (reversedFeedbacks.length === 0) {
+        // Si no hay datos, mostramos un mensaje en lugar de la tabla
+        const parentTable = listaFeedbacks.parentElement; // El <table>
+        const container = parentTable.parentElement; // El div.feedback-container
+
+        // Ocultar la tabla y mostrar el mensaje de vacío
+        parentTable.style.display = 'none'; 
+        container.innerHTML += `
+            <div id="noFeedbacksMessage" class="text-center text-gray-500 py-8">
                 <i class="bi bi-inbox display-4"></i>
                 <p class="mt-2">No hay feedbacks enviados aún</p>
             </div>
         `;
         return;
     }
+    
+    // Si hay datos, nos aseguramos de que no aparezca el mensaje de vacío
+    const noFeedbacksMessage = document.getElementById('noFeedbacksMessage');
+    if(noFeedbacksMessage) noFeedbacksMessage.remove();
+    listaFeedbacks.parentElement.style.display = 'table'; // Mostrar la tabla
 
-    listaFeedbacks.innerHTML = feedbacks.map(feedback => `
-        <div class="feedback-item bg-white border border-gray-200 rounded-lg p-4 mb-4 shadow-sm">
-            <div class="flex justify-between items-start mb-2">
-                <p class="text-gray-700">${feedback.comentario}</p>
-                <span class="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                    ${new Date(feedback.fecha).toLocaleDateString('es-ES')}
-                </span>
-            </div>
-        </div>
+    // Generar las filas de la tabla
+    listaFeedbacks.innerHTML = reversedFeedbacks.map(feedback => `
+        <tr>
+            <td>${feedback.tipo || ''}</td>
+            <td>${feedback.comentario || ''}</td>
+            <td>${new Date(feedback.fecha).toLocaleDateString('es-ES') || ''}</td>
+        </tr>
     `).join('');
 }
 

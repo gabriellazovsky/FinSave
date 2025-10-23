@@ -3,86 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="index.css">
+
     <title>Enviar Feedback - FinSave</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        .feedback-container {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        h1 {
-            color: #333;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        textarea {
-            width: 100%;
-            height: 150px;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
-            resize: vertical;
-            box-sizing: border-box;
-        }
-        textarea:focus {
-            outline: none;
-            border-color: #4CAF50;
-        }
-        .error {
-            color: #d32f2f;
-            font-size: 14px;
-            margin-top: 5px;
-            display: none;
-        }
-        .success {
-            color: #388e3c;
-            font-size: 14px;
-            margin-top: 5px;
-            display: none;
-        }
-        button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 12px 30px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            margin-top: 15px;
-            width: 100%;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        button:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
-        }
-        .loading {
-            display: none;
-            text-align: center;
-            color: #666;
-        }
-        .auth-warning {
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-    </style>
+    
 </head>
-<body>
+<body class ="feedback-page">
+    <header class="w-full bg-white shadow-sm">
+        <nav class="container mx-auto flex justify-between items-center px-4 py-3">
+            <div class="flex gap-6">
+                <a href="index.html" class="hover:text-blue-600 font-semibold">← Volver al Dashboard</a>
+            </div>
+            <h1 class="text-xl font-bold text-gray-800">Contáctanos</h1>
+            <button class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors" id="logoutBtnFeedback">Cerrar Sesión</button>
+        </nav>
+    </header>
+
     <div class="feedback-container">
         <h1>Enviar Feedback</h1>
         

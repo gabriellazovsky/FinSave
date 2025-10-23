@@ -532,4 +532,73 @@ async function handleCredentialResponse(response) {
     }
 }
 
+// ===== script del feedback === //
+$(document).ready(function(){
+    const token = localStorage.getItem('token');
 
+    // Redirección de seguridad si no hay sesión
+    if (!token) {
+        window.location.href = "index.html";
+    }
+
+    $("#feedbackForm").submit(function(e){
+        e.preventDefault();
+
+        const comentario = $("#comentario").val();
+
+        // Ocultar mensajes anteriores
+        $("#errorMessage").hide();
+        $("#successMessage").hide();
+        $("#comentario").removeClass('border-danger');
+
+        // Validaciones
+        let valido = true;
+        let mensajeError = '';
+
+        if (comentario.trim().length === 0) {
+            valido = false;
+            mensajeError = 'El comentario no puede estar vacío';
+        } else if (/^\d+$/.test(comentario.replace(/\s/g, ''))) {
+            valido = false;
+            mensajeError = 'El comentario no puede contener solo números';
+        }
+
+        if (!valido) {
+            $("#errorMessage").text(mensajeError).show();
+            $("#comentario").addClass('border-danger');
+            return;
+        }
+
+        // ✅ Si pasó validación, mostrar “loading”
+        $("#loading").show();
+        $("#submitBtn").prop('disabled', true);
+
+        // Simulamos el envío
+        setTimeout(function(){
+            // Guardar feedback en localStorage
+            const feedbacks = JSON.parse(localStorage.getItem('feedbacks')) || [];
+            feedbacks.push({
+                comentario: comentario.trim(),
+                fecha: new Date().toISOString()
+            });
+            localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
+
+            // Mostrar mensaje de éxito
+            $("#successMessage").text('¡Feedback enviado correctamente!').show();
+            $("#comentario").val('');
+            $("#loading").hide();
+            $("#submitBtn").prop('disabled', false);
+
+            // Ocultar mensaje de éxito después de 3 segundos
+            setTimeout(function(){
+                $("#successMessage").hide();
+            }, 3000);
+        }, 2000);
+    });
+
+    // Quitar borde rojo al escribir
+    $("#comentario").on('input', function() {
+        $("#errorMessage").hide();
+        $(this).removeClass('border-danger');
+    });
+});

@@ -323,3 +323,24 @@ background: #2c3e50;
   padding: 20px;
   border-radius: 10px 10px 0 0;
 }
+.border-danger {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+}
+.feedback-item {
+    transition: all 0.3s ease;
+}
+
+.feedback-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.loading {
+    display: none;
+    text-align: center;
+    color: #4CAF50;
+    font-weight: bold;
+    margin: 15px 0;
+    padding: 12px;
+}

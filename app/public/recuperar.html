@@ -5,24 +5,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recuperar Contraseña</title>
     <link rel="stylesheet" href="recuperar.css">
+    <script src="https://kit.fontawesome.com/a2e0e5f7d2.js" crossorigin="anonymous"></script>
 </head>
 <body>
 <div class="container">
     <h1>Recuperar Contraseña</h1>
 
-    <!-- Paso 1: Solicitar código -->
-    <div id="step1" class="step active">
-        <input type="email" id="email" placeholder="Correo electrónico">
-        <button id="requestCode" class="btn">Solicitar código</button>
-        <div id="step1Msg" class="msg"></div>
+    <div class="step-wrapper">
+        <!-- Paso 1 -->
+        <div class="step" id="step1">
+            <div class="input-wrapper">
+                <input type="email" id="email" placeholder="Correo electrónico" required>
+                <i class="fas fa-envelope icon"></i>
+                <i class="fas fa-check status-icon valid"></i>
+                <i class="fas fa-times status-icon invalid"></i>
+            </div>
+            <button id="requestCode" class="btn">Solicitar código</button>
+            <div id="step1Msg" class="msg"></div>
+        </div>
+
+        <!-- Paso 2 -->
+        <div class="step" id="step2">
+            <div class="input-wrapper">
+                <input type="text" id="code" placeholder="Código recibido" required>
+                <i class="fas fa-key icon"></i>
+                <i class="fas fa-check status-icon valid"></i>
+                <i class="fas fa-times status-icon invalid"></i>
+            </div>
+            <div class="input-wrapper">
+                <input type="password" id="newPassword" placeholder="Nueva contraseña" required>
+                <i class="fas fa-lock icon"></i>
+                <i class="fas fa-check status-icon valid"></i>
+                <i class="fas fa-times status-icon invalid"></i>
+            </div>
+            <button id="confirmReset" class="btn">Restablecer contraseña</button>
+            <button id="backStep" class="btn back-btn">Volver al paso anterior</button>
+            <div id="step2Msg" class="msg"></div>
+        </div>
     </div>
 
-    <!-- Paso 2: Confirmar código -->
-    <div id="step2" class="step">
-        <input type="text" id="code" placeholder="Código recibido">
-        <input type="password" id="newPassword" placeholder="Nueva contraseña">
-        <button id="confirmReset" class="btn">Restablecer contraseña</button>
-        <div id="step2Msg" class="msg"></div>
+    <!-- Indicadores de pasos con texto -->
+    <div class="step-status">
+        <div class="step-indicators">
+            <div class="step-dot active" id="dot1"></div>
+            <div class="step-dot" id="dot2"></div>
+        </div>
+        <span id="stepText">Paso 1 de 2</span>
     </div>
 
     <button id="goHome" class="btn home-btn">Volver a inicio</button>

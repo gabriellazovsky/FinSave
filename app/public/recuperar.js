@@ -204,3 +204,7 @@ goHomeBtn.addEventListener("click", () => window.location.href = "/");
 
 // Initialize UI
 setStep(1);
+// Volver a inicio desde step1
+document.getElementById('goHomeStep1').addEventListener('click', () => {
+    window.location.href = "/";
+});

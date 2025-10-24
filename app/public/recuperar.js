@@ -1,5 +1,5 @@
-// Elementos
-const stepWrapper = document.querySelector('.step-wrapper');
+// Elementos DOM
+const stepWrapper = document.getElementById('stepWrapper');
 const indicators = document.querySelectorAll('.step-dot');
 
 const step1Div = document.getElementById("step1");
@@ -14,37 +14,75 @@ const newPassInput = document.getElementById("newPassword");
 const requestCodeBtn = document.getElementById("requestCode");
 const confirmResetBtn = document.getElementById("confirmReset");
 const backStepBtn = document.getElementById("backStep");
+const backStepBtnSmall = document.getElementById("backStepBtnSmall");
 const goHomeBtn = document.getElementById("goHome");
 
 const stepText = document.getElementById('stepText');
 
-// Checks dinámicos
+// Mail notification
+const mailNotification = document.getElementById('mailNotification');
+const mailContent = document.getElementById('mailContent');
+const closeMailBtn = document.getElementById('closeMail') || document.createElement('button');
+
+// Utility: show/hide status icons inside the input wrapper
 function showStatusIcon(input, valid) {
     const wrapper = input.parentElement;
-    wrapper.querySelector('.valid').style.display = valid ? 'inline' : 'none';
-    wrapper.querySelector('.invalid').style.display = valid ? 'none' : 'inline';
+    const validIcon = wrapper.querySelector('.status-icon.valid');
+    const invalidIcon = wrapper.querySelector('.status-icon.invalid');
+    if (valid) {
+        if (validIcon) validIcon.style.display = 'inline';
+        if (invalidIcon) invalidIcon.style.display = 'none';
+    } else {
+        if (validIcon) validIcon.style.display = 'none';
+        if (invalidIcon) invalidIcon.style.display = 'inline';
+    }
 }
 
-// Cambiar paso
+// set step (1 or 2)
 function setStep(step) {
     stepWrapper.style.transform = step === 1 ? 'translateX(0)' : 'translateX(-50%)';
     indicators.forEach((dot, i) => {
-        dot.classList.remove('active', 'success', 'error');
-        if(i === step-1) dot.classList.add('active');
+        dot.classList.remove('active','success','error');
+        if (i === step - 1) dot.classList.add('active');
     });
     stepText.textContent = `Paso ${step} de 2`;
+    // show/hide back button
+    document.getElementById('backStep').style.display = step === 1 ? 'none' : 'inline-block';
 }
 
-// Actualizar indicador según éxito/error
+// update indicator to success/error/active
 function setStepIndicatorStatus(step, status) {
     const dot = indicators[step-1];
     dot.classList.remove('active','success','error');
-    if(status === 'success') dot.classList.add('success');
-    else if(status === 'error') dot.classList.add('error');
+    if (status === 'success') dot.classList.add('success');
+    else if (status === 'error') dot.classList.add('error');
     else dot.classList.add('active');
 }
 
-// Solicitar código
+// Show simulated mail popup
+function showMailNotification(code, from = "serverfalsodecorreo") {
+    mailContent.textContent = `Tu código es ${code} (válido 15 minutos).`;
+    const header = mailNotification.querySelector('.mail-header strong');
+    if (header) header.textContent = from;
+    mailNotification.classList.remove('hidden');
+    // animate in
+    requestAnimationFrame(() => mailNotification.classList.add('show'));
+    // auto hide
+    setTimeout(() => {
+        mailNotification.classList.remove('show');
+        setTimeout(() => mailNotification.classList.add('hidden'), 500);
+    }, 7000);
+}
+
+// Close mail manually
+if (document.getElementById('closeMail')) {
+    document.getElementById('closeMail').addEventListener('click', () => {
+        mailNotification.classList.remove('show');
+        setTimeout(() => mailNotification.classList.add('hidden'), 400);
+    });
+}
+
+// Request code handler
 requestCodeBtn.addEventListener("click", async () => {
     const email = emailInput.value.trim();
     step1Msg.textContent = "";
@@ -63,30 +101,40 @@ requestCodeBtn.addEventListener("click", async () => {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email })
         });
+
         const data = await res.json();
 
-        if (res.ok) {
-            step1Msg.style.color = "#3498db";
-            step1Msg.textContent = "Código enviado. Revisa tu correo.";
+        if (res.ok || res.status === 202) {
+            // server returns code and from in JSON (server.js sends { message, code, from })
+            const code = data.code || data?.data?.code || null;
+            const from = data.from || "serverfalsodecorreo";
+
+            if (code) {
+                showMailNotification(code, from);
+            }
+            step1Msg.style.color = "#0f172a";
+            step1Msg.textContent = data.message || "Código generado. Revisa la notificación.";
             showStatusIcon(emailInput, true);
             setStepIndicatorStatus(1,'success');
-            setTimeout(() => setStep(2), 800);
+
+            // move to next step after a short delay to let user see msg
+            setTimeout(() => setStep(2), 700);
         } else {
-            step1Msg.style.color = "#e74c3c";
+            step1Msg.style.color = "#ef4444";
             step1Msg.textContent = data.message || "Error enviando código";
             showStatusIcon(emailInput, false);
             setStepIndicatorStatus(1,'error');
         }
     } catch (err) {
-        step1Msg.style.color = "#e74c3c";
+        step1Msg.style.color = "#ef4444";
         step1Msg.textContent = "Error de conexión";
-        console.error(err);
+        console.error("RequestCode error:", err);
         showStatusIcon(emailInput, false);
         setStepIndicatorStatus(1,'error');
     }
 });
 
-// Confirmar código y contraseña
+// Confirm reset handler
 confirmResetBtn.addEventListener("click", async () => {
     const email = emailInput.value.trim();
     const code = codeInput.value.trim();
@@ -95,11 +143,11 @@ confirmResetBtn.addEventListener("click", async () => {
     step2Msg.textContent = "";
     let valid = true;
 
-    if (!code) { showStatusIcon(codeInput, false); valid=false; } else showStatusIcon(codeInput, true);
-    if (!newPassword) { showStatusIcon(newPassInput, false); valid=false; } else showStatusIcon(newPassInput, true);
+    if (!code) { showStatusIcon(codeInput, false); valid = false; } else showStatusIcon(codeInput, true);
+    if (!newPassword) { showStatusIcon(newPassInput, false); valid = false; } else showStatusIcon(newPassInput, true);
 
     if (!valid) {
-        step2Msg.style.color = "#e74c3c";
+        step2Msg.style.color = "#ef4444";
         step2Msg.textContent = "Completa todos los campos";
         setStepIndicatorStatus(2,'error');
         return;
@@ -111,38 +159,48 @@ confirmResetBtn.addEventListener("click", async () => {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, code, password: newPassword })
         });
+
         const data = await res.json();
 
         if (res.ok) {
-            step2Msg.style.color = "#4ecdc4";
+            step2Msg.style.color = "#10b981";
             step2Msg.textContent = "Contraseña restablecida correctamente.";
-            showStatusIcon(codeInput,true);
-            showStatusIcon(newPassInput,true);
+            showStatusIcon(codeInput, true);
+            showStatusIcon(newPassInput, true);
             setStepIndicatorStatus(2,'success');
-            setTimeout(() => window.location.href = "/", 2000);
+            setTimeout(() => window.location.href = "/", 1600);
         } else {
-            step2Msg.style.color = "#e74c3c";
-            step2Msg.textContent = data.message || "Error al restablecer contraseña";
-            if(data.invalidCode) showStatusIcon(codeInput,false);
+            step2Msg.style.color = "#ef4444";
+            step2Msg.textContent = data.message || "Código inválido o expirado.";
+            // mark code as invalid visually
+            showStatusIcon(codeInput, false);
             setStepIndicatorStatus(2,'error');
         }
     } catch (err) {
-        step2Msg.style.color = "#e74c3c";
+        console.error("ConfirmReset error:", err);
+        step2Msg.style.color = "#ef4444";
         step2Msg.textContent = "Error de conexión";
-        console.error(err);
         setStepIndicatorStatus(2,'error');
     }
 });
 
-// Volver al paso anterior
+// Back to step 1
 backStepBtn.addEventListener("click", () => {
+    setStep(1);
+    step2Msg.textContent = "";
+    showStatusIcon(codeInput, true);
+    showStatusIcon(newPassInput, true);
+    setStepIndicatorStatus(2,'active');
+});
+document.getElementById('backStepBtnSmall').addEventListener('click', () => {
     setStep(1);
     step2Msg.textContent = "";
     showStatusIcon(codeInput, true);
     showStatusIcon(newPassInput, true);
 });
 
-// Volver a inicio
-goHomeBtn.addEventListener("click", () => {
-    window.location.href = "/";
-});
+// Go home
+goHomeBtn.addEventListener("click", () => window.location.href = "/");
+
+// Initialize UI
+setStep(1);

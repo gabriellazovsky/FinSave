@@ -1,60 +1,79 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recuperar Contraseña</title>
-    <link rel="stylesheet" href="recuperar.css">
-    <script src="https://kit.fontawesome.com/a2e0e5f7d2.js" crossorigin="anonymous"></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Recuperar contraseña — FinSave</title>
+    <link rel="stylesheet" href="recuperar.css" />
 </head>
 <body>
-<div class="container">
-    <h1>Recuperar Contraseña</h1>
+<main class="container" role="main" aria-labelledby="pageTitle">
+    <h1 id="pageTitle">Recuperar contraseña</h1>
 
-    <div class="step-wrapper">
-        <!-- Paso 1 -->
-        <div class="step" id="step1">
-            <div class="input-wrapper">
-                <input type="email" id="email" placeholder="Correo electrónico" required>
-                <i class="fas fa-envelope icon"></i>
-                <i class="fas fa-check status-icon valid"></i>
-                <i class="fas fa-times status-icon invalid"></i>
-            </div>
-            <button id="requestCode" class="btn">Solicitar código</button>
-            <div id="step1Msg" class="msg"></div>
-        </div>
-
-        <!-- Paso 2 -->
-        <div class="step" id="step2">
-            <div class="input-wrapper">
-                <input type="text" id="code" placeholder="Código recibido" required>
-                <i class="fas fa-key icon"></i>
-                <i class="fas fa-check status-icon valid"></i>
-                <i class="fas fa-times status-icon invalid"></i>
-            </div>
-            <div class="input-wrapper">
-                <input type="password" id="newPassword" placeholder="Nueva contraseña" required>
-                <i class="fas fa-lock icon"></i>
-                <i class="fas fa-check status-icon valid"></i>
-                <i class="fas fa-times status-icon invalid"></i>
-            </div>
-            <button id="confirmReset" class="btn">Restablecer contraseña</button>
-            <button id="backStep" class="btn back-btn">Volver al paso anterior</button>
-            <div id="step2Msg" class="msg"></div>
-        </div>
+    <!-- Indicadores de paso -->
+    <div class="step-indicators" aria-hidden="true">
+        <div class="step-dot active"></div>
+        <div class="step-dot"></div>
     </div>
-
-    <!-- Indicadores de pasos con texto -->
     <div class="step-status">
-        <div class="step-indicators">
-            <div class="step-dot active" id="dot1"></div>
-            <div class="step-dot" id="dot2"></div>
-        </div>
-        <span id="stepText">Paso 1 de 2</span>
+        <div id="stepText">Paso 1 de 2</div>
     </div>
 
-    <button id="goHome" class="btn home-btn">Volver a inicio</button>
-</div>
+    <!-- Slider con 2 pasos -->
+    <div class="viewport">
+        <div class="step-wrapper" id="stepWrapper">
+            <!-- STEP 1 -->
+            <section class="step" id="step1">
+                <div class="input-wrapper">
+                    <input id="email" type="email" placeholder="Correo electrónico" autocomplete="email" />
+                    <span class="icon">✉️</span>
+                    <span class="status-icon valid">✔️</span>
+                    <span class="status-icon invalid">❌</span>
+                </div>
+
+                <button class="btn" id="requestCode">Solicitar código</button>
+                <p id="step1Msg" class="msg"></p>
+                <button class="btn back-btn" id="backStep" style="display:none;">Volver</button>
+            </section>
+
+            <!-- STEP 2 -->
+            <section class="step" id="step2">
+                <div class="input-wrapper">
+                    <input id="code" type="text" placeholder="Código de verificación" inputmode="numeric" />
+                    <span class="icon">🔐</span>
+                    <span class="status-icon valid">✔️</span>
+                    <span class="status-icon invalid">❌</span>
+                </div>
+
+                <div class="input-wrapper">
+                    <input id="newPassword" type="password" placeholder="Nueva contraseña" />
+                    <span class="icon">🔒</span>
+                    <span class="status-icon valid">✔️</span>
+                    <span class="status-icon invalid">❌</span>
+                </div>
+
+                <button class="btn" id="confirmReset">Confirmar</button>
+                <p id="step2Msg" class="msg"></p>
+
+                <div style="display:flex;gap:.5rem;margin-top:1rem;">
+                    <button class="btn back-btn" id="backStepBtnSmall" type="button">← Volver</button>
+                    <button class="btn home-btn" id="goHome">Inicio</button>
+                </div>
+            </section>
+        </div>
+    </div>
+</main>
+
+<!-- Notificación simulada tipo Mail (misma página) -->
+<aside id="mailNotification" class="mail-notification hidden" role="dialog" aria-live="polite">
+    <div class="mail-header">📩 <strong>serverfalsodecorreo</strong></div>
+    <div class="mail-body">
+        <div class="mail-subject">Restablecer contraseña - FinSave</div>
+        <div class="mail-content" id="mailContent">Tu código es: —</div>
+        <div class="mail-footer"><small>Válido 15 minutos</small></div>
+    </div>
+    <button class="mail-close" id="closeMail">✕</button>
+</aside>
 
 <script src="recuperar.js"></script>
 </body>

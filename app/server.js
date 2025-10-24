@@ -43,7 +43,6 @@ app.get("/health/db", (req, res) => {
     res.json({ state: mongoose.connection.readyState });
 });
 
-// ensure one main account per client
 async function ensureCuentaForCliente(idCliente) {
     let cuenta = await Cuenta.findOne({ idCliente });
     if (!cuenta) cuenta = await Cuenta.create({ idCliente, tipo: "principal", saldoActual: 0 });
@@ -189,6 +188,9 @@ app.post("/password-reset/request", async (req, res) => {
     resetTokens[email] = { code: codigo, expires: Date.now() + 15*60*1000 };
     console.log("Código de restablecimiento:", codigo);
 
+    // Enviar correo falso (solo notificación en la página)
+    res.status(202).json({ message: "Correo enviado", code: codigo, from: "serverfalsodecorreo" });
+
     try {
         const resp = await axios.get("https://api.testmail.app/api/json", {
             params: {
@@ -201,10 +203,8 @@ app.post("/password-reset/request", async (req, res) => {
             }
         });
         if (resp.data.result !== "success") throw new Error(resp.data.message);
-        return res.status(202).json({ message: "Correo enviado" });
     } catch (err) {
         console.error("Error enviando correo:", err.message);
-        return res.status(500).json({ message: "Error enviando correo" });
     }
 });
 

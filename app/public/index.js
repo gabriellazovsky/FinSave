@@ -108,7 +108,7 @@ function updateChartFromMovements(movimientos) {
 
     // Generar colores por categoría
     function colorForIndex(i){
-        const hue = (i * 47) % 360; // variación
+        const hue = (i * 137) % 360; // variación
         return `hsl(${hue} 70% 50%)`;
     }
 
@@ -147,15 +147,6 @@ function updateChartFromMovements(movimientos) {
             badgesContainer.appendChild(span);
         });
     }
-
-    // Mantener también las tres badges superiores (ingreso/gasto/ahorro)
-    const ingresosBadge = document.querySelector('.badge.bg-success');
-    const gastosBadge = document.querySelector('.badge.bg-primary');
-    const ahorroBadge = document.querySelector('.badge.bg-warning');
-    const grandTotal = totals.ingreso + totals.gasto || 1;
-    if (ingresosBadge) ingresosBadge.textContent = `Ingreso ${Math.round((totals.ingreso/grandTotal)*100)||0}%`;
-    if (gastosBadge) gastosBadge.textContent = `Gasto ${Math.round((totals.gasto/grandTotal)*100)||0}%`;
-    if (ahorroBadge) ahorroBadge.textContent = `Ahorro ${Math.round(((ahorro)/grandTotal)*100)||0}%`;
 }
 
 // ---------------- API helpers ----------------

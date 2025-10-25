@@ -76,32 +76,86 @@ function completeAchievement(id) { const a = achievements.find(x => x.id === id)
 
 // ---------------- Chart helper ----------------
 function updateChartFromMovements(movimientos) {
-    const totals = { ingreso: 0, gasto: 0, ahorro: 0 };
+    // Calcular totales de tipo y neto (ahorro)
+    const totals = { ingreso: 0, gasto: 0 };
+    // Agrupar por categoría (primera palabra de la descripción)
+    const groups = {}; // { cat: amount }
     movimientos.forEach(m => {
         const tipo = (m.tipo || "").toLowerCase();
-        if (tipo === "ingreso") totals.ingreso += Number(m.monto) || 0;
-        else if (tipo === "gasto") totals.gasto += Number(m.monto) || 0;
-    });
-    totals.ahorro = totals.ingreso - totals.gasto;
+        const monto = Number(m.monto) || 0;
+        if (tipo === 'ingreso') totals.ingreso += monto;
+        else if (tipo === 'gasto') totals.gasto += monto;
 
-    const total = totals.ingreso + totals.gasto + totals.ahorro;
-    const palette = ['#4CAF50','#2196F3','#FFC107'];
+        // extraer categoría desde la descripción (primera palabra alfanumérica)
+        let desc = (m.descripcion || '').trim();
+        let cat = 'otros';
+        if (desc) {
+            const match = desc.match(/[\p{L}\p{N}]+/u);
+            if (match && match[0]) cat = match[0].toLowerCase();
+        }
+        groups[cat] = (groups[cat] || 0) + Math.abs(monto);
+    });
+
+    const ahorro = totals.ingreso - totals.gasto;
+
+    // Construir gradiente para las categorías (outer ring)
     const chart = document.querySelector('.chart-container');
-    if (chart) {
-        const gradientParts = total > 0 ? [
-            `${palette[0]} 0% ${(totals.ingreso/total)*100}%`,
-            `${palette[1]} ${(totals.ingreso/total)*100}% ${(totals.ingreso+totals.gasto)/total*100}%`,
-            `${palette[2]} ${(totals.ingreso+totals.gasto)/total*100}% 100%`
-        ] : ['#4CAF50 0% 60%', '#2196F3 60% 85%', '#FFC107 85% 100%'];
-        chart.style.background = `conic-gradient(${gradientParts.join(',')})`;
+    const centerLabel = document.getElementById('centerLabel');
+    const badgesContainer = document.getElementById('categoryBadges');
+
+    const categoryEntries = Object.entries(groups).sort((a,b) => b[1]-a[1]);
+    const totalCat = categoryEntries.reduce((s,[,v]) => s + v, 0) || 1;
+
+    // Generar colores por categoría
+    function colorForIndex(i){
+        const hue = (i * 47) % 360; // variación
+        return `hsl(${hue} 70% 50%)`;
     }
 
+    if (chart) {
+        let start = 0;
+        const parts = [];
+        categoryEntries.forEach(([cat, value], i) => {
+            const pct = (value / totalCat) * 100;
+            const end = start + pct;
+            const color = colorForIndex(i);
+            parts.push(`${color} ${start}% ${end}%`);
+            start = end;
+        });
+        // fallback si no hay movimientos
+        if (parts.length === 0) parts.push('#e9ecef 0% 100%');
+        chart.style.background = `conic-gradient(${parts.join(',')})`;
+    }
+
+    // Actualizar el centro (ahorro) y su color
+    if (centerLabel) {
+        const fmt = (n) => (n >= 0 ? `€${n.toFixed(2)}` : `-€${Math.abs(n).toFixed(2)}`);
+        centerLabel.textContent = fmt(ahorro);
+        centerLabel.classList.remove('center-positive','center-negative');
+        if (ahorro > 0) centerLabel.classList.add('center-positive');
+        else if (ahorro < 0) centerLabel.classList.add('center-negative');
+    }
+
+    // Rellenar badges por categoría
+    if (badgesContainer) {
+        badgesContainer.innerHTML = '';
+        categoryEntries.slice(0, 8).forEach(([cat, value], i) => {
+            const pct = Math.round((value / totalCat) * 100);
+            const span = document.createElement('span');
+            span.style.background = colorForIndex(i);
+            span.textContent = `${cat} ${pct}%`;
+            badgesContainer.appendChild(span);
+        });
+    }
+
+    // Mantener también las tres badges superiores (ingreso/gasto/ahorro)
     const ingresosBadge = document.querySelector('.badge.bg-success');
     const gastosBadge = document.querySelector('.badge.bg-primary');
     const ahorroBadge = document.querySelector('.badge.bg-warning');
-    if (ingresosBadge) ingresosBadge.textContent = `Ingreso ${Math.round((totals.ingreso/total)*100)||0}%`;
-    if (gastosBadge) gastosBadge.textContent = `Gasto ${Math.round((totals.gasto/total)*100)||0}%`;
-    if (ahorroBadge) ahorroBadge.textContent = `Ahorro ${Math.round((totals.ahorro/total)*100)||0}%`;
+    const grandTotal = totals.ingreso + totals.gasto || 1;
+    if (ingresosBadge) ingresosBadge.textContent = `Ingreso ${Math.round((totals.ingreso/grandTotal)*100)||0}%`;
+    if (gastosBadge) gastosBadge.textContent = `Gasto ${Math.round((totals.gasto/grandTotal)*100)||0}%`;
+    if (ahorroBadge) ahorroBadge.textContent = `Ahorro ${Math.round(((ahorro)/grandTotal)*100)||0}%`;
 }
 
 // ---------------- API helpers ----------------

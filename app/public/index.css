@@ -5,6 +5,8 @@
             border-radius: 50%;
             background: conic-gradient(#4CAF50 0% 60%, #2196F3 60% 85%, #FFC107 85% 100%);
             margin: auto;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            transition: background 600ms ease;
         }
         .center-label {
             position: absolute;
@@ -19,6 +21,16 @@
             justify-content: center;
             align-items: center;
             font-weight: bold;
+        }
+        .center-label.small { width: 80px; height: 80px; font-size: 0.9rem; }
+        .center-positive { color: #198754; }
+        .center-negative { color: #dc3545; }
+        #categoryBadges span {
+            padding: 6px 10px;
+            border-radius: 999px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.85rem;
         }
         
         .hidden {

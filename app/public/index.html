@@ -1,20 +1,105 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>FinSave – Inicio</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>FinSave – Administra tus Finanzas</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+
+    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="index.css"/>
+
+    <!-- Estilos propios -->
+    <link rel="stylesheet" href="home.css">
+
 </head>
-<body class="bg-light">
+<body class="bg-gray-50 text-gray-800">
 
-<div class="container text-center py-5">
-    <h1 class="display-4 fw-bold text-primary">Bienvenido a FinSave</h1>
-    <p class="lead mb-4 text-muted">Tu asistente inteligente para gestionar tus finanzas personales y empresariales.</p>
-    <a href="login.html" class="btn btn-primary btn-lg shadow">Ir a tu panel</a>
-</div>
+<!-- ===== NAVBAR ===== -->
+<header class="w-full bg-white shadow-sm fixed top-0 left-0 z-50">
+    <nav class="container mx-auto flex justify-between items-center px-6 py-3">
+        <div class="text-xl font-bold text-blue-600">FinSave</div>
+        <div class="flex gap-6 items-center">
+            <a href="#features" class="hover:text-blue-600 transition-colors">Funciones</a>
+            <a href="#benefits" class="hover:text-blue-600 transition-colors">Beneficios</a>
+            <a href="#contact" class="hover:text-blue-600 transition-colors">Contacto</a>
+            <a href="login.html" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors font-semibold">Iniciar Sesión</a>
+        </div>
+    </nav>
+</header>
 
+<main class="pt-24">
+
+    <!-- ===== HERO ===== -->
+    <section class="relative overflow-hidden bg-gradient-to-r from-blue-600 to-blue-400 text-white py-32 text-center">
+        <div class="container mx-auto relative z-10">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 hero-title">Controla tus Finanzas con FinSave</h1>
+            <p class="text-lg md:text-xl mb-6 hero-desc">Gestiona tus ingresos, gastos y ahorros en un solo lugar, de manera rápida y segura.</p>
+            <a href="#features" class="bg-white text-blue-600 px-6 py-3 rounded-full font-semibold hover:bg-gray-100 transition">Conoce Más</a>
+        </div>
+        <img src="animation/finsavePet1.png" alt="Mascota FinSave" class="absolute bottom-0 right-0 w-48 opacity-30 hero-image hidden md:block">
+    </section>
+
+    <!-- ===== FEATURES ===== -->
+    <section id="features" class="container mx-auto py-20 px-6">
+        <h2 class="text-3xl font-bold text-center mb-12">Funciones Clave</h2>
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="bg-white shadow-lg rounded-xl p-6 feature-card">
+                <i class="bi bi-wallet2 text-4xl text-blue-600 mb-4"></i>
+                <h3 class="text-xl font-semibold mb-2">Historial de Movimientos</h3>
+                <p>Lleva un control completo de todos tus ingresos y gastos de forma clara y ordenada.</p>
+            </div>
+            <div class="bg-white shadow-lg rounded-xl p-6 feature-card">
+                <i class="bi bi-graph-up-arrow text-4xl text-blue-600 mb-4"></i>
+                <h3 class="text-xl font-semibold mb-2">Gráficas Interactivas</h3>
+                <p>Visualiza tus finanzas con gráficos por categoría y ahorro neto en tiempo real.</p>
+            </div>
+            <div class="bg-white shadow-lg rounded-xl p-6 feature-card">
+                <i class="bi bi-trophy text-4xl text-blue-600 mb-4"></i>
+                <h3 class="text-xl font-semibold mb-2">Sistema de Logros</h3>
+                <p>Alcanza objetivos financieros y desbloquea logros motivadores para tus metas.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== BENEFITS ===== -->
+    <section id="benefits" class="bg-gray-100 py-20 px-6">
+        <h2 class="text-3xl font-bold text-center mb-12">Beneficios de Usar FinSave</h2>
+        <ul class="max-w-4xl mx-auto space-y-6 text-lg list-disc list-inside">
+            <li>Visualización clara de tus finanzas personales.</li>
+            <li>Control de gastos por categoría para optimizar tu presupuesto.</li>
+            <li>Exportación de historial a CSV para tus registros.</li>
+            <li>Seguridad y privacidad con login seguro y autenticación de Google.</li>
+        </ul>
+    </section>
+
+    <!-- ===== CONTACT ===== -->
+    <section id="contact" class="container mx-auto py-20 px-6 text-center">
+        <h2 class="text-3xl font-bold mb-6">Contáctanos</h2>
+        <p class="mb-6">¿Tienes preguntas o sugerencias? Escríbenos y te responderemos pronto.</p>
+        <form id="feedbackForm" class="max-w-lg mx-auto flex flex-col gap-4">
+            <input type="text" placeholder="Nombre" class="form-control" required>
+            <input type="email" placeholder="Correo" class="form-control" required>
+            <textarea placeholder="Mensaje" class="form-control" required></textarea>
+            <button type="submit" class="bg-blue-600 text-white py-2 px-6 rounded-md hover:bg-blue-700 transition">Enviar</button>
+            <span id="mensaje" class="hidden text-green-600 font-semibold">¡Mensaje enviado correctamente!</span>
+        </form>
+    </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="home.js" defer></script>
+<script src="https://unpkg.com/scrollreveal"></script>
+<script>
+    // Animaciones de ScrollReveal
+    ScrollReveal().reveal('.hero-title', { delay: 200, origin: 'top', distance: '50px', duration: 1000 });
+    ScrollReveal().reveal('.hero-desc', { delay: 400, origin: 'bottom', distance: '30px', duration: 1000 });
+    ScrollReveal().reveal('.feature-card', { interval: 200, origin: 'bottom', distance: '30px', duration: 1000 });
+</script>
 </body>
 </html>

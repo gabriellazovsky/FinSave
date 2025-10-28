@@ -576,3 +576,13 @@ async function handleCredentialResponse(response) {
         alert("Error en autenticación con Google");
     }
 }
+// Volver al home desde cualquier sección
+document.getElementById("homeBtnHeader").addEventListener("click", () => {
+    // Si tienes sección de login, app y logros como antes:
+    loginSection.classList.add("hidden");
+    appSection.classList.add("hidden");
+    logrosSection.classList.add("hidden");
+
+    // Redirige al index.html (home)
+    window.location.href = "index.html";
+});

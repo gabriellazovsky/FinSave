@@ -4,6 +4,7 @@ body {
     scroll-behavior: smooth;
     background-color: #f9fafb;
     color: #1f2937;
+    transition: background 0.3s ease, color 0.3s ease;
 }
 
 h1, h2, h3 {
@@ -15,7 +16,6 @@ header nav a {
     font-weight: 500;
     transition: color 0.3s ease, transform 0.3s ease;
 }
-
 header nav a:hover {
     color: #2563eb;
     transform: translateY(-2px);
@@ -25,6 +25,17 @@ header nav a:hover {
 .hero-image {
     pointer-events: none;
     transition: transform 0.5s ease-out, opacity 0.4s ease;
+}
+
+.hero-section {
+    background: linear-gradient(120deg, #2563eb, #3b82f6, #60a5fa);
+    background-size: 200% 200%;
+    animation: gradientShift 8s ease infinite;
+}
+
+@keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
 }
 
 .floating-mascota {
@@ -51,10 +62,7 @@ header nav a:hover {
     text-align: center;
     cursor: pointer;
     box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-    transition:
-            transform 0.45s cubic-bezier(0.19, 1, 0.22, 1),
-            box-shadow 0.45s ease,
-            background 0.45s ease;
+    transition: transform 0.45s cubic-bezier(0.19, 1, 0.22, 1), box-shadow 0.45s ease, background 0.45s ease;
     position: relative;
     overflow: hidden;
 }
@@ -78,7 +86,6 @@ header nav a:hover {
     background: linear-gradient(145deg, #ffffff, #f8fbff);
 }
 
-/* === ICONO Y TÍTULO === */
 .feature-card i,
 .feature-card h3 {
     transition: color 0.4s ease, transform 0.4s ease;
@@ -101,27 +108,6 @@ header nav a:hover {
     transform: scale(1.03);
 }
 
-/* === GRADIENTE HERO === */
-.hero-section {
-    background: linear-gradient(120deg, #2563eb, #3b82f6, #60a5fa);
-    background-size: 200% 200%;
-    animation: gradientShift 8s ease infinite;
-}
-
-@keyframes gradientShift {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-}
-
-/* === PARALLAX Y MASCOTAS === */
-.hero-image.parallax {
-    will-change: transform;
-}
-
-.mascota-follow {
-    transition: transform 0.2s ease-out;
-}
-
 /* === RESPONSIVE === */
 @media (max-width: 768px) {
     .feature-card {
@@ -130,4 +116,82 @@ header nav a:hover {
     .feature-card i {
         font-size: 2rem;
     }
+}
+
+/* === LIGHT/DARK MODE === */
+.checkbox {
+    opacity: 0;
+    position: absolute;
+}
+
+.checkbox-label {
+    background-color: #111;
+    width: 50px;
+    height: 26px;
+    border-radius: 50px;
+    position: relative;
+    padding: 5px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.3s ease;
+}
+
+.fa-moon { color: #f1c40f; }
+.fa-sun { color: #f39c12; }
+
+.checkbox-label .ball {
+    background-color: #fff;
+    width: 22px;
+    height: 22px;
+    position: absolute;
+    left: 2px;
+    top: 2px;
+    border-radius: 50%;
+    transition: transform 0.2s linear;
+}
+
+.checkbox:checked + .checkbox-label .ball {
+    transform: translateX(24px);
+}
+
+/* Dark mode */
+body.dark {
+    background-color: #0f172a;
+    color: #f1f5f9;
+}
+
+body.dark header {
+    background-color: #1e293b !important;
+}
+
+body.dark .feature-card {
+    background: #1e293b;
+    color: #f1f5f9;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+}
+
+body.dark .feature-card:hover {
+    background: linear-gradient(135deg, #1e293b, #334155);
+}
+
+body.dark .feature-card i {
+    color: #60a5fa;
+}
+
+body.dark h1, body.dark h2, body.dark h3 {
+    color: #f1f5f9;
+}
+
+body.dark .hero-image {
+    opacity: 0.9;
+}
+
+body.dark #benefits {
+    background-color: #111827;
+}
+
+body.dark a {
+    color: #93c5fd;
 }

@@ -161,7 +161,7 @@ app.get("/feedback", (_req, res) => {
     res.sendFile(path.join(__dirname, "public", "feedback.html"));
 });
 
-app.get("/", (_req, res) => res.sendFile(path.join(__dirname, "public", "index.html")));
+app.get("/", (_req, res) => res.sendFile(path.join(__dirname, "public", "persona.html")));
 
 app.get("/cuenta-mia", autenticarToken, async (req, res) => {
     const cuenta = await ensureCuentaForCliente(req.user.id);

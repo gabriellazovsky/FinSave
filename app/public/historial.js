@@ -8,7 +8,7 @@ const logoutBtn = document.getElementById('logoutBtnHistorial');
 // Redirección si no hay sesión
 const token = localStorage.getItem('token');
 if (!token) {
-    window.location.href = "index.html";
+    window.location.href = "persona.html";
 }
 
 // Cargar historial al abrir la página
@@ -77,5 +77,5 @@ function mostrarError(mensaje) {
 // Logout
 logoutBtn.addEventListener('click', function() {
     localStorage.removeItem('token');
-    window.location.href = "index.html";
+    window.location.href = "persona.html";
 });

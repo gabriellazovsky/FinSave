@@ -8,7 +8,7 @@ const logoutBtnFeedback = document.getElementById('logoutBtnHistorial') || docum
 // Redirección si no hay sesión
 const token = localStorage.getItem('token');
 if (!token) {
-    window.location.href = "index.html";
+    window.location.href = "persona.html";
 }
 
 // Escucha el envío del formulario
@@ -59,6 +59,6 @@ if (feedbackForm) {
 if (logoutBtnFeedback) {
     logoutBtnFeedback.addEventListener('click', function() {
         localStorage.removeItem('token');
-        window.location.href = "index.html";
+        window.location.href = "persona.html";
     });
 }

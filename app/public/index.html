@@ -21,7 +21,7 @@
 
 <!-- ===== NAVBAR ===== -->
 <header class="w-full bg-white shadow-sm fixed top-0 left-0 z-50">
-    <nav class="container mx-auto flex justify-between items-center px-6 py-3">
+    <nav class="container mx-auto flex justify-between items-center px-6 py-3 relative">
         <div class="flex items-center gap-2">
             <img src="favicon.png" alt="FinSave Logo" class="w-10 h-10">
             <span class="text-xl font-bold text-blue-600">FinSave</span>
@@ -30,19 +30,20 @@
             <a href="#features">Funciones</a>
             <a href="#benefits">Beneficios</a>
             <a href="login.html" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 font-semibold">Iniciar Sesión</a>
+
+            <!-- Light/Dark Toggle -->
+            <div class="ml-4 relative group" title="Activa modo oscuro/claro">
+                <input type="checkbox" class="checkbox" id="checkbox">
+                <label for="checkbox" class="checkbox-label">
+                    <i class="fas fa-moon"></i>
+                    <i class="fas fa-sun"></i>
+                    <span class="ball"></span>
+                </label>
+                <span class="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 rounded bg-gray-800 text-white text-xs px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">Light / Dark Mode</span>
+            </div>
         </div>
     </nav>
 </header>
-
-<!-- ===== LIGHT/DARK TOGGLE ===== -->
-<div class="absolute top-5 right-5 z-50">
-    <input type="checkbox" class="checkbox" id="checkbox">
-    <label for="checkbox" class="checkbox-label">
-        <i class="fas fa-moon"></i>
-        <i class="fas fa-sun"></i>
-        <span class="ball"></span>
-    </label>
-</div>
 
 <main class="pt-28 relative">
 
@@ -63,17 +64,17 @@
             <div class="feature-card">
                 <i class="bi bi-wallet2"></i>
                 <h3>Historial de Movimientos</h3>
-                <p>Lleva un control completo de todos tus ingresos y gastos de forma clara y ordenada, con filtros y ordenación por fecha o monto.</p>
+                <p>Lleva un control completo de todos tus ingresos y gastos de forma clara y ordenada.</p>
             </div>
             <div class="feature-card">
                 <i class="bi bi-graph-up-arrow"></i>
                 <h3>Gráficas Interactivas</h3>
-                <p>Visualiza tus finanzas con gráficos por categoría y ahorro neto en tiempo real. Ajusta el rango de fechas y analiza tus tendencias de gasto.</p>
+                <p>Visualiza tus finanzas con gráficos por categoría y ahorro neto en tiempo real.</p>
             </div>
             <div class="feature-card">
                 <i class="bi bi-trophy"></i>
                 <h3>Sistema de Logros</h3>
-                <p>Alcanza objetivos financieros y desbloquea logros motivadores para mantenerte enfocado en tus metas de ahorro.</p>
+                <p>Alcanza objetivos financieros y desbloquea logros motivadores para mantenerte enfocado.</p>
             </div>
         </div>
     </section>
@@ -82,9 +83,9 @@
     <section id="benefits" class="bg-gray-100 py-20 px-6 relative">
         <h2 class="text-3xl font-bold text-center mb-12">Beneficios de Usar FinSave</h2>
         <div class="max-w-4xl mx-auto space-y-8 text-lg">
-            <p>Con FinSave puedes tener un control total de tu dinero, ver en qué gastas más, planificar tus metas de ahorro y recibir recomendaciones personalizadas.</p>
-            <p>Exporta tu historial completo a CSV, analiza tus hábitos de consumo y recibe notificaciones al alcanzar tus logros.</p>
-            <p>Nuestra interfaz moderna e intuitiva te permite acceder desde cualquier dispositivo, con seguridad y privacidad garantizadas.</p>
+            <p>Control total de tu dinero, planificación de metas y recomendaciones personalizadas.</p>
+            <p>Exporta tu historial, analiza hábitos de consumo y recibe notificaciones al alcanzar tus logros.</p>
+            <p>Interfaz moderna e intuitiva, accesible desde cualquier dispositivo con seguridad garantizada.</p>
         </div>
         <img src="animation/finsavePet2.png" alt="Mascota flotante" class="floating-mascota w-24 hidden md:block" id="mascotaFloat">
     </section>
@@ -96,20 +97,19 @@
             <div class="feature-card">
                 <i class="bi bi-shield-lock"></i>
                 <h3>Seguridad y Privacidad</h3>
-                <p>Tu información financiera está protegida con doble factor al recibir un código al olvidar la contraseña.</p>
+                <p>Tu información financiera protegida con doble factor y cifrado seguro.</p>
             </div>
             <div class="feature-card">
                 <i class="bi bi-phone"></i>
                 <h3>Acceso Multiplataforma</h3>
-                <p>Accede a FinSave desde móvil, tablet o escritorio, con una experiencia consistente y fluida.</p>
+                <p>Disponible en móvil, tablet y escritorio con experiencia consistente.</p>
             </div>
             <div class="feature-card">
                 <i class="bi bi-lightning-charge"></i>
                 <h3>Rápido y Eficiente</h3>
-                <p>Registra movimientos al instante y analiza tu dinero en tiempo real sin esperas ni complicaciones.</p>
+                <p>Registra y analiza tus movimientos financieros al instante.</p>
             </div>
         </div>
-        <img src="animation/finsavePet3.png" alt="Mascota flotante" class="floating-mascota w-24 hidden md:block">
     </section>
 
 </main>

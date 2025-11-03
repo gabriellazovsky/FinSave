@@ -257,7 +257,6 @@
     <span class="market-tab-label"></span>
 </button>
 
-
 <!-- Right-side collapsible precios panel -->
 <div class="offcanvas offcanvas-end" tabindex="-1" id="livePrices" aria-labelledby="livePricesLabel">
     <div class="offcanvas-header">
@@ -266,14 +265,12 @@
     </div>
 
     <div class="offcanvas-body d-flex flex-column gap-3">
-
         <form id="lp-form" class="d-flex gap-2">
             <input id="lp-symbols" class="form-control" placeholder="Symbols (comma-separated), e.g. AAPL,MSFT,SPY" />
             <button class="btn btn-primary" type="submit">Subscribe</button>
         </form>
 
         <div id="lp-status" class="small text-muted">Connecting…</div>
-
         <div class="list-group" id="lp-list"></div>
 
         <button class="btn btn-outline-secondary mt-auto" id="lp-clear">Unsubscribe all</button>

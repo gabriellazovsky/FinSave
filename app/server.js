@@ -270,7 +270,7 @@ function ensureUpstream() {
 
 
     upstream.on('message', (data) => {
-
+        const text = data.toString();
          console.log('[WS] from upstream msg', data.toString());
         for (const c of clients) { try { c.send(data); } catch {} }
     });

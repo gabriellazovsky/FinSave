@@ -1,80 +1,100 @@
-
 (() => {
-    const statusEl = document.getElementById('lp-status');
-    const listEl   = document.getElementById('lp-list');
-    const form     = document.getElementById('lp-form');
-    const input    = document.getElementById('lp-symbols');
-    const clearBtn = document.getElementById('lp-clear');
+    const form   = document.getElementById('lp-form');
+    const input  = document.getElementById('lp-symbols');
+    const status = document.getElementById('lp-status');
+    const list   = document.getElementById('lp-list');
+    const clear  = document.getElementById('lp-clear');
 
-    if (!statusEl || !listEl || !form) return;
+    if (!form || !input || !status || !list) return;
 
-    const wsProto = location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const ws = new WebSocket(`${wsProto}//${location.host}/stream`);
+    const proto = location.protocol === 'https:' ? 'wss' : 'ws';
+    const ws = new WebSocket(`${proto}://${location.host}/stream`);
 
-    const state = new Map();
 
-    function renderRow(symbol, price) {
-        let row = state.get(symbol)?.el;
-        const prev = state.get(symbol)?.price;
+    const rows = new Map();
 
-        if (!row) {
-            row = document.createElement('div');
-            row.className = 'list-group-item d-flex justify-content-between align-items-center';
-            row.innerHTML = `
-        <div class="fw-semibold">${symbol}</div>
-        <div class="d-flex align-items-center gap-2">
-          <span class="lp-price"></span>
-          <span class="lp-delta badge rounded-pill"></span>
-        </div>`;
-            listEl.appendChild(row);
+    const fmtPrice = (p) => {
+        const n = Number(p);
+        if (!Number.isFinite(n)) return String(p);
+        return n >= 1000 ? n.toLocaleString(undefined, { maximumFractionDigits: 2 })
+            : n.toLocaleString(undefined, { maximumFractionDigits: 6 });
+    };
+    const fmtTime = (ts) => {
+
+        const ms = String(ts).length <= 10 ? Number(ts) * 1000 : Number(ts);
+        if (!Number.isFinite(ms)) return '';
+        return new Date(ms).toLocaleTimeString();
+    };
+
+    function upsertRow(symbol, price, ts) {
+        const id = symbol.trim().toUpperCase();
+        let el = rows.get(id);
+        if (!el) {
+            el = document.createElement('div');
+            el.className = 'list-group-item d-flex justify-content-between align-items-center';
+            el.dataset.symbol = id;
+            el.innerHTML = `
+        <div class="d-flex flex-column">
+          <strong data-sym></strong>
+          <small class="text-muted" data-ts></small>
+        </div>
+        <div class="fs-5 fw-semibold" data-price></div>
+      `;
+            list.appendChild(el);
+            rows.set(id, el);
+            el.querySelector('[data-sym]').textContent = id;
         }
-
-        row.querySelector('.lp-price').textContent = Number(price).toFixed(4);
-        const deltaEl = row.querySelector('.lp-delta');
-        if (prev != null) {
-            const diff = Number(price) - prev;
-            const up = diff > 0, flat = diff === 0;
-            deltaEl.textContent = flat ? '—' : (up ? `↑ ${diff.toFixed(4)}` : `↓ ${Math.abs(diff).toFixed(4)}`);
-            deltaEl.className = `lp-delta badge rounded-pill ${flat ? 'bg-secondary' : up ? 'bg-success' : 'bg-danger'}`;
-        } else {
-            deltaEl.textContent = 'new';
-            deltaEl.className = 'lp-delta badge rounded-pill bg-secondary';
-        }
-        state.set(symbol, { price: Number(price), el: row });
+        el.querySelector('[data-price]').textContent = fmtPrice(price);
+        el.querySelector('[data-ts]').textContent = fmtTime(ts);
     }
 
-    ws.addEventListener('open', () => {
-        statusEl.textContent = 'Connected';
-        // optional default subscribe; you can leave it empty and rely on the form
-        // ws.send(JSON.stringify({ action: 'subscribe', params: { symbols: 'BTC/USD' } }));
-    });
+    ws.addEventListener('open', () => { status.textContent = 'Connected'; });
+    ws.addEventListener('close', () => { status.textContent = 'Disconnected'; });
+    ws.addEventListener('error', () => { status.textContent = 'Socket error'; });
 
-    ws.addEventListener('message', (ev) => {
-        let msg; try { msg = JSON.parse(ev.data); } catch { return; }
-        // console.log('msg', msg);
-        if (msg.event === 'price') renderRow(msg.symbol, msg.price);
-        else if (msg.event === 'subscribe-status') {
-            statusEl.textContent = `Subscribed: ${(msg.success||[]).map(s=>s.symbol).join(', ')}`;
-        } else if (msg.event === 'error') {
-            statusEl.textContent = `Error: ${msg.message}`;
+    ws.addEventListener('message', async (ev) => {
+        let raw = ev.data;
+        try {
+            if (raw instanceof Blob)      raw = await raw.text();
+            else if (raw instanceof ArrayBuffer) raw = new TextDecoder().decode(raw);
+            else                            raw = String(raw);
+
+            let msg = JSON.parse(raw);
+            const items = Array.isArray(msg) ? msg : [msg];
+
+            for (const m of items) {
+                if (m && m.event === 'price') {
+                    upsertRow(m.symbol, m.price, m.timestamp);
+                } else if (m && m.event === 'error') {
+                    status.textContent = `Error: ${m.message || 'unknown'}`;
+                }
+            }
+        } catch (e) {
+            console.error('WS parse error:', e, raw);
         }
     });
 
-    ws.addEventListener('close', () => statusEl.textContent = 'Disconnected');
-    ws.addEventListener('error', () => statusEl.textContent = 'Socket error');
+
 
     form.addEventListener('submit', (e) => {
         e.preventDefault();
-        const symbols = (input.value || '').trim().toUpperCase();
-        if (!symbols) return;
-        ws.send(JSON.stringify({ action: 'subscribe', params: { symbols } }));
+        const v = input.value.trim();
+        if (!v) return;
+
+
+        const symbols = v.split(/\s*,\s*/).filter(Boolean).join(',');
+        const payload = JSON.stringify({ action: 'subscribe', params: { symbols } });
+
+        if (ws.readyState === WebSocket.OPEN) ws.send(payload);
         input.value = '';
     });
 
-    clearBtn?.addEventListener('click', () => {
-        ws.send(JSON.stringify({ action: 'reset' }));
-        listEl.innerHTML = '';
-        state.clear();
-        statusEl.textContent = 'Cleared';
+    // Unsubscribe (clear UI and let server drop subs if you add that later)
+    clear?.addEventListener('click', () => {
+        list.innerHTML = '';
+        rows.clear();
+        status.textContent = 'Cleared';
+        // If you later add an unsubscribe path on the server, send it here:
+        // ws.send(JSON.stringify({ action: 'unsubscribe', params: { symbols: '*' } }));
     });
 })();

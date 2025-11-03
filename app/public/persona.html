@@ -89,8 +89,8 @@
             </div>
             <div class="flex items-center gap-4">
                 <span id="bienvenido-user" class="text-blue-600 font-semibold"></span>
+                <button class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors" id="homeBtnHeader"><i class="bi bi-arrow-left"></i>Volver al home</button>
                 <button class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors" id="logoutBtnHeader">Cerrar Sesión</button>
-                <button class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors" id="homeBtnHeader">Volver al home</button>
             </div>
         </nav>
     </header>
@@ -98,7 +98,7 @@
     <canvas id="lienzo" width="150" height="150"></canvas>
     <div class="container mt-8 mb-8">
         <div class="text-center mb-8">
-            <h2>Tus Finanzas </h2>
+
             <div class="chart-container mt-4">
                 <div id="centerLabel" class="center-label">€0.00</div>
             </div>
@@ -246,5 +246,57 @@
 <!-- =================== CONTACTO =================== -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="index.js" defer></script>
+
+<!-- Collapsible Market Menu (persona.html only) -->
+<button
+        id="marketTab"
+        class="btn btn-primary market-tab"
+        type="button"
+        aria-label="Open Market panel">
+    <i class="bi bi-graph-up-arrow"></i>
+    <span class="market-tab-label"></span>
+</button>
+
+
+<!-- Right-side collapsible precios panel -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="livePrices" aria-labelledby="livePricesLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="livePricesLabel">Live Prices</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+
+    <div class="offcanvas-body d-flex flex-column gap-3">
+
+        <form id="lp-form" class="d-flex gap-2">
+            <input id="lp-symbols" class="form-control" placeholder="Symbols (comma-separated), e.g. AAPL,MSFT,SPY" />
+            <button class="btn btn-primary" type="submit">Subscribe</button>
+        </form>
+
+        <div id="lp-status" class="small text-muted">Connecting…</div>
+
+        <div class="list-group" id="lp-list"></div>
+
+        <button class="btn btn-outline-secondary mt-auto" id="lp-clear">Unsubscribe all</button>
+    </div>
+</div>
+
+
+<!-- =================== MARKET =================== -->
+<script src="live-prices.js" defer></script>
+
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        const tabBtn = document.getElementById('marketTab');
+        const panelEl = document.getElementById('livePrices');
+        if (!tabBtn || !panelEl || !window.bootstrap) return;
+
+        const oc = bootstrap.Offcanvas.getOrCreateInstance(panelEl);
+        tabBtn.addEventListener('click', e => { e.preventDefault(); oc.toggle(); });
+
+        panelEl.addEventListener('show.bs.offcanvas', () => document.body.classList.add('offcanvas-open'));
+        panelEl.addEventListener('hidden.bs.offcanvas', () => document.body.classList.remove('offcanvas-open'));
+    });
+
+</script>
 </body>
 </html>

@@ -586,3 +586,102 @@ document.getElementById("homeBtnHeader").addEventListener("click", () => {
     // Redirige al index.html (home)
     window.location.href = "index.html";
 });
+
+// === live prices panel ===
+(() => {
+    const statusEl = document.getElementById('lp-status');
+    const listEl   = document.getElementById('lp-list');
+    const form     = document.getElementById('lp-form');
+    const input    = document.getElementById('lp-symbols');
+    const btnClear = document.getElementById('lp-clear');
+
+    if (!statusEl || !listEl || !form) return; // page safety
+
+    // Connect to your proxy (same origin)
+    const wsProto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const ws = new WebSocket(`${wsProto}//${location.host}/stream`);
+
+    // Keep last price per symbol so we can show ↑/↓
+    const state = new Map(); // symbol -> { price, el }
+
+    function renderRow(symbol, price) {
+        let item = state.get(symbol)?.el;
+        const prev = state.get(symbol)?.price;
+        const hasPrev = typeof prev === 'number';
+
+        // Create DOM row if it doesn't exist
+        if (!item) {
+            item = document.createElement('div');
+            item.className = 'list-group-item d-flex justify-content-between align-items-center';
+            item.innerHTML = `
+        <div class="fw-semibold">${symbol}</div>
+        <div class="d-flex align-items-center gap-2">
+          <span class="lp-price"></span>
+          <span class="lp-delta badge rounded-pill"></span>
+        </div>
+      `;
+            listEl.appendChild(item);
+            state.set(symbol, { price, el: item });
+        }
+
+        // Update price
+        item.querySelector('.lp-price').textContent = Number(price).toFixed(4);
+
+        // Update delta badge
+        const deltaEl = item.querySelector('.lp-delta');
+        if (hasPrev) {
+            const diff = Number(price) - prev;
+            const up = diff > 0;
+            const flat = diff === 0;
+            deltaEl.textContent = flat ? '—' : (up ? `↑ ${diff.toFixed(4)}` : `↓ ${Math.abs(diff).toFixed(4)}`);
+            deltaEl.className = `lp-delta badge rounded-pill ${flat ? 'bg-secondary' : (up ? 'bg-success' : 'bg-danger')}`;
+        } else {
+            deltaEl.textContent = 'new';
+            deltaEl.className = 'lp-delta badge rounded-pill bg-secondary';
+        }
+
+        // Save latest
+        state.set(symbol, { price: Number(price), el: item });
+    }
+
+    ws.addEventListener('open', () => {
+        statusEl.textContent = 'Connected';
+        // Optional default
+        ws.send(JSON.stringify({ action: 'subscribe', params: { symbols: 'BTC/USD' }}));
+    });
+
+    ws.addEventListener('message', (ev) => {
+        let msg;
+        try { msg = JSON.parse(ev.data); } catch { return; }
+
+        if (msg.event === 'price') {
+            renderRow(msg.symbol, msg.price);
+        } else if (msg.event === 'subscribe-status') {
+            const ok = (msg.success || []).map(s => s.symbol).join(', ');
+            statusEl.textContent = ok ? `Subscribed: ${ok}` : 'Subscribed';
+        } else if (msg.event === 'error') {
+            statusEl.textContent = `Error: ${msg.message || 'unknown'}`;
+        }
+    });
+
+    ws.addEventListener('close', () => statusEl.textContent = 'Disconnected');
+    ws.addEventListener('error', () => statusEl.textContent = 'Socket error');
+
+    // Subscribe from form
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const symbols = (input.value || '').trim().toUpperCase();
+        if (!symbols) return;
+        ws.send(JSON.stringify({ action: 'subscribe', params: { symbols } }));
+        input.value = '';
+    });
+
+    // Unsubscribe all (and clear UI)
+    btnClear?.addEventListener('click', () => {
+        ws.send(JSON.stringify({ action: 'reset' })); // Twelve Data supports reset to drop all subs
+        listEl.innerHTML = '';
+        state.clear();
+        statusEl.textContent = 'Cleared subscriptions';
+    });
+})();
+

@@ -2,12 +2,15 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
-const jwt = require("jsonwebtoken");
-const { Parser } = require("json2csv");
-const { Cliente, Cuenta, Movimiento, Feedback } = require("./models");
-const { isDuplicateMovement } = require("./duplicateCheck");
-const axios = require("axios");
 const crypto = require("crypto");
+const {Parser} = require("json2csv");
+const {Cliente, Cuenta, Movimiento, Feedback} = require("./models");
+const {isDuplicateMovement} = require("./duplicateCheck");
+const axios = require("axios");
+const jwt = require("jsonwebtoken");
+const http = require("http");
+const cors = require("cors");
+const {WebSocketServer, Server: WSServer } = require("ws");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -19,6 +22,7 @@ function generarCodigo(length = 6) {
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
+app.use(cors());
 
 function autenticarToken(req, res, next) {
     const authHeader = req.headers["authorization"];
@@ -221,8 +225,100 @@ app.post("/password-reset/confirm", async (req, res) => {
     return res.status(200).json({ message: "Contraseña restablecida correctamente" });
 });
 
+// --- WebSocket Twelve Data ---
+const WebSocket = require('ws');
+const API_KEY = process.env.TWELVEDATA_KEY;         // put this in .env
+const TD_URL  = `wss://ws.twelvedata.com/v1/quotes/price?apikey=${API_KEY}`;
+
+const server = http.createServer(app);
+const wss    = new WebSocket.Server({ server, path: '/stream' });
+
+let upstream = null;
+let upstreamOpen = false;
+let sendQueue = [];
+const clients = new Set();
+let pingTimer = null;
+
+function ensureUpstream() {
+    if (upstream && (upstream.readyState === WebSocket.CONNECTING || upstream.readyState === WebSocket.OPEN)) {
+        return;
+    }
+
+    console.log('[WS] creating upstream → TwelveData');
+    upstreamOpen = false;
+    upstream = new WebSocket(TD_URL);
+
+    upstream.on('open', () => {
+        console.log('[WS] upstream -> OPEN');
+        upstreamOpen = true;
+
+        upstream.send(JSON.stringify({
+            action: 'subscribe',
+            params: { symbols: 'BTC/USD' }
+        }));
+
+        for (const msg of sendQueue) upstream.send(msg);
+        sendQueue = [];
+
+        clearInterval(pingTimer);
+        pingTimer = setInterval(() => {
+            if (upstream?.readyState === WebSocket.OPEN) {
+                try { upstream.ping(); } catch {}
+            }
+        }, 15000);
+    });
+
+
+    upstream.on('message', (data) => {
+
+         console.log('[WS] from upstream msg', data.toString());
+        for (const c of clients) { try { c.send(data); } catch {} }
+    });
+
+    upstream.on('close', (code, reason) => {
+        console.log('[WS] upstream closed', code, reason?.toString());
+        upstreamOpen = false;
+        clearInterval(pingTimer);
+        const notice = JSON.stringify({ event: 'upstream-closed', code, reason: String(reason || '') });
+        for (const c of clients) { try { c.send(notice); } catch {} }
+        setTimeout(ensureUpstream, 1500); // backoff & reconnect
+    });
+
+    upstream.on('error', (e) => console.error('[WS] upstream error', e.message));
+
+    upstream.on('unexpected-response', (req2, res) => {
+        let body = '';
+        res.on('data', c => body += c.toString());
+        res.on('end', () => console.error('[WS] unexpected-response', res.statusCode, body));
+    });
+}
+
+wss.on('connection', (client, req) => {
+    console.log('[WS] browser connected from', req.socket.remoteAddress);
+    clients.add(client);
+
+    ensureUpstream();
+
+
+    client.on('message', (data) => {
+        try { console.log('[WS] from browser ->', JSON.stringify(JSON.parse(data.toString()))); }
+        catch { console.log('[WS] from browser ->', data.toString()); }
+
+        if (upstreamOpen && upstream?.readyState === WebSocket.OPEN) {
+            upstream.send(data);
+        } else {
+            sendQueue.push(data);
+        }
+    });
+
+    client.on('close', () => clients.delete(client));
+    client.on('error', () => clients.delete(client));
+});
+
+
 module.exports = { app };
 
 if (require.main === module) {
-    app.listen(PORT, () => console.log(`Servidor escuchando en http://localhost:${PORT}`));
+    server.listen(PORT, () => console.log(`Servidor escuchando en http://localhost:${PORT}`));
 }
+

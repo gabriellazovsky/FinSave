@@ -1,0 +1,112 @@
+
+/* === MODO OSCURO === */
+body.dark {
+    background-color: #0f172a;
+    color: #f1f5f9;
+}
+
+/* Fondos oscuros por categoría */
+body.dark.categoria-ahorro { background-color: #0b2538; }
+body.dark.categoria-inversion { background-color: #0b3028; }
+body.dark.categoria-presupuesto { background-color: #3a300a; }
+body.dark.categoria-otros { background-color: #1f2937; }
+
+/* Barra de navegación */
+body.dark header {
+    background-color: #1e293b !important;
+    color: #f1f5f9;
+}
+body.dark header h1 {
+    color: #f1f5f9;
+}
+
+/* Botones de categoría en modo oscuro */
+body.dark .category-btn[data-category="ahorro"] {
+    background-color: #1e3a8a; /* azul oscuro */
+    color: #dbeafe;
+}
+body.dark .category-btn[data-category="inversion"] {
+    background-color: #166534; /* verde oscuro */
+    color: #dcfce7;
+}
+body.dark .category-btn[data-category="presupuesto"] {
+    background-color: #854d0e; /* amarillo oscuro */
+    color: #fef9c3;
+}
+body.dark .category-btn[data-category="otros"] {
+    background-color: #5b21b6; /* morado oscuro */
+    color: #f3e8ff;
+}
+body.dark .category-btn:hover {
+    filter: brightness(1.2);
+}
+
+/* Tarjetas */
+body.dark .card-contenido {
+    background-color: #1e293b;
+    color: #f1f5f9;
+    border: 1px solid #334155;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+}
+body.dark .card-contenido:hover {
+    background: linear-gradient(135deg,#1e293b,#334155);
+    transform: translateY(-12px) scale(1.04);
+}
+
+/* Enlaces */
+body.dark a {
+    color: #93c5fd;
+}
+/* === TOGGLE MODO OSCURO DESLIZABLE === */
+.checkbox {
+    display: none;
+}
+
+.checkbox-label {
+    width: 60px;
+    height: 30px;
+    background-color: #e5e7eb;
+    border-radius: 50px;
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 6px;
+    transition: background-color 0.3s ease;
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+}
+
+.checkbox-label i {
+    font-size: 16px;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.ball {
+    width: 24px;
+    height: 24px;
+    background-color: #fff;
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* Activado */
+.checkbox:checked + .checkbox-label {
+    background-color: #1e3a8a;
+}
+.checkbox:checked + .checkbox-label .ball {
+    transform: translateX(30px);
+}
+
+/* Adaptación en modo oscuro */
+body.dark .checkbox-label {
+    background-color: #334155;
+}
+body.dark .checkbox-label .ball {
+    background-color: #e2e8f0;
+}

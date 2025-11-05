@@ -1,0 +1,123 @@
+/* === MODO OSCURO GLOBAL === */
+body.dark {
+    background-color: #0b1120; /* fondo general oscuro */
+    color: #f8fafc;
+}
+
+/* === CABECERA === */
+body.dark header {
+    background-color: #1e293b !important;
+    color: #f8fafc;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+}
+
+body.dark nav a {
+    color: #f8fafc !important;
+    transition: color 0.3s ease;
+}
+body.dark nav a:hover {
+    color: #60a5fa !important;
+}
+
+/* Botones de navegación */
+body.dark .bg-blue-400 {
+    background-color: #3b82f6 !important;
+}
+body.dark .bg-blue-400:hover {
+    background-color: #2563eb !important;
+}
+
+/* Botón cerrar sesión */
+body.dark #logoutBtnFeedback {
+    background-color: #dc2626 !important;
+}
+body.dark #logoutBtnFeedback:hover {
+    background-color: #ef4444 !important;
+}
+
+/* === CONTENEDOR DE FEEDBACK === */
+body.dark .feedback-container {
+    background-color: transparent;
+}
+
+/* Caja del formulario */
+body.dark #feedbackForm {
+    background-color: #1e293b; /* fondo tarjeta oscuro */
+    color: #f1f5f9;
+    border: 1px solid #334155;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+}
+
+/* Etiquetas */
+body.dark #feedbackForm label {
+    color: #e2e8f0;
+}
+
+/* Campos de texto y select */
+body.dark #feedbackForm textarea,
+body.dark #feedbackForm select {
+    background-color: #334155;
+    color: #f1f5f9;
+    border-color: #475569;
+}
+body.dark #feedbackForm textarea::placeholder {
+    color: #94a3b8;
+}
+
+/* Botón enviar */
+body.dark #feedbackForm button {
+    background-color: #22c55e !important; /* verde elegante */
+    color: #f1f5f9;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+body.dark #feedbackForm button:hover {
+    background-color: #16a34a !important;
+}
+
+/* Mensaje de feedback */
+body.dark #feedbackMessage {
+    color: #4ade80 !important;
+}
+
+/* === SWITCH DE MODO OSCURO === */
+.checkbox {
+    opacity: 0;
+    position: absolute;
+}
+
+.checkbox-label {
+    background-color: #e2e8f0;
+    width: 52px;
+    height: 26px;
+    border-radius: 50px;
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 6px;
+    transition: background-color 0.3s ease;
+}
+
+.checkbox-label i {
+    font-size: 14px;
+}
+
+.checkbox-label .ball {
+    background-color: white;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    position: absolute;
+    left: 2px;
+    transition: transform 0.3s ease;
+}
+
+.checkbox:checked + .checkbox-label {
+    background-color: #2563eb;
+}
+
+.checkbox:checked + .checkbox-label .ball {
+    transform: translateX(26px);
+}

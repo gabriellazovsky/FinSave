@@ -8,6 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="index.css">
     <title>Historial de Feedbacks - FinSave</title>
+    <link rel="stylesheet" href="/consejo.css">
 </head>
 <body class="feedback-page">
     <header class="w-full bg-white shadow-sm">
@@ -16,6 +17,16 @@
                 <a href="feedback.html" class="hover:text-blue-600 font-semibold">← Volver a Feedback</a>
             </div>
             <h1 class="text-xl font-bold text-gray-800">Historial de Feedbacks</h1>
+            </div>
+            <div class="ml-4 relative group" title="Activa modo oscuro/claro">
+                <input type="checkbox" class="checkbox" id="checkbox">
+                <label for="checkbox" class="checkbox-label">
+                    <i class="fas fa-moon">☀️</i>
+                    <i class="fas fa-sun">🌙</i>
+                    <span class="ball"></span>
+                </label>
+                <span class="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 rounded bg-gray-800 text-white text-xs px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">Light / Dark Mode</span>
+            </div>
             <button class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors" id="logoutBtnHistorial">Cerrar Sesión</button>
         </nav>
     </header>
@@ -40,5 +51,6 @@
         </div>
 
     <script src="historial.js"></script>
+    <script src="/consejo.js"></script>
 </body>
 </html>

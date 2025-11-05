@@ -110,3 +110,132 @@ body.dark .checkbox-label {
 body.dark .checkbox-label .ball {
     background-color: #e2e8f0;
 }
+/* === MODO OSCURO GENERAL === */
+body.dark {
+    background-color: #0b1120 !important; /* fondo global oscuro */
+    color: #f8fafc !important;
+}
+
+/* === CABECERA === */
+body.dark header {
+    background-color: #1e293b !important;
+    color: #f8fafc !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+
+body.dark nav a {
+    color: #f8fafc !important;
+    transition: color 0.3s ease;
+}
+body.dark nav a:hover {
+    color: #60a5fa !important;
+}
+
+/* Botón azul */
+body.dark .bg-blue-400 {
+    background-color: #3b82f6 !important;
+}
+body.dark .bg-blue-400:hover {
+    background-color: #2563eb !important;
+}
+
+/* Botón cerrar sesión */
+body.dark #logoutBtnFeedback {
+    background-color: #b91c1c !important;
+}
+body.dark #logoutBtnFeedback:hover {
+    background-color: #dc2626 !important;
+}
+
+/* === CONTENEDOR DE FEEDBACK === */
+body.dark .feedback-container {
+    background-color: transparent !important;
+    color: #f1f5f9 !important;
+}
+
+/* === FORMULARIO === */
+body.dark #feedbackForm {
+    background-color: #1e293b !important; /* gris azulado oscuro */
+    border: 1px solid #334155 !important;
+    color: #f1f5f9 !important;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+}
+
+/* Título */
+body.dark .feedback-container h2 {
+    color: #f1f5f9 !important;
+}
+
+/* Etiquetas */
+body.dark #feedbackForm label {
+    color: #e2e8f0 !important;
+}
+
+/* Campos de texto */
+body.dark #comentario,
+body.dark #tipo {
+    background-color: #334155 !important;
+    color: #f8fafc !important;
+    border-color: #475569 !important;
+}
+body.dark #comentario::placeholder {
+    color: #94a3b8 !important;
+}
+
+/* Botón Enviar */
+body.dark #feedbackForm button {
+    background-color: #22c55e !important;
+    color: #f1f5f9 !important;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+body.dark #feedbackForm button:hover {
+    background-color: #16a34a !important;
+}
+
+/* Mensaje final */
+body.dark #feedbackMessage {
+    color: #4ade80 !important;
+}
+
+/* === SWITCH DARK MODE === */
+.checkbox {
+    opacity: 0;
+    position: absolute;
+}
+
+.checkbox-label {
+    background-color: #e2e8f0;
+    width: 52px;
+    height: 26px;
+    border-radius: 50px;
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 6px;
+    transition: background-color 0.3s ease;
+}
+
+.checkbox-label i {
+    font-size: 14px;
+}
+
+.checkbox-label .ball {
+    background-color: white;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    position: absolute;
+    left: 2px;
+    transition: transform 0.3s ease;
+}
+
+.checkbox:checked + .checkbox-label {
+    background-color: #2563eb;
+}
+
+.checkbox:checked + .checkbox-label .ball {
+    transform: translateX(26px);
+}

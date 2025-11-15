@@ -61,6 +61,15 @@ function setStepIndicatorStatus(step, status) {
 
 // Show simulated mail popup
 function showMailNotification(code, from = "serverfalsodecorreo") {
+
+
+    //....................AQUÍ SE ENVÍA EL CORREO DE VERDAD.........................
+    // .............................NO BORRAR.............................
+    //const email = document.getElementById('email').value;
+    //MailSender.sendMail(email, code);
+    //............................................................................
+
+
     mailContent.textContent = `Tu código es ${code} (válido 15 minutos).`;
     const header = mailNotification.querySelector('.mail-header strong');
     if (header) header.textContent = from;

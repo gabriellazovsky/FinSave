@@ -9,15 +9,15 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-const mailOptions = {
+const mailOptions = (email, verificationCode) => ({
   from: process.env.EMAIL_USER,
-  to: 'gabadiz18@gmail.com',
+  to: `${email}`,
   subject: 'Correo de prueba desde Node.js',
   text: 'Hola, este es un correo enviado automáticamente desde Node.js',
-  html: '<p>Hola, este es un <b>correo enviado automáticamente</b> desde Node.js</p>'
-};
+  html: `<p>Este es un <b>correo enviado automáticamente</b> desde Node.js. Tu código de verificación es: ${verificationCode}</p>`
+});
 
-transporter.sendMail(mailOptions, (error, info) => {
+transporter.sendMail(mailOptions(email, verificationCode), (error, info) => {
   if (error) {
     return console.log('Error al enviar el correo:', error);
   }

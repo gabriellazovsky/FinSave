@@ -1,3 +1,5 @@
+
+
 // Elementos DOM
 const stepWrapper = document.getElementById('stepWrapper');
 const indicators = document.querySelectorAll('.step-dot');
@@ -19,10 +21,13 @@ const goHomeBtn = document.getElementById("goHome");
 
 const stepText = document.getElementById('stepText');
 
+
 // Mail notification
 const mailNotification = document.getElementById('mailNotification');
 const mailContent = document.getElementById('mailContent');
 const closeMailBtn = document.getElementById('closeMail') || document.createElement('button');
+
+// Test email sending (remove in production)
 
 // Utility: show/hide status icons inside the input wrapper
 function showStatusIcon(input, valid) {
@@ -61,15 +66,6 @@ function setStepIndicatorStatus(step, status) {
 
 // Show simulated mail popup
 function showMailNotification(code, from = "serverfalsodecorreo") {
-
-
-    //....................AQUÍ SE ENVÍA EL CORREO DE VERDAD.........................
-    // .............................NO BORRAR.............................
-    //const email = document.getElementById('email').value;
-    //MailSender.sendMail(email, code);
-    //............................................................................
-
-
     mailContent.textContent = `Tu código es ${code} (válido 15 minutos).`;
     const header = mailNotification.querySelector('.mail-header strong');
     if (header) header.textContent = from;

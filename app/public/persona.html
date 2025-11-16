@@ -127,6 +127,28 @@
                 <button id="botonFiltro" class="btn btn-info border border-dark px-4 py-2 rounded shadow-sm"><i class="bi bi-filter mr-2"></i>Filtrar tabla</button>
                 <button class="btn btn-secondary" id="btnVerHistorial"><i class="bi bi-file-earmark-text mr-1"></i>Ver Historial</button>
             </div>
+            <div id="editModal" style="display:none; position:fixed; top:20%; left:50%; transform:translateX(-50%); background:#fff; border:1px solid #ccc; padding:20px; z-index:1000; width: 400px; max-width: 90%;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title mb-2">Editar Movimiento</h2>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editForm">
+                            <input type="hidden" id="editId">
+                            <input id="editTipo" class="form-control mb-2" placeholder="Tipo">
+                            <input id="editMonto" type="number" step="0.01" class="form-control mb-2" placeholder="Monto">
+                            <input id="editFecha" type="date" class="form-control mb-2">
+                            <input id="editDescripcion" class="form-control mb-2" placeholder="Descripción">
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary w-100">Guardar</button>
+                                <button type="button" id="cancelEdit" class="btn btn-secondary w-100">Cancelar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            
 
             <div id="montoFilterClass" class="filtrosOcultos mt-2">
                 Monto:
@@ -157,7 +179,7 @@
                 <th>Monto</th>
                 <th>Fecha</th>
                 <th>Descripción</th>
-                <th>Eliminar</th>
+                <th>Acciones</th>
             </tr>
             </thead>
             <tbody id="tablaCuerpo"></tbody>

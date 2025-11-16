@@ -178,6 +178,30 @@ app.get("/historial-mio", autenticarToken, async (req, res) => {
     res.json(movimientos);
 });
 
+app.put("/movimientos/:id", autenticarToken, async (req, res) => {
+    try {
+        const movimiento = await Movimiento.findById(req.params.id);
+        if (!movimiento) return res.status(404).json({ message: "Movimiento no encontrado" });
+
+        // Verifica que el movimiento pertenezca al usuario
+        const cuenta = await Cuenta.findOne({ _id: movimiento.idCuenta, idCliente: req.user.id });
+        if (!cuenta) return res.status(403).json({ message: "No autorizado" });
+
+        // Actualiza los campos permitidos
+        const { tipo, monto, descripcion, fecha } = req.body;
+        if (tipo !== undefined) movimiento.tipo = tipo;
+        if (monto !== undefined) movimiento.monto = monto;
+        if (descripcion !== undefined) movimiento.descripcion = descripcion;
+        if (fecha !== undefined) movimiento.fecha = fecha;
+
+        await movimiento.save();
+        res.json({ ok: true, message: "Movimiento actualizado", movimiento });
+    } catch (err) {
+        console.error("Error editando movimiento:", err);
+        res.status(500).json({ message: "Error editando movimiento" });
+    }
+});
+
 app.delete("/movimientos/:id", autenticarToken, async (req, res) => {
     try {
         const movimiento = await Movimiento.findById(req.params.id);

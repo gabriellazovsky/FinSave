@@ -180,6 +180,7 @@ async function verHistorial() {
                 <td>${new Date(m.fecha).toLocaleDateString()}</td>
                 <td>${m.descripcion || ""}</td>
                 <td>
+                    <button class="btn-editar" data-id="${m._id}">✏️</button>
                     <button class="btn-eliminar" data-id="${m._id}">❌</button>
                 </td>
             `;
@@ -207,6 +208,58 @@ document.addEventListener('click', async (e) => {
         await verHistorial(); // Recarga la tabla
     }
 });
+
+// Abrir modal al hacer click en "Editar"
+document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('btn-editar')) {
+        const id = e.target.dataset.id;
+        const movimiento = Array.from(document.querySelectorAll("#tablaCuerpo tr"))
+            .map(tr => ({
+                id: tr.querySelector('.btn-editar').dataset.id,
+                tipo: tr.cells[0].textContent,
+                monto: parseFloat(tr.cells[1].textContent.replace('$','')),
+                fecha: tr.cells[2].textContent,
+                descripcion: tr.cells[3].textContent
+            }))
+            .find(m => m.id === id);
+        if (!movimiento) return;
+        document.getElementById('editId').value = movimiento.id;
+        document.getElementById('editTipo').value = movimiento.tipo;
+        document.getElementById('editMonto').value = movimiento.monto;
+        document.getElementById('editFecha').value = movimiento.fecha.split('/').reverse().join('-'); // formato yyyy-mm-dd
+        document.getElementById('editDescripcion').value = movimiento.descripcion;
+        document.getElementById('editModal').style.display = 'block';
+    }
+});
+
+// Guardar cambios
+document.getElementById('editForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = document.getElementById('editId').value;
+    const tipo = document.getElementById('editTipo').value;
+    const monto = parseFloat(document.getElementById('editMonto').value);
+    const fecha = document.getElementById('editFecha').value;
+    const descripcion = document.getElementById('editDescripcion').value;
+
+    const res = await fetch(`/movimientos/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', ...authHeaders() },
+        body: JSON.stringify({ tipo, monto, fecha, descripcion })
+    });
+    if (!res.ok) {
+        alert('Error al editar movimiento');
+        return;
+    }
+    document.getElementById('editModal').style.display = 'none';
+    await verHistorial();
+});
+
+// Cancelar edición
+document.getElementById('cancelEdit').addEventListener('click', () => {
+    document.getElementById('editModal').style.display = 'none';
+});
+
+
 
 
 // ---------------- Events: nav/logout ----------------

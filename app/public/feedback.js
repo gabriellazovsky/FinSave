@@ -1,63 +1,60 @@
-
 const feedbackForm = document.getElementById('feedbackForm');
 const feedbackMessage = document.getElementById('feedbackMessage');
 
-// Asumo que el botón de cerrar sesión en feedback.html tiene el ID 'logoutBtnHistorial' o 'logoutBtnFeedback'
 const logoutBtnFeedback = document.getElementById('logoutBtnHistorial') || document.getElementById('logoutBtnFeedback'); 
 
-// Redirección si no hay sesión
 const token = localStorage.getItem('token');
 if (!token) {
     window.location.href = "persona.html";
 }
 
-// Escucha el envío del formulario
+// 🔥 Obtener userId desde el token (MISMO sistema que ingresos/gastos)
+function getUserIdFromToken(token) {
+    try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        return payload.id || payload.userId || payload.uid;
+    } catch {
+        return null;
+    }
+}
+
+const userId = getUserIdFromToken(token);
+
+if (!userId) {
+    window.location.href = "persona.html";
+}
+
+const key = `feedbacks_${userId}`;
+
+// Guardar feedback
 if (feedbackForm) {
     feedbackForm.addEventListener('submit', (e) => {
         e.preventDefault();
 
-        // 1. Recoger datos del formulario
         const comentario = document.getElementById('comentario').value.trim();
         const tipo = document.getElementById('tipo').value;
-        
-        // Validación mínima
         if (!comentario || !tipo) return;
 
-        // 2. Crear el objeto de feedback
-        const nuevoFeedback = {
-            comentario: comentario, // El mensaje
-            tipo: tipo,             // El tipo de feedback
-            fecha: new Date().toISOString(),
-        };
+        const feedbacks = JSON.parse(localStorage.getItem(key)) || [];
 
-        // 3. Obtener el historial actual y añadir el nuevo feedback
-        let feedbacks = [];
-        try {
-            feedbacks = JSON.parse(localStorage.getItem('feedbacks')) || []; 
-        } catch (error) {
-            console.error("Error al parsear feedbacks de localStorage:", error);
-        }
-        
-        feedbacks.push(nuevoFeedback);
+        feedbacks.push({
+            comentario,
+            tipo,
+            fecha: new Date().toISOString()
+        });
 
-        // 4. Guardar el array actualizado en localStorage
-        localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
+        localStorage.setItem(key, JSON.stringify(feedbacks));
 
-        // 5. Limpiar formulario 
         feedbackForm.reset();
-        feedbackMessage.textContent = '¡Gracias! Tu Feedback ha sido enviado y guardado correctamente.';
+        feedbackMessage.textContent = "¡Gracias! Tu Feedback ha sido enviado.";
         feedbackMessage.style.display = 'block';
-    
-        setTimeout(() => {
-            feedbackMessage.style.display = 'none';
-        
-        }, 5000);
+
+        setTimeout(() => feedbackMessage.style.display = 'none', 5000);
     });
 }
 
-// Logout del formulario
 if (logoutBtnFeedback) {
-    logoutBtnFeedback.addEventListener('click', function() {
+    logoutBtnFeedback.addEventListener('click', () => {
         localStorage.removeItem('token');
         window.location.href = "persona.html";
     });

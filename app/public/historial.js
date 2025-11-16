@@ -1,28 +1,36 @@
-// historial.js (Modificado)
-
 const listaFeedbacks = document.getElementById('lista-feedbacks');
 const loadingDiv = document.getElementById('loading');
 const errorDiv = document.getElementById('errorMessage');
 const logoutBtn = document.getElementById('logoutBtnHistorial');
 
-// Redirección si no hay sesión
 const token = localStorage.getItem('token');
-if (!token) {
-    window.location.href = "persona.html";
+if (!token) window.location.href = "persona.html";
+
+function getUserIdFromToken(token) {
+    try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        return payload.id || payload.userId || payload.uid;
+    } catch {
+        return null;
+    }
 }
 
-// Cargar historial al abrir la página
+const userId = getUserIdFromToken(token);
+if (!userId) window.location.href = "persona.html";
+
+const key = `feedbacks_${userId}`;
+
+
 document.addEventListener('DOMContentLoaded', function() {
     cargarHistorial();
 });
 
-// Función para cargar feedbacks del localStorage
 function cargarHistorial() {
     loadingDiv.style.display = 'block';
     errorDiv.style.display = 'none';
 
     try {
-        const feedbacks = JSON.parse(localStorage.getItem('feedbacks')) || [];
+        const feedbacks = JSON.parse(localStorage.getItem(key)) || [];
         mostrarFeedbacks(feedbacks);
     } catch (err) {
         mostrarError('Error al cargar el historial: ' + err.message);
@@ -31,19 +39,16 @@ function cargarHistorial() {
     }
 }
 
-// Función para mostrar los feedbacks en la tabla
 function mostrarFeedbacks(feedbacks) {
-    // Mostrar el más reciente primero
     const reversedFeedbacks = [...feedbacks].reverse(); 
-    listaFeedbacks.innerHTML = ''; // Limpiar el tbody
+    listaFeedbacks.innerHTML = '';
 
     if (reversedFeedbacks.length === 0) {
-        // Si no hay datos, mostramos un mensaje en lugar de la tabla
-        const parentTable = listaFeedbacks.parentElement; // El <table>
-        const container = parentTable.parentElement; // El div.feedback-container
+        const parentTable = listaFeedbacks.parentElement;
+        const container = parentTable.parentElement;
 
-        // Ocultar la tabla y mostrar el mensaje de vacío
-        parentTable.style.display = 'none'; 
+        parentTable.style.display = 'none';
+
         container.innerHTML += `
             <div id="noFeedbacksMessage" class="text-center text-gray-500 py-8">
                 <i class="bi bi-inbox display-4"></i>
@@ -52,13 +57,11 @@ function mostrarFeedbacks(feedbacks) {
         `;
         return;
     }
-    
-    // Si hay datos, nos aseguramos de que no aparezca el mensaje de vacío
+
     const noFeedbacksMessage = document.getElementById('noFeedbacksMessage');
     if(noFeedbacksMessage) noFeedbacksMessage.remove();
-    listaFeedbacks.parentElement.style.display = 'table'; // Mostrar la tabla
+    listaFeedbacks.parentElement.style.display = 'table';
 
-    // Generar las filas de la tabla
     listaFeedbacks.innerHTML = reversedFeedbacks.map(feedback => `
         <tr>
             <td>${feedback.tipo || ''}</td>
@@ -68,13 +71,11 @@ function mostrarFeedbacks(feedbacks) {
     `).join('');
 }
 
-// Función para mostrar errores
 function mostrarError(mensaje) {
     errorDiv.textContent = mensaje;
     errorDiv.style.display = 'block';
 }
 
-// Logout
 logoutBtn.addEventListener('click', function() {
     localStorage.removeItem('token');
     window.location.href = "persona.html";

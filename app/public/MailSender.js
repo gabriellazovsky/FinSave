@@ -22,3 +22,6 @@ function sendEmail(email, verificationCode) {
 
   return transporter.sendMail(mailOptions)
 }
+
+
+module.exports = sendEmail;

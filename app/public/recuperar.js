@@ -1,5 +1,3 @@
-
-
 // Elementos DOM
 const stepWrapper = document.getElementById('stepWrapper');
 const indicators = document.querySelectorAll('.step-dot');
@@ -20,7 +18,6 @@ const backStepBtnSmall = document.getElementById("backStepBtnSmall");
 const goHomeBtn = document.getElementById("goHome");
 
 const stepText = document.getElementById('stepText');
-
 
 // Mail notification
 const mailNotification = document.getElementById('mailNotification');
@@ -66,7 +63,7 @@ function setStepIndicatorStatus(step, status) {
 
 // Show simulated mail popup
 function showMailNotification(code, from = "serverfalsodecorreo") {
-    mailContent.textContent = `Tu código es ${code} (válido 15 minutos).`;
+    mailContent.textContent = `Tu código ( ${code}) se acaba de enviar, se desactivará en 15 minutos.`;
     const header = mailNotification.querySelector('.mail-header strong');
     if (header) header.textContent = from;
     mailNotification.classList.remove('hidden');

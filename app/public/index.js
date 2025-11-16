@@ -175,11 +175,14 @@ async function verHistorial() {
         movimientos.forEach(m => {
             const tr = document.createElement("tr");
             tr.innerHTML = `
-        <td>${m.tipo}</td>
-        <td>$${Number(m.monto).toFixed(2)}</td>
-        <td>${new Date(m.fecha).toLocaleDateString()}</td>
-        <td>${m.descripcion || ""}</td>
-      `;
+                <td>${m.tipo}</td>
+                <td>$${Number(m.monto).toFixed(2)}</td>
+                <td>${new Date(m.fecha).toLocaleDateString()}</td>
+                <td>${m.descripcion || ""}</td>
+                <td>
+                    <button class="btn-eliminar" data-id="${m._id}">❌</button>
+                </td>
+            `;
             tbody.appendChild(tr);
         });
         updateChartFromMovements(movimientos);
@@ -187,6 +190,23 @@ async function verHistorial() {
         alert(err.message || 'Error al cargar historial');
     }
 }
+
+// Evento para eliminar movimiento
+document.addEventListener('click', async (e) => {
+    if (e.target.classList.contains('btn-eliminar')) {
+        const id = e.target.dataset.id;
+        if (!confirm('¿Seguro que quieres eliminar este movimiento?')) return;
+        const res = await fetch(`/movimientos/${id}`, {
+            method: 'DELETE',
+            headers: { ...authHeaders() }
+        });
+        if (!res.ok) {
+            alert('Error al eliminar movimiento');
+            return;
+        }
+        await verHistorial(); // Recarga la tabla
+    }
+});
 
 
 // ---------------- Events: nav/logout ----------------

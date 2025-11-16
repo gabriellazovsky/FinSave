@@ -178,6 +178,23 @@ app.get("/historial-mio", autenticarToken, async (req, res) => {
     res.json(movimientos);
 });
 
+app.delete("/movimientos/:id", autenticarToken, async (req, res) => {
+    try {
+        const movimiento = await Movimiento.findById(req.params.id);
+        if (!movimiento) return res.status(404).json({ message: "Movimiento no encontrado" });
+
+        // Verifica que el movimiento pertenezca al usuario
+        const cuenta = await Cuenta.findOne({ _id: movimiento.idCuenta, idCliente: req.user.id });
+        if (!cuenta) return res.status(403).json({ message: "No autorizado" });
+
+        await movimiento.deleteOne();
+        res.json({ ok: true, message: "Movimiento eliminado" });
+    } catch (err) {
+        console.error("Error eliminando movimiento:", err);
+        res.status(500).json({ message: "Error eliminando movimiento" });
+    }
+});
+
 /* ------------ OLVIDE CONTRASEÑA / 2FA ------------ */
 const resetTokens = {}; // temporal en memoria
 

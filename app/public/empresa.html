@@ -44,11 +44,18 @@
         <h1 class="text-xl font-bold text-gray-800 dark:text-gray-100">Empresa</h1>
 
         <div class="header-actions">
-            <label title="Modo oscuro" style="display:flex;align-items:center;gap:.5rem;">
-                <input id="checkbox" type="checkbox" style="transform:scale(1.1)"/>
-                <span class="text-sm">Dark</span>
-            </label>
+            <div class="ml-4 relative group" title="Activa modo oscuro/claro">
+                <input type="checkbox" class="checkbox" id="checkbox">
+                <label for="checkbox" class="checkbox-label">
+                    <i class="fas fa-moon">☀️</i>
+                    <i class="fas fa-sun">🌙</i>
+                    <span class="ball"></span>
+                </label>
 
+                <span class="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 rounded bg-gray-800 text-white text-xs px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">Light / Dark Mode</span>
+            </div>
+
+            <button id="exportPdf" class="bg-blue-600 text-white px-3 py-2 rounded-md hover:bg-blue-700 ml-2">Exportar PDF</button>
             <button id="clearAll" class="bg-red-600 text-white px-3 py-2 rounded-md hover:bg-red-700">Eliminar Todo</button>
 
             <button id="logoutBtnConsejo" class="bg-gray-800 text-white px-3 py-2 rounded-md hover:bg-gray-900 ml-2">Cerrar Sesión</button>
@@ -71,7 +78,8 @@
         <div id="dashboard"></div>
     </main>
 </div>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
     /* ============================
        USER / TOKEN (misma lógica que feedbacks)
@@ -181,6 +189,28 @@
         saveDashboard();
         return widget;
     }
+    const exportPdfBtn = document.getElementById('exportPdf');
+    exportPdfBtn.addEventListener('click', async () => {
+        const dashboardElem = document.getElementById('dashboard');
+
+        // Capturamos el dashboard como imagen
+        const canvas = await html2canvas(dashboardElem, { scale: 2 });
+        const imgData = canvas.toDataURL('image/png');
+
+        // Crear PDF
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'pt', 'a4');
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+
+        // Ajustar la imagen al ancho de la página
+        const imgProps = pdf.getImageProperties(imgData);
+        const ratio = imgProps.width / imgProps.height;
+        const pdfHeight = pageWidth / ratio;
+
+        pdf.addImage(imgData, 'PNG', 0, 0, pageWidth, pdfHeight);
+        pdf.save('dashboard.pdf');
+    });
 
     /* ============================
        INIT WIDGET: drag, resize, specific bindings (charts, table)

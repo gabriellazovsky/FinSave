@@ -1,25 +1,400 @@
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="index.css">
-<link rel="stylesheet" href="/consejo.css">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Dashboard Fintech Profesional - Empresa</title>
 
-<header class="w-full bg-white shadow-sm">
+    <!-- UI libs (opcional) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Tu CSS de consejos (modo oscuro) y CSS extra -->
+    <link rel="stylesheet" href="/consejo.css">
+    <link rel="stylesheet" href="index.css">
+
+    <style>
+        /* Widget base */
+        .widget { background-color: white; border-radius:8px; padding:1rem; box-shadow:0 6px 20px rgba(0,0,0,0.08); position:relative; cursor:grab; display:flex; flex-direction:column; transition: all .15s; }
+        .widget.dragging { opacity:0.5; transform: scale(.995); }
+        .delete-btn { position:absolute; top:8px; right:8px; width:30px; height:30px; border-radius:50%; border:none; background:#ef4444; color:white; cursor:pointer; }
+        .resize-handle { width:12px; height:12px; background:#2563eb; position:absolute; bottom:8px; right:8px; cursor:se-resize; border-radius:2px; }
+        .editable { border-bottom:1px dotted #2563eb; cursor:text; }
+
+        /* Grid layout */
+        #dashboard { display:grid; grid-template-columns: repeat(1, minmax(0,1fr)); gap:16px; }
+        @media(min-width:768px){ #dashboard { grid-template-columns: repeat(3, minmax(0,1fr)); } }
+
+        /* placeholder during drag */
+        .placeholder { border:2px dashed #2563eb; border-radius:10px; min-height:120px; }
+
+        /* small helpers */
+        .btn-add { background:#2563eb;color:white;padding:.5rem 1rem;border-radius:8px;border:none;cursor:pointer }
+        .btn-add:hover{ background:#1e4fd0 }
+        .header-actions { display:flex; gap:.5rem; align-items:center; }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+<!-- HEADER -->
+<header class="w-full bg-white dark:bg-gray-800 shadow-sm">
     <nav class="container mx-auto flex justify-between items-center px-4 py-3">
         <a href="persona.html" class="hover:text-blue-600 font-semibold">← Volver al Dashboard</a>
-        <h1 class="text-xl font-bold text-gray-800">Empresa</h1>
-        <div class="ml-4 relative group" title="Activa modo oscuro/claro">
-            <input type="checkbox" class="checkbox" id="checkbox">
-            <label for="checkbox" class="checkbox-label">
-                <i class="fas fa-moon">☀️</i>
-                <i class="fas fa-sun">🌙</i>
-                <span class="ball"></span>
+        <h1 class="text-xl font-bold text-gray-800 dark:text-gray-100">Empresa</h1>
+
+        <div class="header-actions">
+            <label title="Modo oscuro" style="display:flex;align-items:center;gap:.5rem;">
+                <input id="checkbox" type="checkbox" style="transform:scale(1.1)"/>
+                <span class="text-sm">Dark</span>
             </label>
-            <span class="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 rounded bg-gray-800 text-white text-xs px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">Light / Dark Mode</span>
+
+            <button id="clearAll" class="bg-red-600 text-white px-3 py-2 rounded-md hover:bg-red-700">Eliminar Todo</button>
+
+            <button id="logoutBtnConsejo" class="bg-gray-800 text-white px-3 py-2 rounded-md hover:bg-gray-900 ml-2">Cerrar Sesión</button>
         </div>
-        <button id="logoutBtnConsejo" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors">
-            Cerrar Sesión
-        </button>
     </nav>
 </header>
-<h1>Bienvenido a la pagina de empresa</h1>
-<script src="/consejo.js" defer></script>
+
+<div class="flex">
+    <!-- SIDEBAR -->
+    <aside class="w-64 bg-white dark:bg-gray-800 shadow-md min-h-screen p-4">
+        <h2 class="text-lg font-bold mb-4">Widgets</h2>
+        <button class="w-full mb-2 btn-add" data-type="chart" onclick="addWidget('chart')">Agregar Gráfico</button>
+        <button class="w-full mb-2 btn-add" data-type="table" onclick="addWidget('table')">Agregar Tabla</button>
+        <button class="w-full mb-2 btn-add" data-type="text" onclick="addWidget('text')">Agregar Texto</button>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="flex-1 p-6">
+        <h2 class="text-2xl font-bold mb-6">Dashboard Profesional</h2>
+        <div id="dashboard"></div>
+    </main>
+</div>
+
+<script>
+    /* ============================
+       USER / TOKEN (misma lógica que feedbacks)
+       ============================ */
+    const token = localStorage.getItem('token');
+    if (!token) {
+        // si no hay token, redirigir (mismo comportamiento que feedbacks)
+        window.location.href = "persona.html";
+    }
+    function getUserIdFromToken(token) {
+        try {
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            return payload.id || payload.userId || payload.uid || null;
+        } catch (e) {
+            return null;
+        }
+    }
+    const userId = getUserIdFromToken(token);
+    if (!userId) { window.location.href = "persona.html"; }
+
+    const storageKey = `dashboardWidgets_${userId}`;
+    const darkKey = `darkMode_${userId}`;
+
+    /* ============================
+       ELEMENTS & STATE
+       ============================ */
+    const dashboard = document.getElementById('dashboard');
+    const checkbox = document.getElementById('checkbox');
+    const clearAllBtn = document.getElementById('clearAll');
+    const logoutBtn = document.getElementById('logoutBtnConsejo');
+
+    let draggingElem = null;
+    let resizeElem = null;
+    let startX=0, startY=0, startW=0, startH=0;
+
+    /* ============================
+       DARK MODE (per-user)
+       ============================ */
+    checkbox.addEventListener('change', () => {
+        document.body.classList.toggle('dark', checkbox.checked);
+        localStorage.setItem(darkKey, checkbox.checked ? 'true' : 'false');
+    });
+    if (localStorage.getItem(darkKey) === 'true') {
+        checkbox.checked = true;
+        document.body.classList.add('dark');
+    }
+
+    /* ============================
+       LOGOUT
+       ============================ */
+    logoutBtn.addEventListener('click', () => {
+        localStorage.removeItem('token');
+        window.location.href = "persona.html";
+    });
+
+    /* ============================
+       ADD WIDGET (chart / table / text)
+       ============================ */
+    function addWidget(type, saved = null) {
+        const widget = document.createElement('div');
+        widget.className = 'widget';
+        widget.draggable = true;
+        widget.dataset.type = type;
+
+        // delete button (always add, so saved html doesn't have to include listeners)
+        const del = document.createElement('button');
+        del.className = 'delete-btn';
+        del.title = 'Eliminar widget';
+        del.innerHTML = '×';
+        del.addEventListener('click', () => { widget.remove(); saveDashboard(); });
+        widget.appendChild(del);
+
+        // content
+        if (!saved) {
+            if (type === 'chart') {
+                widget.innerHTML += `
+        <h3 class="editable" contenteditable="true">Gráfico de Ingresos</h3>
+        <canvas class="chart-canvas" style="height:220px"></canvas>
+        <input class="chart-data-input form-control mt-2" placeholder="Valores separados por comas (ej: 10,20,30)"/>
+        <div class="resize-handle" title="Redimensionar"></div>
+      `;
+            } else if (type === 'table') {
+                widget.innerHTML += `
+        <h3 class="editable" contenteditable="true">Clientes</h3>
+        <input class="table-search form-control mb-2" placeholder="Buscar..." />
+        <table class="table-auto w-full table-fintech" contenteditable="true">
+          <thead><tr><th>Cliente</th><th>Saldo</th></tr></thead>
+          <tbody><tr><td>Juan</td><td>$1200</td></tr></tbody>
+        </table>
+        <button class="btn btn-sm btn-success mt-2 add-row">Agregar fila</button>
+        <div class="resize-handle" title="Redimensionar"></div>
+      `;
+            } else {
+                widget.innerHTML += `
+        <h3 class="editable" contenteditable="true">Notas</h3>
+        <textarea class="form-control" rows="4">Escribe tus notas aquí...</textarea>
+        <div class="resize-handle" title="Redimensionar"></div>
+      `;
+            }
+        } else {
+            // if saved content provided, use it
+            widget.innerHTML += saved;
+        }
+
+        dashboard.appendChild(widget);
+        initWidget(widget);
+        saveDashboard();
+        return widget;
+    }
+
+    /* ============================
+       INIT WIDGET: drag, resize, specific bindings (charts, table)
+       ============================ */
+    function initWidget(widget) {
+        // drag events
+        widget.addEventListener('dragstart', (e) => {
+            draggingElem = widget;
+            widget.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        });
+        widget.addEventListener('dragend', () => {
+            widget.classList.remove('dragging');
+            draggingElem = null;
+            // remove placeholder if any
+            const ph = document.querySelector('.placeholder'); if (ph) ph.remove();
+            saveDashboard();
+        });
+
+        // drop target logic on dashboard is global (see below)
+
+        // resize
+        const handle = widget.querySelector('.resize-handle');
+        if (handle) {
+            handle.addEventListener('mousedown', (e) => {
+                resizeElem = widget;
+                startX = e.clientX; startY = e.clientY;
+                startW = widget.offsetWidth; startH = widget.offsetHeight;
+                document.addEventListener('mousemove', onResize);
+                document.addEventListener('mouseup', stopResize);
+                e.preventDefault();
+            });
+        }
+
+        // chart: init Chart.js if canvas exists
+        const canvas = widget.querySelector('.chart-canvas');
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+            // default data
+            let values = [12000,15000,14000,16000];
+            const input = widget.querySelector('.chart-data-input');
+            if (input && input.value) {
+                values = input.value.split(',').map(v => parseFloat(v.trim()) || 0);
+            }
+            // create chart instance and save reference on element
+            const chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: values.map((_,i)=>`P${i+1}`),
+                    datasets: [{ label: 'Dataset', data: values, borderColor: 'rgba(59,130,246,1)', backgroundColor:'rgba(59,130,246,0.12)', fill:true }]
+                },
+                options: { maintainAspectRatio: false, responsive: true }
+            });
+            // link input: update chart when input changes
+            if (input) {
+                input.addEventListener('input', (e) => {
+                    const vals = e.target.value.split(',').map(v => parseFloat(v.trim()) || 0);
+                    chart.data.labels = vals.map((_,i)=>`P${i+1}`);
+                    chart.data.datasets[0].data = vals;
+                    chart.update();
+                    saveDashboard();
+                });
+            }
+            // store chart instance for potential future use
+            widget._chart = chart;
+        }
+
+        // table row add
+        const addRowBtn = widget.querySelector('.add-row');
+        if (addRowBtn) {
+            addRowBtn.addEventListener('click', (e) => {
+                const table = widget.querySelector('table tbody') || widget.querySelector('table');
+                const tr = document.createElement('tr');
+                tr.innerHTML = '<td>Nuevo</td><td>0</td>';
+                table.appendChild(tr);
+                saveDashboard();
+            });
+        }
+
+        // table search
+        const search = widget.querySelector('.table-search');
+        if (search) {
+            search.addEventListener('input', (e) => {
+                const q = e.target.value.toLowerCase();
+                const rows = widget.querySelectorAll('table tbody tr');
+                rows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(q) ? '' : 'none';
+                });
+            });
+        }
+
+        // contenteditable changes -> save on blur
+        widget.querySelectorAll('[contenteditable]').forEach(el=>{
+            el.addEventListener('blur', saveDashboard);
+        });
+        // textarea changes
+        widget.querySelectorAll('textarea').forEach(ta=>{
+            ta.addEventListener('change', saveDashboard);
+        });
+
+        // ensure delete button inside saved html works (some saved html could include its own .delete-btn)
+        const del = widget.querySelector('.delete-btn');
+        if (del) {
+            del.addEventListener('click', () => {
+                widget.remove();
+                saveDashboard();
+            });
+        }
+    }
+
+    /* ============================
+       DASHBOARD dragover/drop handling (placeholder insertion)
+       ============================ */
+    dashboard.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        const dragging = document.querySelector('.dragging');
+        if (!dragging) return;
+
+        const widgets = [...dashboard.querySelectorAll('.widget:not(.dragging)')];
+        let next = widgets.find(w => e.clientY <= w.getBoundingClientRect().top + w.offsetHeight / 2);
+
+        // create placeholder if doesn't exist
+        let ph = document.querySelector('.placeholder');
+        if (!ph) {
+            ph = document.createElement('div');
+            ph.className = 'placeholder';
+        }
+        ph.style.minHeight = dragging.offsetHeight + 'px';
+
+        if (!next) dashboard.appendChild(ph);
+        else dashboard.insertBefore(ph, next);
+    });
+
+    dashboard.addEventListener('drop', (e) => {
+        e.preventDefault();
+        const ph = document.querySelector('.placeholder');
+        if (!draggingElem) return;
+        if (ph) {
+            dashboard.insertBefore(draggingElem, ph);
+            ph.remove();
+        }
+        saveDashboard();
+    });
+
+    /* ============================
+       RESIZE handlers
+       ============================ */
+    function onResize(e) {
+        if (!resizeElem) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        resizeElem.style.width = (startW + dx) + 'px';
+        resizeElem.style.height = (startH + dy) + 'px';
+    }
+    function stopResize() {
+        if (resizeElem) {
+            resizeElem = null;
+            document.removeEventListener('mousemove', onResize);
+            document.removeEventListener('mouseup', stopResize);
+            saveDashboard();
+        }
+    }
+
+    /* ============================
+       SAVE / LOAD (per user)
+       ============================ */
+    function saveDashboard() {
+        const arr = [];
+        Array.from(dashboard.children).forEach(w => {
+            // avoid saving temporary placeholder
+            if (w.classList.contains('placeholder')) return;
+            arr.push({
+                type: w.dataset.type,
+                html: w.innerHTML,
+                width: w.style.width || '',
+                height: w.style.height || ''
+            });
+        });
+        localStorage.setItem(storageKey, JSON.stringify(arr));
+    }
+
+    function loadDashboard() {
+        const raw = localStorage.getItem(storageKey);
+        if (!raw) return;
+        try {
+            const arr = JSON.parse(raw);
+            // clear current
+            dashboard.innerHTML = '';
+            arr.forEach(item => {
+                addWidget(item.type, item.html);
+                const added = dashboard.lastElementChild;
+                if (item.width) added.style.width = item.width;
+                if (item.height) added.style.height = item.height;
+            });
+        } catch (e) {
+            console.error('Error cargando dashboard:', e);
+        }
+    }
+
+    /* ============================
+       CLEAR ALL (per user)
+       ============================ */
+    clearAllBtn.addEventListener('click', () => {
+        if (!confirm('¿Seguro que quieres eliminar todos los widgets de tu dashboard?')) return;
+        dashboard.innerHTML = '';
+        localStorage.removeItem(storageKey);
+    });
+
+    /* ============================
+       INITIAL LOAD
+       ============================ */
+    loadDashboard();
+
+</script>
+</body>
+</html>

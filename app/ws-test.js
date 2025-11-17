@@ -7,6 +7,7 @@ const URL = 'wss://ws.twelvedata.com/v1/quotes/price?apikey=72a8048c51e94265bee9
 
 const ws = new WebSocket(URL);
 
+
 ws.on('open', () => {
     console.log('Connected.');
     const subscribeMsg = {
@@ -36,5 +37,3 @@ ws.on('close', (code, reason) => {
 ws.on('error', (err) => {
     console.error('Socket error', err);
 });
-
-

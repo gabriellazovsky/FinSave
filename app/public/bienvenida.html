@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>FinSave - Bienvenida</title>
+
+<!-- Fuente Inter -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --primary-blue: #3F6FF8;
+  --primary-blue-dark: #315BE0;
+  --text-dark: #222;
+  --card-light: #FFFFFF;
+  --radius: 18px;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #F4F6FA;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.welcome-card {
+  background: var(--card-light);
+  width: 600px;
+  text-align: center;
+  padding: 60px 70px;
+  border-radius: var(--radius);
+  box-shadow: 0 10px 35px rgba(0,0,0,0.12);
+}
+
+.icon-box {
+  width: 100px;
+  height: 100px;
+  background: var(--primary-blue);
+  border-radius: 22px;
+  margin: 0 auto 35px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.icon-box span {
+  color: white;
+  font-size: 55px;
+  font-weight: bold;
+}
+
+h1 {
+  margin: 0 0 20px;
+  font-size: 46px;
+  color: var(--text-dark);
+}
+
+p {
+  font-size: 20px;
+  opacity: 0.8;
+  margin-bottom: 40px;
+}
+
+button {
+  background: var(--primary-blue);
+  color: white;
+  padding: 18px 60px;
+  font-size: 20px;
+  font-weight: 600;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+button:hover {
+  background: var(--primary-blue-dark);
+  transform: scale(1.03);
+}
+</style>
+</head>
+
+<body>
+
+<div class="welcome-card">
+  <div class="icon-box">
+    <span>$</span>
+  </div>
+
+  <h1 id="welcome">¡Hola!</h1>
+
+  <p>
+    Bienvenido a FinSave. Estamos listos para ayudarte a gestionar tus finanzas de forma sencilla, inteligente y clara.
+  </p>
+
+  <button onclick="continuar()">Continuar</button>
+</div>
+
+<script>
+  // El token ya lo guardas al iniciar sesión
+  const token = localStorage.getItem("auth_token");
+
+  if (token) {
+    try {
+      const json = decodeURIComponent(escape(atob(token)));
+      const data = JSON.parse(json);
+
+      if (data.username) {
+        document.getElementById("welcome").textContent =
+          "¡Hola, " + data.username + "!";
+      }
+    } catch (e) {
+      console.error("Error decodificando token", e);
+    }
+  }
+
+  function continuar() {
+    window.location.href = "index.html";
+  }
+</script>
+
+</body>
+</html>

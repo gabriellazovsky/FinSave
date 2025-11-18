@@ -1,3 +1,65 @@
+// ---------------- INTERNATIONALIZATION (i18n) ----------------
+const translations = {
+    es: {
+        welcome: "Bienvenido, ",
+        profile: "Perfil",
+        logout: "Cerrar sesión",
+        email: "Correo",
+        memberSince: "Miembro desde",
+        save: "Guardar",
+        editProfile: "Editar perfil",
+        settings: "Configuración",
+        language: "Idioma",
+        currency: "Moneda",
+    },
+    en: {
+        welcome: "Welcome, ",
+        profile: "Profile",
+        logout: "Sign Out",
+        email: "Email",
+        memberSince: "Member since",
+        save: "Save",
+        editProfile: "Edit profile",
+        settings: "Settings",
+        language: "Language",
+        currency: "Currency",
+    }
+};
+
+let currentLang = localStorage.getItem("lang") || "es";
+
+// Cambiar idioma
+function setLanguage(lang) {
+    currentLang = lang;
+    localStorage.setItem("lang", lang);
+    translatePage();
+}
+
+// Reemplaza texto según data-i18n="key"
+function translatePage() {
+    document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        if (translations[currentLang][key]) {
+            el.textContent = translations[currentLang][key];
+        }
+    });
+}
+
+// ---------------- Currency System ----------------
+let currentCurrency = localStorage.getItem("currency") || "EUR";
+
+function formatCurrency(amount) {
+    const symbols = { EUR: "€", USD: "$", GBP: "£" };
+    return `${symbols[currentCurrency]}${Number(amount).toFixed(2)}`;
+}
+
+function setCurrency(cur) {
+    currentCurrency = cur;
+    localStorage.setItem("currency", cur);
+    verHistorial(); // refresca tabla y gráfico
+}
+
+
 // ---------------- Helpers ----------------
 const getToken = () => localStorage.getItem("token");
 const setToken = (t) => localStorage.setItem("token", t);
@@ -605,6 +667,32 @@ function mostrarBienvenida() {
     }
 }
 
+// ---------------- PROFILE DATA ----------------
+function loadUserProfile() {
+    const name = localStorage.getItem("userName") || "Usuario";
+    const email = localStorage.getItem("userEmail") || "";
+    const since = localStorage.getItem("memberSince") || new Date().toISOString().split("T")[0];
+
+    document.getElementById("profileName").value = name;
+    document.getElementById("profileEmail").value = email;
+    document.getElementById("profileSince").textContent = since;
+
+    // Iniciales en el header
+    const initials = name.split(" ").map(x => x[0]).join("").toUpperCase();
+    document.getElementById("userAvatar").textContent = initials;
+}
+
+function saveUserProfile() {
+    const name = document.getElementById("profileName").value;
+    const email = document.getElementById("profileEmail").value;
+
+    localStorage.setItem("userName", name);
+    localStorage.setItem("userEmail", email);
+
+    mostrarBienvenida();
+    loadUserProfile();
+}
+
 
 
 // ---------------- Feedback form (FIXED) ----------------
@@ -756,5 +844,25 @@ document.getElementById("homeBtnHeader").addEventListener("click", () => {
         state.clear();
         statusEl.textContent = 'Cleared subscriptions';
     });
+
+    // BOTONES DEL PERFIL
+document.getElementById("saveProfileBtn").addEventListener("click", saveUserProfile);
+
+// SELECT CAMBIAR IDIOMA
+document.getElementById("langSelect").addEventListener("change", (e) => {
+    setLanguage(e.target.value);
+});
+
+// SELECT CAMBIAR MONEDA
+document.getElementById("currencySelect").addEventListener("change", (e) => {
+    setCurrency(e.target.value);
+});
+
+// Cargar perfil e idioma al iniciar
+window.addEventListener("load", () => {
+    translatePage();
+    loadUserProfile();
+});
+
 })();
 

@@ -89,7 +89,22 @@
                 <a href="feedback.html" class="hover:text-blue-600 font-semibold">Contáctanos</a>
             </div>
             <div class="flex items-center gap-4">
-                <span id="bienvenido-user" class="text-blue-600 font-semibold"></span>
+               <!-- AVATAR DEL USUARIO -->
+<div class="relative" id="userMenuContainer" style="display:none;">
+    <button id="userAvatar"
+        class="w-10 h-10 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center cursor-pointer">
+    </button>
+
+    <div id="dropdownUser"
+        class="hidden absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg border text-sm z-50">
+        <a href="dashboard.html" class="block px-4 py-2 hover:bg-gray-100">Perfil</a>
+        <button id="logoutBtnAvatar"
+            class="block w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600">
+            Cerrar sesión
+        </button>
+    </div>
+</div>
+
                 <div class="ml-4 relative group" title="Activa modo oscuro/claro">
                     <input type="checkbox" class="checkbox" id="checkbox">
                     <label for="checkbox" class="checkbox-label">
@@ -338,5 +353,36 @@
 
 </script>
 <script src="/consejo.js" defer></script>
+    <script>
+document.addEventListener("DOMContentLoaded", () => {
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if (user) {
+        document.getElementById("userMenuContainer").style.display = "block";
+
+        const initial = user.name ? user.name.charAt(0).toUpperCase() : "?";
+        document.getElementById("userAvatar").textContent = initial;
+    }
+
+    const avatar = document.getElementById("userAvatar");
+    const dropdown = document.getElementById("dropdownUser");
+
+    avatar?.addEventListener("click", () => {
+        dropdown.classList.toggle("hidden");
+    });
+
+    document.getElementById("logoutBtnAvatar")?.addEventListener("click", () => {
+        localStorage.clear();
+        window.location.href = "login.html";
+    });
+
+    document.addEventListener("click", e => {
+        if (!avatar.contains(e.target) && !dropdown.contains(e.target)) {
+            dropdown.classList.add("hidden");
+        }
+    });
+});
+</script>
+
 </body>
 </html>

@@ -97,6 +97,66 @@ app.post("/login", async (req, res) => {
     }
 });
 
+/* ============================================================
+   PERFIL DEL USUARIO
+============================================================ */
+
+/* Obtener perfil completo */
+app.get("/api/me", autenticarToken, async (req, res) => {
+    try {
+        const user = await Cliente.findById(req.user.id).lean();
+        const cuenta = await Cuenta.findOne({ idCliente: req.user.id }).lean();
+
+        if (!user) return res.status(404).json({ message: "Usuario no encontrado" });
+
+        res.json({
+            nombre: user.nombre,
+            correo: user.correo,
+            idioma: user.idioma || "es",
+            moneda: user.moneda || "EUR",
+            tema: user.tema || "light",
+            miembroDesde: user._id.getTimestamp().getFullYear(),
+            balance: cuenta ? cuenta.saldoActual : 0
+        });
+    } catch (err) {
+        res.status(500).json({ message: "Error obteniendo perfil" });
+    }
+});
+
+/* Actualizar perfil (nombre + correo) */
+app.put("/api/me", autenticarToken, async (req, res) => {
+    try {
+        const { nombre, correo } = req.body;
+        const data = {};
+
+        if (nombre) data.nombre = nombre;
+        if (correo) data.correo = correo.toLowerCase().trim();
+
+        await Cliente.updateOne({ _id: req.user.id }, { $set: data });
+
+        res.json({ message: "Perfil actualizado" });
+    } catch (err) {
+        res.status(500).json({ message: "Error actualizando perfil" });
+    }
+});
+
+/* Guardar ajustes (idioma, moneda, tema) */
+app.put("/api/settings", autenticarToken, async (req, res) => {
+    try {
+        const { idioma, moneda, tema } = req.body;
+
+        await Cliente.updateOne(
+            { _id: req.user.id },
+            { $set: { idioma, moneda, tema } }
+        );
+
+        res.json({ message: "Ajustes guardados" });
+    } catch (err) {
+        res.status(500).json({ message: "Error guardando ajustes" });
+    }
+});
+
+
 /* ------------ Protected examples ------------ */
 app.post("/movimientos", autenticarToken, async (req, res) => {
     try {

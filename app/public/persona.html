@@ -447,6 +447,37 @@ window.addEventListener('DOMContentLoaded', () => {
 <script src="/consejo.js" defer></script>
 
 <script>
+
+
+    <script>
+async function cargarBalancePersona() {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    try {
+        const res = await fetch("/api/me", {
+            headers: { "Authorization": "Bearer " + token }
+        });
+
+        if (!res.ok) return;
+
+        const user = await res.json();
+
+        const simbolos = { EUR: "€", USD: "$" };
+        const simbolo = simbolos[user.moneda] || "€";
+
+        // Mostrar balance correcto
+        document.getElementById("centerLabel").textContent =
+            simbolo + user.balance.toFixed(2);
+
+    } catch (err) {
+        console.error("Error cargando balance:", err);
+    }
+}
+
+cargarBalancePersona();
+</script>
+
 // ================== AVATAR ==================
 
 async function loadUserAvatar() {

@@ -202,6 +202,8 @@ document.getElementById("guardarBtn").addEventListener("click", async () => {
             })
         });
 
+        localStorage.setItem("currency", document.getElementById("moneda").value);
+
         alert("Cambios guardados correctamente.");
         cargarPerfil();
 
@@ -233,6 +235,7 @@ cargarPerfil();
 
 </body>
 </html>
+
 
 
 

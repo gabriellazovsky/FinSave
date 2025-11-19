@@ -19,6 +19,7 @@ const goHomeBtn = document.getElementById("goHome");
 
 const stepText = document.getElementById('stepText');
 
+
 // Mail notification
 const mailNotification = document.getElementById('mailNotification');
 const mailContent = document.getElementById('mailContent');

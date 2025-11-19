@@ -15,6 +15,7 @@ const {WebSocketServer, Server: WSServer } = require("ws");
 const app = express();
 const PORT = process.env.PORT || 3000;
 const SECRET_KEY = process.env.JWT_SECRET || "change_me";
+const sendEmail = require("./MailSender");
 
 function generarCodigo(length = 6) {
     return Math.floor(100000 + Math.random() * 900000).toString();
@@ -295,6 +296,16 @@ app.post("/password-reset/request", async (req, res) => {
 
     // Enviar correo falso (solo notificación en la página)
     res.status(202).json({ message: "Correo enviado", code: codigo, from: "serverfalsodecorreo" });
+
+
+    //................Implementación de correo real................//
+    try {
+        await sendEmail(email, codigo);   
+        console.log("Correo real enviado a:", email);
+    } catch (err) {
+        console.error("Error enviando correo real:", err.message);
+    }
+    //...........................................................//
 
     try {
         const resp = await axios.get("https://api.testmail.app/api/json", {

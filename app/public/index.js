@@ -138,7 +138,7 @@ function completeAchievement(id) { const a = achievements.find(x => x.id === id)
 
 // ---------------- Chart helper ----------------
 function updateChartFromMovements(movimientos) {
-    // Calcular totales de tipo y neto (ahorro)
+    // Calcular totales de tipo y neto ()
     const totals = { ingreso: 0, gasto: 0 };
     // Agrupar por categoría (primera palabra de la descripción)
     const groups = {}; // { cat: amount }
@@ -191,8 +191,8 @@ function updateChartFromMovements(movimientos) {
 
     // Actualizar el centro (ahorro) y su color
     if (centerLabel) {
-        const fmt = (n) => (n >= 0 ? `€${n.toFixed(2)}` : `-€${Math.abs(n).toFixed(2)}`);
-        centerLabel.textContent = fmt(ahorro);
+      centerLabel.textContent = formatCurrency(ahorro);
+
         centerLabel.classList.remove('center-positive','center-negative');
         if (ahorro > 0) centerLabel.classList.add('center-positive');
         else if (ahorro < 0) centerLabel.classList.add('center-negative');
@@ -238,7 +238,8 @@ async function verHistorial() {
             const tr = document.createElement("tr");
             tr.innerHTML = `
                 <td>${m.tipo}</td>
-                <td>$${Number(m.monto).toFixed(2)}</td>
+            <td>${formatCurrency(m.monto)}</td>
+
                 <td>${new Date(m.fecha).toLocaleDateString()}</td>
                 <td>${m.descripcion || ""}</td>
                 <td>
@@ -500,7 +501,8 @@ function aplicarFiltros() {
     const filas = document.querySelectorAll('#tablaCuerpo tr');
     filas.forEach(fila => {
         const descripcion = fila.cells[3].textContent.toLowerCase();
-        const monto = parseFloat(fila.cells[1].textContent.replace('$', ''));
+      const monto = parseFloat(fila.cells[1].textContent.replace(/[^0-9.-]/g, ''));
+
 
         let mostrar = true;
         if (tipoSeleccionado !== 'predeterminado' && !descripcion.startsWith(tipoSeleccionado.toLowerCase())) mostrar = false;
@@ -560,7 +562,8 @@ document.getElementById('exportBtn').addEventListener('click', async () => {
 
         let csvContent = 'Tipo,Monto,Fecha,Descripción\n';
         movimientos.forEach(m => {
-            csvContent += `"${m.tipo}","${Number(m.monto).toFixed(2)}","${new Date(m.fecha).toLocaleDateString()}","${m.descripcion || ''}"\n`;
+            csvContent += `"${m.tipo}","${formatCurrency(m.monto)}"
+,"${new Date(m.fecha).toLocaleDateString()}","${m.descripcion || ''}"\n`;
         });
 
         const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });

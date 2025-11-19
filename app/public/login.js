@@ -32,7 +32,7 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
         loginMsg.className = "mb-3 text-success";
 
         // Redirigir a dashboard
-        window.location.href = "/bienvenida.html";
+        window.location.href = "/persona.html";
     } catch (err) {
         loginMsg.textContent = "Error de conexión con el servidor";
         loginMsg.className = "mb-3 text-danger";
@@ -85,5 +85,5 @@ function handleCredentialResponse(response) {
     const jwt = response.credential;
     setToken(jwt);
     alert("Inicio de sesión con Google exitoso!");
-    window.location.href = "/bienvenida.html"; // Redirige al dashboard
+    window.location.href = "/persona.html"; // Redirige al dashboard
 }

@@ -530,6 +530,36 @@ async function cargarBalancePersona() {
 document.addEventListener("DOMContentLoaded", cargarBalancePersona);
 </script>
 
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+    const savedCurrency = localStorage.getItem("currency") || "EUR";
+    const balanceLabel = document.getElementById("centerLabel");
+
+    function formatCurrency(amount, currency) {
+        return new Intl.NumberFormat("es-ES", {
+            style: "currency",
+            currency: currency
+        }).format(amount);
+    }
+
+    // Observar cuándo /api/me ha colocado el valor en #centerLabel
+    const observer = new MutationObserver(() => {
+        if (!balanceLabel || balanceLabel.textContent.trim() === "") return;
+
+        const raw = balanceLabel.textContent.replace(/[^\d.-]/g, "");
+        const amount = parseFloat(raw);
+
+        if (!isNaN(amount)) {
+            balanceLabel.textContent = formatCurrency(amount, savedCurrency);
+            observer.disconnect();
+        }
+    });
+
+    observer.observe(balanceLabel, { childList: true });
+
+});
+</script>
 
 
 </body>

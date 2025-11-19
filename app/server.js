@@ -108,7 +108,31 @@ app.get("/api/me", autenticarToken, async (req, res) => {
         const user = await Cliente.findById(req.user.id).lean();
         const cuenta = await Cuenta.findOne({ idCliente: req.user.id }).lean();
 
-        if (!user) return res.status(404).json({ message: "Usuario no encontrado" });
+        if (!user) {
+            return res.status(404).json({ message: "Usuario no encontrado" });
+        }
+
+        if (!cuenta) {
+            return res.json({
+                nombre: user.nombre,
+                correo: user.correo,
+                idioma: user.idioma || "es",
+                moneda: user.moneda || "EUR",
+                tema: user.tema || "light",
+                miembroDesde: user._id.getTimestamp().getFullYear(),
+                balance: 0
+            });
+        }
+
+        // 🔥 Obtener movimientos de la cuenta
+        const movimientos = await Movimiento.find({ idCuenta: cuenta._id }).lean();
+
+        // 🔥 Calcular balance REAL
+        const balance = movimientos.reduce((total, mov) => {
+            return mov.tipo === "ingreso"
+                ? total + mov.monto
+                : total - mov.monto;
+        }, 0);
 
         res.json({
             nombre: user.nombre,
@@ -117,12 +141,14 @@ app.get("/api/me", autenticarToken, async (req, res) => {
             moneda: user.moneda || "EUR",
             tema: user.tema || "light",
             miembroDesde: user._id.getTimestamp().getFullYear(),
-            balance: cuenta ? cuenta.saldoActual : 0
+            balance: balance  // ✔️ AHORA SE VE EL -970000
         });
     } catch (err) {
+        console.error(err);
         res.status(500).json({ message: "Error obteniendo perfil" });
     }
 });
+
 
 /* Actualizar perfil (nombre + correo) */
 app.put("/api/me", autenticarToken, async (req, res) => {

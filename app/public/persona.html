@@ -425,8 +425,66 @@
         <button class="btn btn-outline-secondary mt-auto" id="lp-clear">Unsubscribe all</button>
     </div>
 </div>
+<script>
+// ================== CARGAR MONEDA DESDE SETTINGS ==================
 
+let currentCurrency = "EUR"; // valor por defecto
 
+function formatCurrency(amount) {
+    const symbols = { EUR: "€", USD: "$", GBP: "£" };
+    return symbols[currentCurrency] + Number(amount).toFixed(2);
+}
+
+async function loadUserCurrency() {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    try {
+        const res = await fetch("/api/settings", {
+            headers: { "Authorization": "Bearer " + token }
+        });
+
+        const settings = await res.json();
+        currentCurrency = settings.moneda || "EUR";
+
+        console.log("MONEDA CARGADA:", currentCurrency);
+
+    } catch (err) {
+        console.error("Error cargando moneda:", err);
+    }
+}
+
+// Llamamos antes de pintar nada
+loadUserCurrency().then(() => {
+    if (window.cargarMovimientos) window.cargarMovimientos();
+});
+</script>
+
+<script>
+// ================== ACTUALIZAR BALANCE CON MONEDA ==================
+
+function actualizarBalanceLabel(balance) {
+    const simbolos = { EUR: "€", USD: "$" };
+    const simbolo = simbolos[currentCurrency] || "€";
+
+    document.getElementById("centerLabel").textContent =
+        simbolo + balance.toFixed(2);
+}
+
+// CUANDO CARGAS MOVIMIENTOS, SE LLAMA AQUÍ:
+function actualizarBalanceGlobal() {
+    if (!window.totalBalance) return;
+
+    actualizarBalanceLabel(window.totalBalance);
+}
+
+// ESPERAR A QUE SE CARGUE LA MONEDA
+setTimeout(() => {
+    actualizarBalanceGlobal();
+}, 300);
+</script>
+
+    
 <!-- =================== MARKET =================== -->
 <script src="live-prices.js" defer></script>
 

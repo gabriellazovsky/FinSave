@@ -158,6 +158,8 @@ async function cargarPerfil() {
             headers: { "Authorization": "Bearer " + token }
         });
         const settings = await resSettings.json();
+        console.log("MONEDA RECIBIDA:", settings.moneda);
+
 
         document.getElementById("idioma").value = settings.idioma;
         document.getElementById("moneda").value = settings.moneda;
@@ -266,6 +268,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 </body>
 </html>
+
 
 
 

@@ -232,9 +232,41 @@ document.getElementById("logoutBtn").addEventListener("click", () => {
 cargarPerfil();
 
 </script>
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    // 1. Obtener balance del servidor
+    const res = await fetch("/api/me", {
+        headers: { "Authorization": "Bearer " + token }
+    });
+    const user = await res.json();
+
+    // 2. Obtener moneda guardada en localStorage (o la del usuario)
+    const currency = localStorage.getItem("currency") || user.moneda || "EUR";
+
+    // 3. Tabla de símbolos
+    const symbols = { EUR: "€", USD: "$" };
+    const symbol = symbols[currency] || "€";
+
+    // 4. Formatear
+    const formatted = new Intl.NumberFormat("es-ES", {
+        style: "currency",
+        currency: currency
+    }).format(user.balance);
+
+    // 5. Ponerlo en pantalla
+    const label = document.getElementById("centerLabel");
+    if (label) label.textContent = formatted;
+
+});
+</script>
 
 </body>
 </html>
+
 
 
 

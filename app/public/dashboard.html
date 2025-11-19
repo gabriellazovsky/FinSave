@@ -138,25 +138,30 @@ async function cargarPerfil() {
     if (!token) return window.location.href = "login.html";
 
     try {
-        const res = await fetch("/api/me", {
+        // --- Obtener datos del usuario ---
+        const resUser = await fetch("/api/me", {
             headers: { "Authorization": "Bearer " + token }
         });
+        const user = await resUser.json();
 
-        const data = await res.json();
-
-        // Rellenar campos
-        document.getElementById("nombre").value = data.nombre;
-        document.getElementById("correo").value = data.correo;
-        document.getElementById("miembroDesde").value = data.miembroDesde;
-        document.getElementById("balance").value = data.balance + " " + data.moneda;
-
-        document.getElementById("idioma").value = data.idioma;
-        document.getElementById("moneda").value = data.moneda;
-        document.getElementById("tema").value = data.tema;
+        document.getElementById("nombre").value = user.nombre;
+        document.getElementById("correo").value = user.correo;
+        document.getElementById("miembroDesde").value = user.miembroDesde;
+        document.getElementById("balance").value = user.balance + " " + user.moneda;
 
         // Avatar iniciales
-        const iniciales = data.nombre.split(" ").map(w => w[0]).join("").toUpperCase();
+        const iniciales = user.nombre.split(" ").map(w => w[0]).join("").toUpperCase();
         document.getElementById("userAvatar").textContent = iniciales;
+
+        // --- Obtener ajustes del usuario ---
+        const resSettings = await fetch("/api/settings", {
+            headers: { "Authorization": "Bearer " + token }
+        });
+        const settings = await resSettings.json();
+
+        document.getElementById("idioma").value = settings.idioma;
+        document.getElementById("moneda").value = settings.moneda;
+        document.getElementById("tema").value = settings.tema;
 
     } catch (err) {
         console.error(err);
@@ -169,32 +174,32 @@ async function cargarPerfil() {
 document.getElementById("guardarBtn").addEventListener("click", async () => {
     const token = localStorage.getItem("token");
 
-    const nombre = document.getElementById("nombre").value;
-    const correo = document.getElementById("correo").value;
-
-    const idioma = document.getElementById("idioma").value;
-    const moneda = document.getElementById("moneda").value;
-    const tema = document.getElementById("tema").value;
-
     try {
-        // Guardar nombre/correo
+        // Guardar nombre y correo
         await fetch("/api/me", {
             method: "PUT",
             headers: {
                 "Authorization": "Bearer " + token,
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ nombre, correo })
+            body: JSON.stringify({
+                nombre: document.getElementById("nombre").value,
+                correo: document.getElementById("correo").value
+            })
         });
 
-        // Guardar settings
+        // Guardar ajustes
         await fetch("/api/settings", {
             method: "PUT",
             headers: {
                 "Authorization": "Bearer " + token,
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ idioma, moneda, tema })
+            body: JSON.stringify({
+                idioma: document.getElementById("idioma").value,
+                moneda: document.getElementById("moneda").value,
+                tema: document.getElementById("tema").value
+            })
         });
 
         alert("Cambios guardados correctamente.");
@@ -204,6 +209,7 @@ document.getElementById("guardarBtn").addEventListener("click", async () => {
         console.error(err);
     }
 });
+
 
 /* ============================
    TOGGLE DROPDOWN
@@ -226,4 +232,5 @@ cargarPerfil();
 
 </body>
 </html>
+
 

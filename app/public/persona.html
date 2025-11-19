@@ -449,34 +449,6 @@ window.addEventListener('DOMContentLoaded', () => {
 <script>
 
 
-    <script>
-async function cargarBalancePersona() {
-    const token = localStorage.getItem("token");
-    if (!token) return;
-
-    try {
-        const res = await fetch("/api/me", {
-            headers: { "Authorization": "Bearer " + token }
-        });
-
-        if (!res.ok) return;
-
-        const user = await res.json();
-
-        const simbolos = { EUR: "€", USD: "$" };
-        const simbolo = simbolos[user.moneda] || "€";
-
-        // Mostrar balance correcto
-        document.getElementById("centerLabel").textContent =
-            simbolo + user.balance.toFixed(2);
-
-    } catch (err) {
-        console.error("Error cargando balance:", err);
-    }
-}
-
-cargarBalancePersona();
-</script>
 
 // ================== AVATAR ==================
 
@@ -526,6 +498,38 @@ document.getElementById("logout-btn").addEventListener("click", () => {
 
 loadUserAvatar();
 </script>
+
+    <script>
+async function cargarBalancePersona() {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    try {
+        const res = await fetch("/api/me", {
+            headers: { "Authorization": "Bearer " + token }
+        });
+
+        if (!res.ok) return;
+
+        const user = await res.json();
+
+        const simbolos = { EUR: "€", USD: "$" };
+        const simbolo = simbolos[user.moneda] || "€";
+
+        // ACTUALIZAR EL BALANCE DEL DASHBOARD
+        const label = document.getElementById("centerLabel");
+        if (label) {
+            label.textContent = simbolo + user.balance.toFixed(2);
+        }
+
+    } catch (err) {
+        console.error("Error cargando balance:", err);
+    }
+}
+
+document.addEventListener("DOMContentLoaded", cargarBalancePersona);
+</script>
+
 
 
 </body>

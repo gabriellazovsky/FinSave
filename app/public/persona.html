@@ -65,6 +65,18 @@
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <link rel="stylesheet" href="/consejo.css">
     <link rel="icon" href="favicon.png" type="image/png">
+    <style>
+    /* Todo esto se asegura de que el menú esté por encima del bloqueo del fondo*/
+    #movModal.modal {
+        z-index: 2000 !important;
+    }
+    .modal-backdrop {
+        z-index: 1500 !important;
+    }
+    #movModal.modal.show {
+        z-index: 2000 !important;
+    }
+    </style>
     
     
 </head>

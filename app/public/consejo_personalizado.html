@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>FinSave – Consejos Personalizados</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/consejo.css">
+</head>
+<body class="categoria-ahorro">
+<header class="w-full bg-white shadow-sm">
+    <nav class="container mx-auto flex justify-between items-center px-4 py-3">
+        <a href="consejo.html" class="hover:text-blue-600 font-semibold">← Volver a Consejos</a>
+        <h1 class="text-xl font-bold text-gray-800">Consejos Personalizados</h1>
+        <button id="logoutBtnCustom" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors">Cerrar Sesión</button>
+    </nav>
+</header>
+
+<main class="container mx-auto mt-8 px-4">
+    <div id="status" class="text-center text-gray-600 mb-4">Cargando recomendaciones...</div>
+    <div id="recs" class="grid md:grid-cols-1 lg:grid-cols-1 gap-4"></div>
+    <div class="mt-6 text-center">
+        <button id="btnRefresh" class="btn btn-primary">Refrescar</button>
+        <button id="btnDiag" class="btn btn-secondary ms-2">Ver diagnóstico</button>
+    </div>
+
+    <div id="diag" class="mt-4 hidden">
+        <h4>Diagnóstico</h4>
+        <pre id="diagContent" class="small bg-light p-2 rounded" style="white-space:pre-wrap;"></pre>
+    </div>
+</main>
+
+<footer class="text-center mt-8 mb-4 text-gray-500">&copy; 2025 FinSave. Todos los derechos reservados.</footer>
+
+<script>
+    // session check
+    const getToken = () => localStorage.getItem('token');
+    const clearToken = () => localStorage.removeItem('token');
+    document.getElementById('logoutBtnCustom').addEventListener('click', () => {
+        clearToken();
+        alert('Sesión cerrada.');
+        window.location.href = 'index.html';
+    });
+    if (!getToken()) {
+        alert('Debes iniciar sesión primero.');
+        window.location.href = 'index.html';
+    }
+</script>
+<script src="/consejo_personalizado.js" defer></script>
+</body>
+</html>

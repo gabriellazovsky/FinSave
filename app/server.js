@@ -6,6 +6,7 @@ const crypto = require("crypto");
 const {Parser} = require("json2csv");
 const {Cliente, Cuenta, Movimiento, Feedback} = require("./models");
 const {isDuplicateMovement} = require("./duplicateCheck");
+const { generateRecommendations } = require("./recommendations");
 const axios = require("axios");
 const jwt = require("jsonwebtoken");
 const http = require("http");
@@ -263,6 +264,23 @@ app.get("/historial-mio", autenticarToken, async (req, res) => {
     const cuenta = await ensureCuentaForCliente(req.user.id);
     const movimientos = await Movimiento.find({ idCuenta: cuenta._id }).sort({ fecha: -1 });
     res.json(movimientos);
+});
+
+// Recomendaciones personalizadas basadas en los movimientos del usuario
+app.get('/api/recommendations', autenticarToken, async (req, res) => {
+    try {
+        const cuenta = await ensureCuentaForCliente(req.user.id);
+        const movimientos = await Movimiento.find({ idCuenta: cuenta._id }).lean();
+        const recommendations = generateRecommendations(movimientos);
+        // Debug option: ?debug=1 devuelve conteo y muestra de movimientos (útil para verificar datos reales)
+        if (req.query.debug === '1') {
+            return res.json({ recommendations, count: movimientos.length, sample: movimientos.slice(0, 8) });
+        }
+        res.json({ recommendations });
+    } catch (err) {
+        console.error('Error generando recomendaciones:', err);
+        res.status(500).json({ message: 'Error generando recomendaciones' });
+    }
 });
 
 app.put("/movimientos/:id", autenticarToken, async (req, res) => {

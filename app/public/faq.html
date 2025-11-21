@@ -4,78 +4,317 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <link rel="stylesheet" href="index.css">
-    <link rel="stylesheet" href="/consejo.css">
-    <link rel="stylesheet" href="faq.css">
     <link rel="icon" href="favicon.png" type="image/png">
 
-    <title>FAQ</title>
+    <title>FAQ - Fintech Premium</title>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        /* Fondo premium */
+        body {
+            background: linear-gradient(135deg, #eef2ff, #f8fafc);
+        }
+        .dark body {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+        }
+
+        /* Estilos Glass */
+        .glass {
+            backdrop-filter: blur(18px);
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+        }
+        .dark .glass {
+            background: rgba(17, 25, 40, 0.55);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Texto FAQ legible */
+        .faq-question-text {
+            color: #1f2937;
+        }
+        .dark .faq-question-text {
+            color: #e5e7eb;
+        }
+        .faq-answer-text {
+            color: #4b5563;
+        }
+        .dark .faq-answer-text {
+            color: #d1d5db;
+        }
+
+        /* Oscurecer solo para modo claro */
+        .darken-light {
+            color: #111827;
+        }
+        .dark .darken-light {
+            color: inherit;
+        }
+
+        /* Acordeón */
+        .faq-item {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        }
+        .dark .faq-item {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+        }
+        .faq-answer {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: all 0.35s ease;
+        }
+        .faq-item.active .faq-answer {
+            max-height: 200px;
+            opacity: 1;
+            margin-top: 12px;
+        }
+        .icon {
+            transition: transform 0.3s ease;
+        }
+        .faq-item.active .icon {
+            transform: rotate(45deg);
+        }
+        .faq-question:hover {
+            color: #2563eb;
+        }
+
+        /* SWITCH PREMIUM REVOLUT */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+        }
+        #dark-toggle {
+            display: none;
+        }
+        .toggle-switch {
+            width: 58px;
+            height: 30px;
+            background: #e5e7eb;
+            border-radius: 30px;
+            position: relative;
+            cursor: pointer;
+            transition: 0.25s ease;
+            display: flex;
+            align-items: center;
+            padding: 0 6px;
+        }
+        .dark .toggle-switch {
+            background: #334155;
+        }
+        .icon-sun,
+        .icon-moon {
+            position: absolute;
+            font-size: 14px;
+            opacity: 0.55;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
+        .icon-sun { left: 8px; }
+        .icon-moon { right: 8px; }
+        .toggle-ball {
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            left: 4px;
+            transition: transform 0.3s ease, background 0.3s ease;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+        }
+        #dark-toggle:checked + .toggle-switch .toggle-ball {
+            transform: translateX(28px);
+        }
+        .dark #dark-toggle:checked + .toggle-switch .toggle-ball {
+            background: #f1f5f9;
+        }
+        #dark-toggle:not(:checked) ~ .toggle-switch .icon-sun { opacity: 1; }
+        #dark-toggle:checked ~ .toggle-switch .icon-moon { opacity: 1; }
+    </style>
 </head>
 
-<body class="bg-gray-50">
+<body class="text-gray-900 dark:text-gray-200 transition duration-300">
 
-    <header class="w-full bg-white shadow-sm">
-        <nav class="container mx-auto flex justify-between items-center px-4 py-3">
-            <a href="persona.html" class="hover:text-blue-600 font-semibold">← Volver</a>
-            <h1 class="text-xl font-bold text-gray-800">FAQ</h1>
+<!-- NAV -->
+<header class="w-full glass shadow-md sticky top-0 z-50">
+    <nav class="max-w-5xl mx-auto flex justify-between items-center px-4 py-4">
+        <!-- Volver (oscurecido en modo claro) -->
+        <a href="persona.html" class="font-semibold hover:text-blue-500 transition darken-light">← Volver</a>
 
-            <div class="ml-4 relative group" title="Activa modo oscuro/claro">
-                <input type="checkbox" class="checkbox" id="checkbox">
-                <label for="checkbox" class="checkbox-label">
-                    <i class="fas fa-moon">☀️</i>
-                    <i class="fas fa-sun">🌙</i>
-                    <span class="ball"></span>
-                </label>
-                <span class="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 rounded bg-gray-800 text-white text-xs px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    Light / Dark Mode
-                </span>
-            </div>
+        <!-- Centro de Ayuda (oscurecido en modo claro) -->
+        <h1 class="text-xl font-bold darken-light">Centro de Ayuda</h1>
 
-            <button id="logoutBtnConsejo" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors">
-                Cerrar Sesión
+        <!-- SWITCH PREMIUM -->
+        <div class="toggle-container">
+            <input type="checkbox" id="dark-toggle" />
+            <label for="dark-toggle" class="toggle-switch">
+                <span class="icon-sun">☀️</span>
+                <span class="icon-moon">🌙</span>
+                <span class="toggle-ball"></span>
+            </label>
+        </div>
+    </nav>
+</header>
+
+<!-- MAIN -->
+<main class="max-w-3xl mx-auto mt-10 px-6">
+    <div class="glass rounded-2xl shadow-xl p-8">
+        <h1 class="text-3xl font-bold mb-4 darken-light">Preguntas Frecuentes</h1>
+        <p class="text-gray-600 dark:text-gray-400 mb-8">
+            Encuentra respuestas rápidas sobre tu cuenta, seguridad y uso de la plataforma.
+        </p>
+
+        <!-- FAQ -->
+        <h2 class="text-2xl font-semibold text-blue-600 dark:text-blue-400 mb-4">Cuenta y Acceso</h2>
+
+        <div class="faq-item py-4">
+            <button class="flex justify-between w-full text-left text-lg font-medium faq-question">
+                <span class="faq-question-text">Olvidé mi contraseña, ¿qué hago?</span>
+                <span class="icon text-2xl">+</span>
             </button>
-        </nav>
-    </header>
+            <div class="faq-answer">
+                <p class="faq-answer-text">
+                    En la pantalla de inicio de sesión encontrarás la opción “¿Olvidaste tu contraseña?”.
+                    Desde allí podrás restablecerla de forma segura.
+                </p>
+            </div>
+        </div>
 
-    <main class="container mx-auto mt-6 px-4">
-        <h1 class="text-2xl font-bold mb-2">Bienvenido a la página de FAQ</h1>
-        <h2 class="text-xl">Esperamos que encuentres la respuesta a tus preguntas</h2>
-        <br>
-    <h2 class="text-xl">Parte del login y cuentas del usuario</h2>
-    <br>
-    <p>1. Ayuda, se me olvidó la contraseña:</p>
-    <p>En la pantalla de iniciar sesión, puedes darle a ¿olvidaste la contraseña? para restaurarla</p>
-    <p>2. ¿Para qué sirve el nombre en iniciar sesión?</p>
-    <p>Solamente es una mera formalidad con las que nos referiremos a ti, pon como quieres que te llamemos :D</p>
-    <p>3. ¿Cómo puedo cerrar sesión?</p>
-    <p>Quizas con el botón grande del menu principal que pone "Cerrar Sesión"</p>
-    <br>
-    <h2 class="text-xl">Página principal</h2>
-    <br>
-    <p>1. ¿Cómo hago un ingreso?</p>
-    <p>Tienes que darle al botón verde del centro, debajo de la gráfica y la operación se registrará con tu email</p>
-    <p>2. ¿Cómo puedo filtrar mis movimientos?</p>
-    <p>Tienes un botón gris encima de la tabla de movimientos donde puedes filtrar por tipo de movimiento y cantidad del mismo</p>
-    <p>3. ¿Qué es la bola azul que aparece en mi pantalla?</p>
-    <p>Es FinMuru, nuestra gran y adorable mascota, si te preguntas que es... No lo sabemos, simplemente un día apareció para quedarse</p>
-    <br>
-    <h2 class="text-xl">Pestañas adicionales</h2>
-    <br>
-    <p>1. ¿Qué es y para que sirven los logros?</p>
-    <p>Es un sistema propio que incentiva el uso de la página al user, sirven para amenizar a los clientes y que se diviertan mientras ahorran</p>
-    <p>2. ¿Qué es y para que sirve el feedback?</p>
-    <p>Es un sistema con el que nos puedes poner preguntas menores, para decirnos sugerencias para la página</p>
-    <br>
-    <p>Aquí se termina la página de faq, si tienes algún problema o alguna pregunta concreta, sientete libre de contactarnos por el sistema de feedback, o por nuestro correo de empresa: finsaveservices@gmail.com</p>
-    <br>
-    </main>
+        <div class="faq-item py-4">
+            <button class="flex justify-between w-full text-left text-lg font-medium faq-question">
+                <span class="faq-question-text">¿Para qué sirve colocar un nombre al iniciar sesión?</span>
+                <span class="icon text-2xl">+</span>
+            </button>
+            <div class="faq-answer">
+                <p class="faq-answer-text">
+                    Es únicamente para personalizar tu experiencia y referirnos a ti como prefieras.
+                </p>
+            </div>
+        </div>
 
-    <script src="/consejo.js" defer></script>
+        <div class="faq-item py-4">
+            <button class="flex justify-between w-full text-left text-lg font-medium faq-question">
+                <span class="faq-question-text">¿Cómo cierro sesión?</span>
+                <span class="icon text-2xl">+</span>
+            </button>
+            <div class="faq-answer">
+                <p class="faq-answer-text">
+                    Desde el inicio, presiona el botón “Cerrar Sesión”. Te recomendamos hacerlo siempre por seguridad.
+                </p>
+            </div>
+        </div>
+
+        <h2 class="text-2xl font-semibold text-blue-600 dark:text-blue-400 mt-10 mb-4">Página Principal</h2>
+
+        <div class="faq-item py-4">
+            <button class="flex justify-between w-full text-left text-lg font-medium faq-question">
+                <span class="faq-question-text">¿Cómo hago un ingreso?</span>
+                <span class="icon text-2xl">+</span>
+            </button>
+            <div class="faq-answer">
+                <p class="faq-answer-text">
+                    Pulsa el botón verde debajo de la gráfica principal. La operación quedará registrada automáticamente.
+                </p>
+            </div>
+        </div>
+
+        <div class="faq-item py-4">
+            <button class="flex justify-between w-full text-left text-lg font-medium faq-question">
+                <span class="faq-question-text">¿Cómo filtro mis movimientos?</span>
+                <span class="icon text-2xl">+</span>
+            </button>
+            <div class="faq-answer">
+                <p class="faq-answer-text">
+                    Usa el botón gris sobre la tabla para filtrar por tipo o cantidad.
+                </p>
+            </div>
+        </div>
+
+        <div class="faq-item py-4">
+            <button class="flex justify-between w-full text-left text-lg font-medium faq-question">
+                <span class="faq-question-text">¿Qué es la bola azul en pantalla?</span>
+                <span class="icon text-2xl">+</span>
+            </button>
+            <div class="faq-answer">
+                <p class="faq-answer-text">
+                    Es FinMuru, nuestra adorable mascota. Un día apareció… y se quedó para siempre.
+                </p>
+            </div>
+        </div>
+
+        <h2 class="text-2xl font-semibold text-blue-600 dark:text-blue-400 mt-10 mb-4">Funciones Adicionales</h2>
+
+        <div class="faq-item py-4">
+            <button class="flex justify-between w-full text-left text-lg font-medium faq-question">
+                <span class="faq-question-text">¿Qué son los logros?</span>
+                <span class="icon text-2xl">+</span>
+            </button>
+            <div class="faq-answer">
+                <p class="faq-answer-text">
+                    Un sistema para gamificar el ahorro y motivarte con pequeños objetivos y recompensas visuales.
+                </p>
+            </div>
+        </div>
+
+        <div class="faq-item py-4">
+            <button class="flex justify-between w-full text-left text-lg font-medium faq-question">
+                <span class="faq-question-text">¿Para qué sirve el feedback?</span>
+                <span class="icon text-2xl">+</span>
+            </button>
+            <div class="faq-answer">
+                <p class="faq-answer-text">
+                    Es la forma más rápida de enviarnos sugerencias o reportar detalles para mejorar tu experiencia.
+                </p>
+            </div>
+        </div>
+
+        <p class="mt-8 text-gray-600 dark:text-gray-400">
+            ¿Aún tienes dudas? Escríbenos a
+            <a href="mailto:finsaveservices@gmail.com" class="text-blue-600 dark:text-blue-400 underline">
+                finsaveservices@gmail.com
+            </a>
+        </p>
+
+    </div>
+</main>
+
+<script>
+    // FAQ acordeón
+    document.querySelectorAll(".faq-item button").forEach(btn => {
+        btn.addEventListener("click", () => {
+            btn.parentElement.classList.toggle("active");
+        });
+    });
+
+    // Dark mode con sincronización entre páginas
+    const toggle = document.getElementById("dark-toggle");
+
+    function applyDarkMode(isDark) {
+        if (isDark) {
+            document.documentElement.classList.add("dark");
+            toggle.checked = true;
+        } else {
+            document.documentElement.classList.remove("dark");
+            toggle.checked = false;
+        }
+    }
+
+    // Cargar preferencia al iniciar
+    window.addEventListener("DOMContentLoaded", () => {
+        const darkPref = localStorage.getItem("dark-mode");
+        applyDarkMode(darkPref === "on");
+    });
+
+    // Guardar preferencia al cambiar
+    toggle.addEventListener("change", () => {
+        const isDark = toggle.checked;
+        applyDarkMode(isDark);
+        localStorage.setItem("dark-mode", isDark ? "on" : "off");
+    });
+</script>
+
 </body>
 
 </html>

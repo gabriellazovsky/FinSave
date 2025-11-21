@@ -1,49 +1,145 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Dashboard Fintech Profesional - Empresa</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Dashboard Fintech Profesional</title>
 
-    <!-- UI libs (opcional) -->
+    <!-- Librerías -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- Tu CSS de consejos (modo oscuro) y CSS extra -->
+    <!-- CSS -->
     <link rel="stylesheet" href="/consejo.css">
     <link rel="stylesheet" href="index.css">
-
     <link rel="icon" href="favicon.png" type="image/png">
 
     <style>
-        /* Widget base */
-        .widget { background-color: white; border-radius:8px; padding:1rem; box-shadow:0 6px 20px rgba(0,0,0,0.08); position:relative; cursor:grab; display:flex; flex-direction:column; transition: all .15s; }
-        .widget.dragging { opacity:0.5; transform: scale(.995); }
-        .delete-btn { position:absolute; top:8px; right:8px; width:30px; height:30px; border-radius:50%; border:none; background:#ef4444; color:white; cursor:pointer; }
-        .resize-handle { width:12px; height:12px; background:#2563eb; position:absolute; bottom:8px; right:8px; cursor:se-resize; border-radius:2px; }
-        .editable { border-bottom:1px dotted #2563eb; cursor:text; }
+        :root { --bg-body:#f3f4f6; --bg-widget:#ffffff; --text-color:#111827; }
+        body.dark { --bg-body:#1f2937; --bg-widget:#2d3748; --text-color:#f3f4f6; }
+        body { background-color: var(--bg-body)!important; color: var(--text-color)!important; }
 
-        /* Grid layout */
-        #dashboard { display:grid; grid-template-columns: repeat(1, minmax(0,1fr)); gap:16px; }
-        @media(min-width:768px){ #dashboard { grid-template-columns: repeat(3, minmax(0,1fr)); } }
+        * { box-sizing: border-box; }
 
-        /* placeholder during drag */
-        .placeholder { border:2px dashed #2563eb; border-radius:10px; min-height:120px; }
+        .widget {
+            background-color: var(--bg-widget)!important;
+            color: var(--text-color)!important;
+            border-radius:8px;
+            padding:1rem;
+            box-shadow:0 6px 20px rgba(0,0,0,0.08);
+            position:relative;
+            cursor:grab;
+            display:flex;
+            flex-direction:column;
+            transition: all .15s;
+            max-height:600px;
+            overflow:auto;
+            z-index: 1;
+            min-width: 0;
+            overflow-wrap: break-word;
+        }
+        .widget.dragging {
+            opacity:0.5;
+            transform: scale(.995);
+            z-index: 100;
+        }
 
-        /* small helpers */
-        .btn-add { background:#2563eb;color:white;padding:.5rem 1rem;border-radius:8px;border:none;cursor:pointer }
-        .btn-add:hover{ background:#1e4fd0 }
-        .header-actions { display:flex; gap:.5rem; align-items:center; }
+        .delete-btn {
+            position:absolute;
+            top:8px;
+            right:8px;
+            width:30px;
+            height:30px;
+            border-radius:50%;
+            border:none;
+            background:#ef4444;
+            color:white;
+            cursor:pointer;
+            z-index: 10;
+            font-size: 20px;
+            line-height: 1;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .delete-btn:hover { background:#dc2626; }
+
+        .resize-handle {
+            width:12px;
+            height:12px;
+            background:#2563eb;
+            position:absolute;
+            bottom:8px;
+            right:8px;
+            cursor:se-resize;
+            border-radius:2px;
+            z-index: 5;
+        }
+
+        .editable {
+            border-bottom:1px dotted #2563eb;
+            cursor:text;
+        }
+
+        #dashboard {
+            display:grid;
+            grid-template-columns: repeat(1, minmax(0,1fr));
+            gap:16px;
+            position: relative;
+        }
+        @media(min-width:768px){
+            #dashboard {
+                grid-template-columns: repeat(3, minmax(0,1fr));
+            }
+        }
+
+        .placeholder {
+            border:2px dashed #2563eb;
+            border-radius:10px;
+            min-height:120px;
+            grid-column: 1;
+        }
+
+        .btn-add {
+            background:#2563eb;
+            color:white;
+            padding:.5rem 1rem;
+            border-radius:8px;
+            border:none;
+            cursor:pointer;
+        }
+        .btn-add:hover{ background:#1e4fd0; }
+
+        .header-actions {
+            display:flex;
+            gap:.5rem;
+            align-items:center;
+        }
+
+        .kpi-card {
+            padding:1rem;
+            border-radius:8px;
+            text-align:center;
+            font-weight:bold;
+            font-size:1.5rem;
+        }
+        .kpi-positive { background-color:#10b981; color:white; }
+        .kpi-negative { background-color:#ef4444; color:white; }
+
+        .chart-canvas {
+            width:100% !important;
+            height:220px !important;
+        }
     </style>
 </head>
-<body class="bg-gray-100">
+<body>
 
-<!-- HEADER -->
 <header class="w-full bg-white dark:bg-gray-800 shadow-sm">
     <nav class="container mx-auto flex justify-between items-center px-4 py-3">
         <a href="persona.html" class="hover:text-blue-600 font-semibold">← Volver</a>
-        <h1 class="text-xl font-bold text-gray-800 dark:text-gray-100">Empresa</h1>
+        <h1 class="text-xl font-bold text-gray-800 dark:text-gray-100">Dashboard Profesional</h1>
 
         <div class="header-actions">
             <div class="ml-4 relative group" title="Activa modo oscuro/claro">
@@ -53,380 +149,314 @@
                     <i class="fas fa-sun">🌙</i>
                     <span class="ball"></span>
                 </label>
-
                 <span class="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 rounded bg-gray-800 text-white text-xs px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">Light / Dark Mode</span>
             </div>
-
             <button id="exportPdf" class="bg-blue-600 text-white px-3 py-2 rounded-md hover:bg-blue-700 ml-2">Exportar PDF</button>
             <button id="clearAll" class="bg-red-600 text-white px-3 py-2 rounded-md hover:bg-red-700">Eliminar Todo</button>
-
-            <button id="logoutBtnConsejo" class="bg-gray-800 text-white px-3 py-2 rounded-md hover:bg-gray-900 ml-2">Cerrar Sesión</button>
+            <button id="logoutBtn" class="bg-gray-800 text-white px-3 py-2 rounded-md hover:bg-gray-900 ml-2">Cerrar Sesión</button>
         </div>
     </nav>
 </header>
 
 <div class="flex">
-    <!-- SIDEBAR -->
     <aside class="w-64 bg-white dark:bg-gray-800 shadow-md min-h-screen p-4">
         <h2 class="text-lg font-bold mb-4">Widgets</h2>
-        <button class="w-full mb-2 btn-add" data-type="chart" onclick="addWidget('chart')">Agregar Gráfico</button>
-        <button class="w-full mb-2 btn-add" data-type="table" onclick="addWidget('table')">Agregar Tabla</button>
-        <button class="w-full mb-2 btn-add" data-type="text" onclick="addWidget('text')">Agregar Texto</button>
+        <button class="w-full mb-2 btn-add" onclick="addWidget('line')">Gráfico Lineal</button>
+        <button class="w-full mb-2 btn-add" onclick="addWidget('bar')">Gráfico de Barras</button>
+        <button class="w-full mb-2 btn-add" onclick="addWidget('pie')">Gráfico Circular</button>
+        <button class="w-full mb-2 btn-add" onclick="addWidget('table')">Tabla</button>
+        <button class="w-full mb-2 btn-add" onclick="addWidget('text')">Texto</button>
+        <button class="w-full mb-2 btn-add" onclick="addWidget('kpi')">KPI</button>
     </aside>
 
-    <!-- MAIN -->
     <main class="flex-1 p-6">
         <h2 class="text-2xl font-bold mb-6">Dashboard Profesional</h2>
         <div id="dashboard"></div>
     </main>
 </div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 <script>
-    /* ============================
-       USER / TOKEN (misma lógica que feedbacks)
-       ============================ */
-    const token = localStorage.getItem('token');
-    if (!token) {
-        // si no hay token, redirigir (mismo comportamiento que feedbacks)
-        window.location.href = "persona.html";
-    }
-    function getUserIdFromToken(token) {
-        try {
-            const payload = JSON.parse(atob(token.split('.')[1]));
-            return payload.id || payload.userId || payload.uid || null;
-        } catch (e) {
-            return null;
-        }
-    }
-    const userId = getUserIdFromToken(token);
-    if (!userId) { window.location.href = "persona.html"; }
+    // ================= USER / TOKEN
+    const token=localStorage.getItem('token');
+    if(!token) window.location.href="persona.html";
+    function getUserIdFromToken(token){try{return JSON.parse(atob(token.split('.')[1])).id||JSON.parse(atob(token.split('.')[1])).userId||JSON.parse(atob(token.split('.')[1])).uid||null}catch{return null;}}
+    const userId=getUserIdFromToken(token);
+    if(!userId) window.location.href="persona.html";
 
-    const storageKey = `dashboardWidgets_${userId}`;
-    const darkKey = `darkMode_${userId}`;
+    const storageKey=`dashboardWidgets_${userId}`;
+    const darkKey=`darkMode_${userId}`;
+    const dashboard=document.getElementById('dashboard');
+    const checkbox=document.getElementById('checkbox');
+    const clearAllBtn=document.getElementById('clearAll');
+    const logoutBtn=document.getElementById('logoutBtn');
 
-    /* ============================
-       ELEMENTS & STATE
-       ============================ */
-    const dashboard = document.getElementById('dashboard');
-    const checkbox = document.getElementById('checkbox');
-    const clearAllBtn = document.getElementById('clearAll');
-    const logoutBtn = document.getElementById('logoutBtnConsejo');
+    let draggingElem=null, resizeElem=null, startX=0, startY=0, startW=0, startH=0;
 
-    let draggingElem = null;
-    let resizeElem = null;
-    let startX=0, startY=0, startW=0, startH=0;
-
-    /* ============================
-       DARK MODE (per-user)
-       ============================ */
-    checkbox.addEventListener('change', () => {
+    // ================= DARK MODE
+    if(localStorage.getItem(darkKey)==='true'){ checkbox.checked=true; document.body.classList.add('dark'); }
+    else { checkbox.checked=false; document.body.classList.remove('dark'); }
+    checkbox.addEventListener('change', ()=>{
         document.body.classList.toggle('dark', checkbox.checked);
-        localStorage.setItem(darkKey, checkbox.checked ? 'true' : 'false');
-    });
-    if (localStorage.getItem(darkKey) === 'true') {
-        checkbox.checked = true;
-        document.body.classList.add('dark');
-    }
-
-    /* ============================
-       LOGOUT
-       ============================ */
-    logoutBtn.addEventListener('click', () => {
-        localStorage.removeItem('token');
-        window.location.href = "persona.html";
+        localStorage.setItem(darkKey, checkbox.checked?'true':'false');
     });
 
-    /* ============================
-       ADD WIDGET (chart / table / text)
-       ============================ */
-    function addWidget(type, saved = null) {
-        const widget = document.createElement('div');
-        widget.className = 'widget';
-        widget.draggable = true;
-        widget.dataset.type = type;
+    // ================= LOGOUT
+    logoutBtn.addEventListener('click', ()=>{ localStorage.removeItem('token'); window.location.href="persona.html"; });
 
-        // delete button (always add, so saved html doesn't have to include listeners)
-        const del = document.createElement('button');
-        del.className = 'delete-btn';
-        del.title = 'Eliminar widget';
-        del.innerHTML = '×';
-        del.addEventListener('click', () => { widget.remove(); saveDashboard(); });
-        widget.appendChild(del);
+    // ================= ADD WIDGET
+    function addWidget(type,saved=null){
+        const widget=document.createElement('div');
+        widget.className='widget';
+        widget.draggable=true;
+        widget.dataset.type=type;
+        widget.style.position = 'relative';
 
-        // content
-        if (!saved) {
-            if (type === 'chart') {
-                widget.innerHTML += `
-        <h3 class="editable" contenteditable="true">Gráfico de Ingresos</h3>
-        <canvas class="chart-canvas" style="height:220px"></canvas>
-        <input class="chart-data-input form-control mt-2" placeholder="Valores separados por comas (ej: 10,20,30)"/>
-        <div class="resize-handle" title="Redimensionar"></div>
-      `;
-            } else if (type === 'table') {
-                widget.innerHTML += `
-        <h3 class="editable" contenteditable="true">Clientes</h3>
-        <input class="table-search form-control mb-2" placeholder="Buscar..." />
-        <table class="table-auto w-full table-fintech" contenteditable="true">
-          <thead><tr><th>Cliente</th><th>Saldo</th></tr></thead>
-          <tbody><tr><td>Juan</td><td>$1200</td></tr></tbody>
-        </table>
-        <button class="btn btn-sm btn-success mt-2 add-row">Agregar fila</button>
-        <div class="resize-handle" title="Redimensionar"></div>
-      `;
-            } else {
-                widget.innerHTML += `
-        <h3 class="editable" contenteditable="true">Notas</h3>
-        <textarea class="form-control" rows="4">Escribe tus notas aquí...</textarea>
-        <div class="resize-handle" title="Redimensionar"></div>
-      `;
+        const del=document.createElement('button');
+        del.className='delete-btn';
+        del.type='button';
+        del.title='Eliminar widget';
+        del.textContent='×';
+        del.addEventListener('click', function(e){
+            e.stopPropagation();
+            e.preventDefault();
+            widget.remove();
+            saveDashboard();
+            return false;
+        });
+
+        if(!saved){
+            if(type==='line'||type==='bar'||type==='pie'){
+                widget.innerHTML=`<h3 class="editable" contenteditable="true">Gráfico</h3>
+            <canvas class="chart-canvas"></canvas>
+            <input class="chart-data-input form-control mt-2" placeholder="10,20,30">
+            <input class="chart-labels-input form-control mt-1" placeholder="Ene,Feb,Mar">
+            <div class="resize-handle"></div>`;
             }
-        } else {
-            // if saved content provided, use it
-            widget.innerHTML += saved;
-        }
+            else if(type==='table'){
+                widget.innerHTML=`<h3 class="editable" contenteditable="true">Tabla</h3>
+            <input class="table-search form-control mb-2" placeholder="Buscar...">
+            <table class="table-auto w-full table-fintech" contenteditable="true">
+            <thead><tr><th>Cliente</th><th>Saldo</th></tr></thead><tbody><tr><td>Juan</td><td>$1200</td></tr></tbody></table>
+            <button class="btn btn-sm btn-success mt-2 add-row">Agregar fila</button>
+            <div class="resize-handle"></div>`;
+            }
+            else if(type==='text'){
+                widget.innerHTML=`<h3 class="editable" contenteditable="true">Notas</h3>
+            <textarea class="form-control" rows="4">Escribe tus notas...</textarea>
+            <div class="resize-handle"></div>`;
+            }
+            else if(type==='kpi'){
+                widget.innerHTML=`<h3 class="editable" contenteditable="true">KPI</h3>
+            <div class="kpi-card" contenteditable="true">12345</div>
+            <div class="resize-handle"></div>`;
+            }
+        }else widget.innerHTML=saved;
 
+        widget.insertBefore(del, widget.firstChild);
         dashboard.appendChild(widget);
         initWidget(widget);
         saveDashboard();
         return widget;
     }
-    const exportPdfBtn = document.getElementById('exportPdf');
-    exportPdfBtn.addEventListener('click', async () => {
-        const dashboardElem = document.getElementById('dashboard');
 
-        // Capturamos el dashboard como imagen
-        const canvas = await html2canvas(dashboardElem, { scale: 2 });
-        const imgData = canvas.toDataURL('image/png');
+    // ================= INIT WIDGET
+    function initWidget(widget){
+        widget.classList.toggle('dark', document.body.classList.contains('dark'));
 
-        // Crear PDF
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF('p', 'pt', 'a4');
-        const pageWidth = pdf.internal.pageSize.getWidth();
-        const pageHeight = pdf.internal.pageSize.getHeight();
-
-        // Ajustar la imagen al ancho de la página
-        const imgProps = pdf.getImageProperties(imgData);
-        const ratio = imgProps.width / imgProps.height;
-        const pdfHeight = pageWidth / ratio;
-
-        pdf.addImage(imgData, 'PNG', 0, 0, pageWidth, pdfHeight);
-        pdf.save('dashboard.pdf');
-    });
-
-    /* ============================
-       INIT WIDGET: drag, resize, specific bindings (charts, table)
-       ============================ */
-    function initWidget(widget) {
-        // drag events
-        widget.addEventListener('dragstart', (e) => {
-            draggingElem = widget;
+        widget.addEventListener('dragstart',(e)=>{
+            draggingElem=widget;
             widget.classList.add('dragging');
-            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.effectAllowed='move';
         });
-        widget.addEventListener('dragend', () => {
+
+        widget.addEventListener('dragend',()=>{
             widget.classList.remove('dragging');
-            draggingElem = null;
-            // remove placeholder if any
-            const ph = document.querySelector('.placeholder'); if (ph) ph.remove();
+            draggingElem=null;
+            const ph=document.querySelector('.placeholder');
+            if(ph) ph.remove();
             saveDashboard();
         });
 
-        // drop target logic on dashboard is global (see below)
+        const handle=widget.querySelector('.resize-handle');
+        if(handle) handle.addEventListener('mousedown',(e)=>{
+            e.stopPropagation();
+            resizeElem=widget;
+            startX=e.clientX;
+            startY=e.clientY;
+            startW=widget.offsetWidth;
+            startH=widget.offsetHeight;
 
-        // resize
-        const handle = widget.querySelector('.resize-handle');
-        if (handle) {
-            handle.addEventListener('mousedown', (e) => {
-                resizeElem = widget;
-                startX = e.clientX; startY = e.clientY;
-                startW = widget.offsetWidth; startH = widget.offsetHeight;
-                document.addEventListener('mousemove', onResize);
-                document.addEventListener('mouseup', stopResize);
-                e.preventDefault();
-            });
-        }
+            const dashboardRect = dashboard.getBoundingClientRect();
+            const nextColumn = widget.nextElementSibling;
+            let maxWidth = dashboardRect.width;
 
-        // chart: init Chart.js if canvas exists
-        const canvas = widget.querySelector('.chart-canvas');
-        if (canvas) {
-            const ctx = canvas.getContext('2d');
-            // default data
-            let values = [12000,15000,14000,16000];
-            const input = widget.querySelector('.chart-data-input');
-            if (input && input.value) {
-                values = input.value.split(',').map(v => parseFloat(v.trim()) || 0);
+            if(nextColumn && !nextColumn.classList.contains('placeholder')) {
+                maxWidth = nextColumn.getBoundingClientRect().left - dashboardRect.left;
             }
-            // create chart instance and save reference on element
-            const chart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: values.map((_,i)=>`P${i+1}`),
-                    datasets: [{ label: 'Dataset', data: values, borderColor: 'rgba(59,130,246,1)', backgroundColor:'rgba(59,130,246,0.12)', fill:true }]
-                },
-                options: { maintainAspectRatio: false, responsive: true }
-            });
-            // link input: update chart when input changes
-            if (input) {
-                input.addEventListener('input', (e) => {
-                    const vals = e.target.value.split(',').map(v => parseFloat(v.trim()) || 0);
-                    chart.data.labels = vals.map((_,i)=>`P${i+1}`);
-                    chart.data.datasets[0].data = vals;
-                    chart.update();
-                    saveDashboard();
-                });
-            }
-            // store chart instance for potential future use
-            widget._chart = chart;
-        }
 
-        // table row add
-        const addRowBtn = widget.querySelector('.add-row');
-        if (addRowBtn) {
-            addRowBtn.addEventListener('click', (e) => {
-                const table = widget.querySelector('table tbody') || widget.querySelector('table');
-                const tr = document.createElement('tr');
-                tr.innerHTML = '<td>Nuevo</td><td>0</td>';
-                table.appendChild(tr);
-                saveDashboard();
-            });
-        }
-
-        // table search
-        const search = widget.querySelector('.table-search');
-        if (search) {
-            search.addEventListener('input', (e) => {
-                const q = e.target.value.toLowerCase();
-                const rows = widget.querySelectorAll('table tbody tr');
-                rows.forEach(row => {
-                    const text = row.textContent.toLowerCase();
-                    row.style.display = text.includes(q) ? '' : 'none';
-                });
-            });
-        }
-
-        // contenteditable changes -> save on blur
-        widget.querySelectorAll('[contenteditable]').forEach(el=>{
-            el.addEventListener('blur', saveDashboard);
-        });
-        // textarea changes
-        widget.querySelectorAll('textarea').forEach(ta=>{
-            ta.addEventListener('change', saveDashboard);
+            document.addEventListener('mousemove', (e) => onResize(e, maxWidth));
+            document.addEventListener('mouseup',stopResize);
+            e.preventDefault();
         });
 
-        // ensure delete button inside saved html works (some saved html could include its own .delete-btn)
-        const del = widget.querySelector('.delete-btn');
-        if (del) {
-            del.addEventListener('click', () => {
-                widget.remove();
-                saveDashboard();
+        const addRowBtn=widget.querySelector('.add-row');
+        if(addRowBtn) addRowBtn.addEventListener('click',(e)=>{
+            e.stopPropagation();
+            const tbody=widget.querySelector('table tbody');
+            const tr=document.createElement('tr');
+            tr.innerHTML='<td>Nuevo</td><td>0</td>';
+            tbody.appendChild(tr);
+            saveDashboard();
+        });
+
+        const search=widget.querySelector('.table-search');
+        if(search) search.addEventListener('input',(e)=>{
+            const q=e.target.value.toLowerCase();
+            widget.querySelectorAll('table tbody tr').forEach(r=>{
+                r.style.display=r.textContent.toLowerCase().includes(q)?'':'none';
             });
-        }
+        });
+
+        widget.querySelectorAll('[contenteditable]').forEach(el=>el.addEventListener('blur',saveDashboard));
+        widget.querySelectorAll('textarea').forEach(ta=>ta.addEventListener('change',saveDashboard));
+
+        if(['line','bar','pie'].includes(widget.dataset.type)) initChart(widget,widget.dataset.type);
     }
 
-    /* ============================
-       DASHBOARD dragover/drop handling (placeholder insertion)
-       ============================ */
-    dashboard.addEventListener('dragover', (e) => {
+    // ================= INIT CHART (SIN DATOS AUTOMÁTICOS)
+    function initChart(widget,type){
+        const canvas=widget.querySelector('.chart-canvas');
+        if(!canvas) return;
+        if(widget._chart) widget._chart.destroy();
+
+        const input=widget.querySelector('.chart-data-input');
+        const labelsInput=widget.querySelector('.chart-labels-input');
+        const vals=input?.value?input.value.split(',').map(v=>parseFloat(v.trim())||0):[10,20,30,40];
+        const labels=labelsInput?.value?labelsInput.value.split(',').map(v=>v.trim()):vals.map((_,i)=>`P${i+1}`);
+        const colors=['#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6'];
+
+        const dataset={label:'Dataset 1',data:vals,backgroundColor:colors[0],borderColor:colors[0],fill:type==='line'};
+        const chart=new Chart(canvas.getContext('2d'),{
+            type:type,
+            data:{labels:labels,datasets:[dataset]},
+            options:{responsive:true,maintainAspectRatio:false}
+        });
+        widget._chart=chart;
+
+        if(input) input.addEventListener('input',()=>updateChart(widget));
+        if(labelsInput) labelsInput.addEventListener('input',()=>updateChart(widget));
+    }
+
+    // ================= UPDATE CHART
+    function updateChart(widget){
+        const chart=widget._chart; if(!chart) return;
+        const input=widget.querySelector('.chart-data-input');
+        const labelsInput=widget.querySelector('.chart-labels-input');
+        const vals=input.value.split(',').map(v=>parseFloat(v.trim())||0);
+        const labels=labelsInput?.value?labelsInput.value.split(',').map(v=>v.trim()):vals.map((_,i)=>`P${i+1}`);
+        chart.data.labels=labels;
+        chart.data.datasets[0].data=vals;
+        chart.update();
+        saveDashboard();
+    }
+
+    // ================= DRAG & DROP
+    dashboard.addEventListener('dragover',(e)=>{
         e.preventDefault();
-        const dragging = document.querySelector('.dragging');
-        if (!dragging) return;
-
-        const widgets = [...dashboard.querySelectorAll('.widget:not(.dragging)')];
-        let next = widgets.find(w => e.clientY <= w.getBoundingClientRect().top + w.offsetHeight / 2);
-
-        // create placeholder if doesn't exist
-        let ph = document.querySelector('.placeholder');
-        if (!ph) {
-            ph = document.createElement('div');
-            ph.className = 'placeholder';
+        const dragging=document.querySelector('.dragging');
+        if(!dragging) return;
+        const widgets=[...dashboard.querySelectorAll('.widget:not(.dragging)')];
+        let next=widgets.find(w=>e.clientY<=w.getBoundingClientRect().top+w.offsetHeight/2);
+        let ph=document.querySelector('.placeholder');
+        if(!ph){
+            ph=document.createElement('div');
+            ph.className='placeholder';
         }
-        ph.style.minHeight = dragging.offsetHeight + 'px';
-
-        if (!next) dashboard.appendChild(ph);
-        else dashboard.insertBefore(ph, next);
+        ph.style.minHeight=dragging.offsetHeight+'px';
+        if(!next) dashboard.appendChild(ph);
+        else dashboard.insertBefore(ph,next);
     });
 
-    dashboard.addEventListener('drop', (e) => {
-        e.preventDefault();
-        const ph = document.querySelector('.placeholder');
-        if (!draggingElem) return;
-        if (ph) {
-            dashboard.insertBefore(draggingElem, ph);
+    dashboard.addEventListener('drop',()=>{
+        const ph=document.querySelector('.placeholder');
+        if(draggingElem && ph){
+            dashboard.insertBefore(draggingElem,ph);
             ph.remove();
         }
         saveDashboard();
     });
 
-    /* ============================
-       RESIZE handlers
-       ============================ */
-    function onResize(e) {
-        if (!resizeElem) return;
-        const dx = e.clientX - startX;
-        const dy = e.clientY - startY;
-        resizeElem.style.width = (startW + dx) + 'px';
-        resizeElem.style.height = (startH + dy) + 'px';
-    }
-    function stopResize() {
-        if (resizeElem) {
-            resizeElem = null;
-            document.removeEventListener('mousemove', onResize);
-            document.removeEventListener('mouseup', stopResize);
-            saveDashboard();
+    // ================= RESIZE
+    function onResize(e, maxWidth){
+        if(!resizeElem) return;
+        let newWidth = startW + e.clientX - startX;
+        if(maxWidth && newWidth > maxWidth - 20) {
+            newWidth = maxWidth - 20;
         }
+        resizeElem.style.width = newWidth + 'px';
+        resizeElem.style.height = (startH + e.clientY - startY) + 'px';
+    }
+    function stopResize(){
+        resizeElem=null;
+        document.removeEventListener('mousemove',onResize);
+        document.removeEventListener('mouseup',stopResize);
+        saveDashboard();
     }
 
-    /* ============================
-       SAVE / LOAD (per user)
-       ============================ */
-    function saveDashboard() {
-        const arr = [];
-        Array.from(dashboard.children).forEach(w => {
-            // avoid saving temporary placeholder
-            if (w.classList.contains('placeholder')) return;
+    // ================= SAVE & LOAD
+    function saveDashboard(){
+        const arr=[];
+        [...dashboard.children].forEach(w=>{
+            if(w.classList.contains('placeholder')) return;
             arr.push({
-                type: w.dataset.type,
-                html: w.innerHTML,
-                width: w.style.width || '',
-                height: w.style.height || ''
+                type:w.dataset.type,
+                html:w.innerHTML,
+                width:w.style.width||'',
+                height:w.style.height||''
             });
         });
-        localStorage.setItem(storageKey, JSON.stringify(arr));
+        localStorage.setItem(storageKey,JSON.stringify(arr));
     }
 
-    function loadDashboard() {
-        const raw = localStorage.getItem(storageKey);
-        if (!raw) return;
-        try {
-            const arr = JSON.parse(raw);
-            // clear current
-            dashboard.innerHTML = '';
-            arr.forEach(item => {
-                addWidget(item.type, item.html);
-                const added = dashboard.lastElementChild;
-                if (item.width) added.style.width = item.width;
-                if (item.height) added.style.height = item.height;
+    function loadDashboard(){
+        const raw=localStorage.getItem(storageKey);
+        if(!raw) return;
+        try{
+            const arr=JSON.parse(raw);
+            dashboard.innerHTML='';
+            arr.forEach(item=>{
+                const w=addWidget(item.type,item.html);
+                if(item.width) w.style.width=item.width;
+                if(item.height) w.style.height=item.height;
             });
-        } catch (e) {
-            console.error('Error cargando dashboard:', e);
+        }catch(e){
+            console.error("Error cargando dashboard:",e);
         }
     }
+    loadDashboard();
 
-    /* ============================
-       CLEAR ALL (per user)
-       ============================ */
-    clearAllBtn.addEventListener('click', () => {
-        if (!confirm('¿Seguro que quieres eliminar todos los widgets de tu dashboard?')) return;
-        dashboard.innerHTML = '';
+    // ================= CLEAR ALL
+    clearAllBtn.addEventListener('click',()=>{
+        if(!confirm("¿Seguro que quieres eliminar todos los widgets?")) return;
+        dashboard.innerHTML='';
         localStorage.removeItem(storageKey);
     });
 
-    /* ============================
-       INITIAL LOAD
-       ============================ */
-    loadDashboard();
-
+    // ================= EXPORT PDF
+    document.getElementById('exportPdf').addEventListener('click',async()=>{
+        const canvas=await html2canvas(dashboard,{scale:2});
+        const imgData=canvas.toDataURL('image/png');
+        const {jsPDF}=window.jspdf;
+        const pdf=new jsPDF('p','pt','a4');
+        const pageWidth=pdf.internal.pageSize.getWidth();
+        const imgProps=pdf.getImageProperties(imgData);
+        const pdfHeight=pageWidth/imgProps.width*imgProps.height;
+        pdf.addImage(imgData,'PNG',0,0,pageWidth,pdfHeight);
+        pdf.save('dashboard.pdf');
+    });
 </script>
 </body>
 </html>

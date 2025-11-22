@@ -135,6 +135,43 @@ function updateAchievementsUI() {
 function resetAchievements() { achievements.forEach(a => a.completed = false); updateAchievementsUI(); }
 function completeAchievement(id) { const a = achievements.find(x => x.id === id); if (a && !a.completed) { a.completed = true; showAchievementNotification(a.name); updateAchievementsUI(); } }
 
+
+//Achievements automatic check 
+function checkAchievements(movimientos) {
+    const totalAhorro = movimientos
+        .filter(m => (m.tipo || '').toLowerCase() === 'ingreso')
+        .reduce((sum, m) => sum + Number(m.monto || 0), 0)
+        - movimientos
+        .filter(m => (m.tipo || '').toLowerCase() === 'gasto')
+        .reduce((sum, m) => sum + Number(m.monto || 0), 0);
+
+    const gastosComidaEsteMes = movimientos
+        .filter(m => (m.tipo || '').toLowerCase() === 'gasto' && (m.descripcion || '').toLowerCase().includes('comida'))
+        .reduce((sum, m) => sum + Number(m.monto || 0), 0);
+    
+    const ingresosCount = movimientos.filter(m => (m.tipo || '').toLowerCase() === 'ingreso').length;
+    const gastosCount = movimientos.filter(m => (m.tipo || '').toLowerCase() === 'gasto').length;
+
+    //ahorrar 100€
+    if (!achievements.find(a => a.id === 1).completed && totalAhorro >= 100) completeAchievement(1);
+    //ahorrar 500€
+    if (!achievements.find(a => a.id === 2).completed && totalAhorro >= 500) completeAchievement(2);
+    //registrar 10 movimientos
+    if (!achievements.find(a => a.id === 3).completed && movimientos.length >= 10) completeAchievement(3);
+    //registrar 50 movimientos
+    if (!achievements.find(a => a.id === 4).completed && movimientos.length >= 50) completeAchievement(4);
+    //primer gasto registrado
+    if (!achievements.find(a => a.id === 5).completed && gastosCount >= 1) completeAchievement(5);
+    //primer ingreso registrado
+    if (!achievements.find(a => a.id === 6).completed && ingresosCount >= 1) completeAchievement(6);
+    //ahorrar 1000€
+    if (!achievements.find(a => a.id === 7).completed && totalAhorro >= 1000) completeAchievement(7);
+    //gasto en comida < 50€ en un mes
+    if (!achievements.find(a => a.id === 8).completed && gastosComidaEsteMes < 50 && gastosComidaEsteMes > 0) completeAchievement(8);
+}
+
+    
+    
 // ---------------- Chart helper ----------------
 function updateChartFromMovements(movimientos) {
     // Calcular totales de tipo y neto ()
@@ -566,6 +603,7 @@ async function verHistorial() {
             tbody.appendChild(tr);
         });
         updateChartFromMovements(movimientos);
+        checkAchievements(movimientos);
         try { buildFloatingChartWidget(movimientos); } catch (e) { console.warn('Floating chart build failed', e); }
     } catch (err) {
         alert(err.message || 'Error al cargar historial');

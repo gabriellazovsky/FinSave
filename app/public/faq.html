@@ -16,7 +16,7 @@
         body {
             background: linear-gradient(135deg, #eef2ff, #f8fafc);
         }
-        .dark body {
+        body.dark {
             background: linear-gradient(135deg, #0f172a, #1e293b);
         }
 
@@ -287,10 +287,11 @@
             btn.parentElement.classList.toggle("active");
         });
     });
-    /*
+    
     // Dark mode con sincronización entre páginas
+    /*
     const toggle = document.getElementById("dark-toggle");
-
+    
     function applyDarkMode(isDark) {
         if (isDark) {
             document.documentElement.classList.add("dark");
@@ -300,7 +301,7 @@
             toggle.checked = false;
         }
     }
-
+    
     // Cargar preferencia al iniciar
     window.addEventListener("DOMContentLoaded", () => {
         const darkPref = localStorage.getItem("dark-mode");
@@ -312,7 +313,7 @@
         const isDark = toggle.checked;
         applyDarkMode(isDark);
         localStorage.setItem("dark-mode", isDark ? "on" : "off");
-    });*/
+    })*/
 </script>
 <script src="/faq.js" defer></script>
 

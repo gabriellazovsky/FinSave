@@ -22,6 +22,8 @@
             --border-dark: #1e2d3d;
             --primary: #3b82f6;
             --primary-hover: #2563eb;
+            --success: #10b981;
+            --warning: #f59e0b;
         }
 
         body {
@@ -96,6 +98,46 @@
             gap: 1.5rem;
         }
 
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-online {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+        }
+
+        .status-offline {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--warning);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .status-online .status-dot {
+            background: var(--success);
+        }
+
+        .status-offline .status-dot {
+            background: var(--warning);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
         /* ========== TOGGLE OSCURO ========== */
         .theme-toggle {
             position: relative;
@@ -133,9 +175,12 @@
 
         /* ========== MAIN ========== */
         main {
-            max-width: 480px;
+            max-width: 1000px;
             margin: 3rem auto;
             padding: 0 1rem;
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 2rem;
         }
 
         .card {
@@ -200,30 +245,6 @@
             gap: 1rem;
         }
 
-        .swap-btn {
-            position: absolute;
-            right: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            background: var(--primary);
-            color: white;
-            border: none;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-            font-size: 1.2rem;
-        }
-
-        .swap-btn:hover {
-            background: var(--primary-hover);
-            transform: translateY(-50%) scale(1.1);
-        }
-
         .currency-wrapper {
             position: relative;
         }
@@ -259,8 +280,6 @@
             border-left: 4px solid var(--primary);
             border-radius: 8px;
             text-align: center;
-            font-size: 1.25rem;
-            font-weight: 700;
             display: none;
             animation: slideIn 0.3s ease;
         }
@@ -284,6 +303,23 @@
             display: block;
         }
 
+        #resultText {
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .rate-info {
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        body.dark .rate-info {
+            color: #999;
+        }
+
         .footer {
             margin-top: 1.5rem;
             font-size: 0.85rem;
@@ -296,17 +332,105 @@
             color: #666;
         }
 
-        .rate-info {
-            margin-top: 1rem;
-            font-size: 0.9rem;
-            color: #666;
+        /* ========== HISTORIAL ========== */
+        .history-card {
+            height: fit-content;
+            max-height: 600px;
+            display: flex;
+            flex-direction: column;
         }
 
-        body.dark .rate-info {
+        .history-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .history-list {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .history-item {
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 3px solid var(--primary);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        body.dark .history-item {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .history-item:hover {
+            background: #f0f4ff;
+            transform: translateX(4px);
+        }
+
+        body.dark .history-item:hover {
+            background: rgba(59, 130, 246, 0.2);
+        }
+
+        .history-item-amount {
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .history-item-rate {
+            font-size: 0.8rem;
             color: #999;
+            margin-top: 0.3rem;
+        }
+
+        .history-empty {
+            text-align: center;
+            color: #999;
+            padding: 2rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        .history-clear {
+            width: 100%;
+            padding: 0.75rem;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: auto;
+            transition: all 0.2s;
+        }
+
+        body.dark .history-clear {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .history-clear:hover {
+            background: #e0e0e0;
+        }
+
+        body.dark .history-clear:hover {
+            background: rgba(255, 255, 255, 0.15);
         }
 
         /* ========== RESPONSIVE ========== */
+        @media (max-width: 900px) {
+            main {
+                grid-template-columns: 1fr;
+            }
+
+            .history-card {
+                max-height: 300px;
+            }
+        }
+
         @media (max-width: 640px) {
             nav {
                 flex-direction: column;
@@ -331,6 +455,23 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-light);
+            border-radius: 3px;
+        }
+
+        body.dark ::-webkit-scrollbar-thumb {
+            background: var(--border-dark);
+        }
     </style>
 </head>
 <body>
@@ -342,6 +483,10 @@
             <h1>Conversor</h1>
         </div>
         <div class="nav-right">
+            <div class="status-badge" id="statusBadge">
+                <span class="status-dot"></span>
+                <span id="statusText">Online</span>
+            </div>
             <button class="theme-toggle">
                 <div class="toggle-circle">☀️</div>
             </button>
@@ -404,21 +549,49 @@
 
         <div id="result" class="result">
             <span id="resultText"></span>
-        </div>
-
-        <div class="rate-info" id="rateInfo" style="display: none;">
-            <small id="rateText"></small>
+            <div class="rate-info">
+                <small id="rateText"></small>
+            </div>
         </div>
 
         <div class="footer">
             Tasas en tiempo real vía exchangerate.host
             <br>
-            Fallback automático sin conexión
+            Cálculo aproximado sin conexión
         </div>
+    </div>
+
+    <div class="card history-card">
+        <h3>📊 Historial</h3>
+        <div class="history-list" id="historyList">
+            <div class="history-empty">Sin historial</div>
+        </div>
+        <button class="history-clear" id="historyClear">Limpiar historial</button>
     </div>
 </main>
 
 <script>
+    // ========== ESTADO CONEXIÓN ==========
+    const statusBadge = document.getElementById('statusBadge');
+    const statusText = document.getElementById('statusText');
+    let isOnline = navigator.onLine;
+
+    function updateStatus() {
+        if (navigator.onLine) {
+            isOnline = true;
+            statusBadge.className = 'status-badge status-online';
+            statusText.textContent = 'Online';
+        } else {
+            isOnline = false;
+            statusBadge.className = 'status-badge status-offline';
+            statusText.textContent = 'Sin conexión';
+        }
+    }
+
+    window.addEventListener('online', updateStatus);
+    window.addEventListener('offline', updateStatus);
+    updateStatus();
+
     // ========== TEMA OSCURO ==========
     const themeToggle = document.querySelector('.theme-toggle');
 
@@ -433,6 +606,28 @@
         localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
     });
 
+    // ========== TASAS FALLBACK ==========
+    const fallbackRates = {
+        'EURUSD': 1.08, 'USDEUR': 0.92,
+        'EURGBP': 0.86, 'GBPEUR': 1.16,
+        'EURJPY': 161.2, 'JPYEUR': 0.0062,
+        'EURMXN': 20.5, 'MXNEUR': 0.049,
+        'EURCAD': 1.48, 'CADEUR': 0.675,
+        'EURAUD': 1.68, 'AUDEUR': 0.595,
+        'EURCHF': 1.0, 'CHFEUR': 1.0,
+        'USDGBP': 0.79, 'GBPUSD': 1.26,
+        'USDJPY': 149.2, 'JPYUSD': 0.0067,
+        'USDMXN': 19.0, 'MXNUSD': 0.053,
+        'USDCAD': 1.37, 'CADUSD': 0.73,
+        'USDAUD': 1.55, 'AUDUSD': 0.645,
+        'USDCHF': 0.93, 'CHFUSD': 1.075,
+        'GBPJPY': 189.0, 'JPYGBP': 0.0053,
+        'GBPMXN': 24.0, 'MXNGBP': 0.042,
+        'GBPCAD': 1.73, 'CADGBP': 0.578,
+        'GBPAUD': 1.96, 'AUDGBP': 0.51,
+        'JPYMXN': 0.127, 'MXNJPY': 7.87,
+    };
+
     // ========== CONVERSOR ==========
     const form = document.getElementById('converterForm');
     const amountInput = document.getElementById('amount');
@@ -440,21 +635,49 @@
     const toSelect = document.getElementById('to');
     const resultDiv = document.getElementById('result');
     const resultText = document.getElementById('resultText');
-    const rateInfo = document.getElementById('rateInfo');
     const rateText = document.getElementById('rateText');
+    const historyList = document.getElementById('historyList');
+    const historyClear = document.getElementById('historyClear');
 
-    const fallbackRates = {
-        'EURUSD': 1.08, 'USDEUR': 0.92,
-        'EURGBP': 0.86, 'GBPEUR': 1.16,
-        'EURJPY': 161.2, 'JPYEUR': 0.0062,
-        'EURMXN': 20.5, 'MXNEUR': 0.049,
-        'USDGBP': 0.79, 'GBPUSD': 1.26,
-        'USDJPY': 149.2, 'JPYUSD': 0.0067,
-        'USDMXN': 19.0, 'MXNUSD': 0.053,
-        'GBPJPY': 189.0, 'JPYGBP': 0.0053,
-        'GBPMXN': 24.0, 'MXNGBP': 0.042,
-        'JPYMXN': 0.127, 'MXNJPY': 7.87,
+    let history = JSON.parse(localStorage.getItem('conversionHistory')) || [];
+    let cachedRates = JSON.parse(localStorage.getItem('cachedRates')) || {};
+
+    // Mostrar historial al cargar
+    renderHistory();
+
+    function renderHistory() {
+        if (history.length === 0) {
+            historyList.innerHTML = '<div class="history-empty">Sin historial</div>';
+            return;
+        }
+
+        historyList.innerHTML = history.map((item, idx) => `
+            <div class="history-item" onclick="loadFromHistory(${idx})">
+                <div class="history-item-amount">
+                    ${item.amount} ${item.from} → ${item.result} ${item.to}
+                </div>
+                <div class="history-item-rate">
+                    Tasa: 1 ${item.from} = ${item.rate}
+                </div>
+            </div>
+        `).join('');
+    }
+
+    window.loadFromHistory = (idx) => {
+        const item = history[idx];
+        amountInput.value = item.amount;
+        fromSelect.value = item.from;
+        toSelect.value = item.to;
+        form.dispatchEvent(new Event('submit'));
     };
+
+    historyClear.addEventListener('click', () => {
+        if (confirm('¿Limpiar todo el historial?')) {
+            history = [];
+            localStorage.removeItem('conversionHistory');
+            renderHistory();
+        }
+    });
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -465,42 +688,91 @@
 
         if (!amount || amount <= 0) {
             resultText.textContent = '⚠️ Ingresa una cantidad válida';
+            rateText.textContent = '';
             resultDiv.classList.add('visible');
-            rateInfo.style.display = 'none';
             return;
         }
 
         if (from === to) {
             resultText.textContent = `${amount} ${from} = ${amount} ${to}`;
+            rateText.textContent = `Tasa: 1 ${from} = 1 ${to}`;
             resultDiv.classList.add('visible');
-            rateInfo.style.display = 'none';
+            addToHistory(amount, from, to, 1, amount);
             return;
         }
 
-        try {
-            const res = await fetch(`https://api.exchangerate.host/latest?base=${from}`);
-            const data = await res.json();
+        let rate = null;
+        let isOnlineResult = false;
 
-            if (!data.rates || !data.rates[to]) throw new Error('No rate found');
+        // Intentar obtener tasa en línea
+        if (isOnline) {
+            try {
+                const cacheKey = `${from}_${to}`;
+                const cached = cachedRates[cacheKey];
+                const now = Date.now();
 
-            const rate = data.rates[to];
-            const result = (amount * rate).toFixed(2);
+                // Usar cache si es menor a 1 hora
+                if (cached && (now - cached.timestamp < 3600000)) {
+                    rate = cached.rate;
+                    isOnlineResult = true;
+                } else {
+                    const res = await fetch(`https://api.exchangerate.host/latest?base=${from}`);
+                    const data = await res.json();
 
-            resultText.textContent = `${amount.toLocaleString()} ${from} = ${parseFloat(result).toLocaleString()} ${to}`;
-            rateText.textContent = `Tasa: 1 ${from} = ${rate.toFixed(4)} ${to}`;
-            resultDiv.classList.add('visible');
-            rateInfo.style.display = 'block';
-        } catch {
+                    if (!data.rates || !data.rates[to]) throw new Error('No rate found');
+
+                    rate = data.rates[to];
+                    isOnlineResult = true;
+
+                    // Guardar en cache
+                    cachedRates[cacheKey] = {
+                        rate: rate,
+                        timestamp: now
+                    };
+                    localStorage.setItem('cachedRates', JSON.stringify(cachedRates));
+                }
+            } catch (err) {
+                // Fallback a tasas aproximadas
+                const key = from + to;
+                rate = fallbackRates[key] || 1;
+                isOnlineResult = false;
+            }
+        } else {
+            // Sin conexión: usar fallback
             const key = from + to;
-            const rate = fallbackRates[key] || 1;
-            const estimated = (amount * rate).toFixed(2);
-
-            resultText.textContent = `📡 ${amount.toLocaleString()} ${from} ≈ ${parseFloat(estimated).toLocaleString()} ${to}`;
-            rateText.textContent = `Tasa aproximada (sin conexión)`;
-            resultDiv.classList.add('visible');
-            rateInfo.style.display = 'block';
+            rate = fallbackRates[key] || 1;
+            isOnlineResult = false;
         }
+
+        const result = (amount * rate).toFixed(2);
+        const formattedRate = rate.toFixed(4);
+
+        resultText.textContent = `${amount.toLocaleString()} ${from} = ${parseFloat(result).toLocaleString()} ${to}`;
+
+        if (isOnlineResult) {
+            rateText.textContent = `✓ Tasa en vivo: 1 ${from} = ${formattedRate} ${to}`;
+        } else {
+            rateText.textContent = `📡 Tasa aproximada: 1 ${from} = ${formattedRate} ${to}`;
+        }
+
+        resultDiv.classList.add('visible');
+        addToHistory(amount, from, to, parseFloat(formattedRate), parseFloat(result));
     });
+
+    function addToHistory(amount, from, to, rate, result) {
+        history.unshift({
+            amount,
+            from,
+            to,
+            rate: rate.toFixed(4),
+            result: parseFloat(result).toLocaleString(),
+            timestamp: new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })
+        });
+
+        if (history.length > 20) history.pop();
+        localStorage.setItem('conversionHistory', JSON.stringify(history));
+        renderHistory();
+    }
 
     // Convertir al presionar Enter
     amountInput.addEventListener('keypress', (e) => {

@@ -1,4 +1,3 @@
-// ---------------- INTERNATIONALIZATION (i18n) ----------------
 const translations = {
     es: {
         welcome: "Bienvenido, ",
@@ -28,14 +27,12 @@ const translations = {
 
 let currentLang = localStorage.getItem("lang") || "es";
 
-// Cambiar idioma
 function setLanguage(lang) {
     currentLang = lang;
     localStorage.setItem("lang", lang);
     translatePage();
 }
 
-// Reemplaza texto según data-i18n="key"
 function translatePage() {
     document.querySelectorAll("[data-i18n]").forEach(el => {
         const key = el.getAttribute("data-i18n");
@@ -45,7 +42,6 @@ function translatePage() {
     });
 }
 
-// ---------------- Currency System ----------------
 let currentCurrency = localStorage.getItem("currency") || "EUR";
 
 function formatCurrency(amount) {
@@ -56,7 +52,7 @@ function formatCurrency(amount) {
 function setCurrency(cur) {
     currentCurrency = cur;
     localStorage.setItem("currency", cur);
-    verHistorial(); // refresca tabla y gráfico
+    verHistorial();
 }
 
 
@@ -87,49 +83,62 @@ if (getToken() && localStorage.getItem("userName")) {
 //la condenada lógica de logros segun el usuario
 function getUserIdFromToken(token) {
     try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
+        const parts = token.split('.');
+        if (parts.length !== 3) return null;
+        const payload = JSON.parse(atob(parts[1]));
         return payload.id || payload.userId || payload.uid;
     } catch {
         return null;
     }
 }
+const defaultAchievements = [
+    { id: 1, name: "Ahorrar 100€", completed: false },
+    { id: 2, name: "Ahorrar 500€", completed: false },
+    { id: 3, name: "Registrar 10 movimientos", completed: false },
+    { id: 4, name: "Registrar 50 movimientos", completed: false },
+    { id: 5, name: "Primer gasto registrado", completed: false },
+    { id: 6, name: "Primer ingreso registrado", completed: false },
+    { id: 7, name: "Ahorrar 1000€", completed: false },
+    { id: 8, name: "Gasto en comida < 50€ en un mes", completed: false },
+    { id: 9, name: "3 meses consecutivos de ahorro", completed: false },
+    { id: 10, name: "Exportar tu historial a CSV", completed: false }
+];
 
-const token = localStorage.getItem('token');
-const userId = getUserIdFromToken(token);
-
-const achievementsKey = `achievements_${userId}`;
-
-function loadUserAchievements() {
-    const saved = localStorage.getItem(achievementsKey);
+function loadUserAchievements(userId) {
+    if (!userId) {
+        return defaultAchievements;
+    }
+    const userKey = `achievements_${userId}`;
+    const saved = localStorage.getItem(userKey);
     if (saved) {
-        achievements = JSON.parse(saved);
+        return JSON.parse(saved);
     } else {
-        return [
-            { id: 1, name: "Ahorrar 100€", completed: false },
-            { id: 2, name: "Ahorrar 500€", completed: false },
-            { id: 3, name: "Registrar 10 movimientos", completed: false },
-            { id: 4, name: "Registrar 50 movimientos", completed: false },
-            { id: 5, name: "Primer gasto registrado", completed: false },
-            { id: 6, name: "Primer ingreso registrado", completed: false },
-            { id: 7, name: "Ahorrar 1000€", completed: false },
-            { id: 8, name: "Gasto en comida < 50€ en un mes", completed: false },
-            { id: 9, name: "3 meses consecutivos de ahorro", completed: false },
-            { id: 10, name: "Exportar tu historial a CSV", completed: false }
-        ];
+        return defaultAchievements;
     }
 }
 
-let achievements = loadUserAchievements();
+let achievements = loadUserAchievements(getUserIdFromToken(localStorage.getItem('token')));
 
 function saveUserAchievements() {
-    localStorage.setItem(achievementsKey, JSON.stringify(achievements));
+    const token = localStorage.getItem('token');
+    const userId = getUserIdFromToken(token);
+    if (!userId) return;
+    const userKey = `achievements_${userId}`;
+    localStorage.setItem(userKey, JSON.stringify(achievements));
+}
+
+function onUserLogin(token) {
+    const userId = getUserIdFromToken(token);
+    if (!userId) return;
+
+    achievements = loadUserAchievements(userId);
+
+    updateAchievementsUI();
 }
 
 
 
 // ---------------- Achievements (unchanged core) ----------------
-
-
 function showAchievementNotification(achievementName) {
     const notification = document.createElement('div');
     notification.className = 'achievement-notification';
@@ -240,8 +249,6 @@ function checkAchievements(movimientos) {
     }
 }
 
-    
-    
 // ---------------- Chart helper ----------------
 function updateChartFromMovements(movimientos) {
     // Calcular totales de tipo y neto ()
@@ -1068,6 +1075,7 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
         loginMsg.textContent = "";
         showApp();
         mostrarBienvenida();
+        onUserLogin(data.token);
         verHistorial();
     } catch (err) {
         loginMsg.textContent = "Error de conexión con el servidor";
@@ -1159,12 +1167,15 @@ async function handleCredentialResponse(response) {
         setToken(jwt);
         alert("Inicio de sesión con Google exitoso!");
         showApp();
+        mostrarBienvenida();
+        onUserLogin(jwt);
+        await verHistorial();
     } catch (err) {
         console.error(err);
         alert("Error en autenticación con Google");
     }
 }
-// Volver al home desde cualquier sección
+
 document.getElementById("homeBtnHeader").addEventListener("click", () => {
     // Si tienes sección de login, app y logros como antes:
     loginSection.classList.add("hidden");

@@ -168,6 +168,33 @@ function checkAchievements(movimientos) {
     if (!achievements.find(a => a.id === 7).completed && totalAhorro >= 1000) completeAchievement(7);
     //gasto en comida < 50€ en un mes
     if (!achievements.find(a => a.id === 8).completed && gastosComidaEsteMes < 50 && gastosComidaEsteMes > 0) completeAchievement(8);
+    //3 meses consecutivos de ahorro
+    if (!achievements.find(a => a.id === 9).completed) {
+        const mesesAhorro = {};
+        movimientos.forEach(m => {
+            const date = new Date(m.fecha);
+            if (isNaN(date)) return;
+            const key = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}`;
+            if (!mesesAhorro[key]) mesesAhorro[key] = 0;
+            const tipo = (m.tipo || '').toLowerCase();
+            const monto = Number(m.monto) || 0;
+            if (tipo === 'ingreso') mesesAhorro[key] += monto;
+            else if (tipo === 'gasto') mesesAhorro[key] -= monto;
+        });
+        const meses = Object.keys(mesesAhorro).sort();
+        let consecutivos = 0;
+        for (let i = 0; i < meses.length; i++) {
+            if (mesesAhorro[meses[i]] > 0) {
+                consecutivos++;
+                if (consecutivos >= 3) {
+                    completeAchievement(9);
+                    break;
+                }
+            } else {
+                consecutivos = 0;
+            }
+        }
+    }
 }
 
     

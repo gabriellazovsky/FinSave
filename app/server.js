@@ -485,6 +485,40 @@ wss.on('connection', (client, req) => {
 });
 
 
+
+require("dotenv").config();
+const fetch = require('node-fetch');
+
+app.use(express.static(path.join(__dirname, 'public')));
+app.get("/api/eurusd", async (req, res) => {
+    try {
+        const apiKey = process.env.TWELVEDATA_API_KEY;
+        const url = `https://api.twelvedata.com/exchange_rate?symbol=EUR/USD&apikey=${apiKey}`;
+
+        const r = await fetch(url);
+        const data = await r.json();
+
+        if (data.status === "error") {
+            console.error("Error TwelveData:", data);
+            return res.status(500).json({ error: data.message || "Error Twelve Data" });
+        }
+
+
+        const rate = parseFloat(data.rate);
+
+        res.json({ rate });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Error interno del servidor" });
+    }
+});
+
+
+
+
+
+
+
 module.exports = { app };
 
 if (require.main === module) {

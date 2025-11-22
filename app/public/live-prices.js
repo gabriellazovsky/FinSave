@@ -97,4 +97,50 @@
         // If you later add an unsubscribe path on the server, send it here:
         // ws.send(JSON.stringify({ action: 'unsubscribe', params: { symbols: '*' } }));
     });
+
+
+    async function getEurUsdRate() {
+        const res = await fetch("/api/eurusd");
+        if (!res.ok) throw new Error("Error al obtener el tipo de cambio");
+        const data = await res.json();
+
+        if (data.error) throw new Error(data.error);
+
+        return data.rate; // número
+    }
+
+    async function convertirEurUsd() {
+        const input = document.getElementById("eurAmount");
+        const result = document.getElementById("eurusdResult");
+
+        const eur = parseFloat(input.value);
+
+        if (isNaN(eur) || eur <= 0) {
+            result.textContent = "Introduce una cantidad válida en euros.";
+            return;
+        }
+
+        try {
+            const rate = await getEurUsdRate();
+            const usd = eur * rate;
+
+            result.textContent = `${eur.toFixed(2)} € son ${usd.toFixed(2)} $ (1 EUR = ${rate.toFixed(4)} USD)`;
+        } catch (err) {
+            console.error(err);
+            result.textContent = "No se ha podido obtener el tipo de cambio.";
+        }
+    }
+
+
+    window.addEventListener("DOMContentLoaded", () => {
+        const btn = document.getElementById("convertBtn");
+        if (btn) {
+            btn.addEventListener("click", convertirEurUsd);
+        }
+    });
+
+
+
 })();
+
+

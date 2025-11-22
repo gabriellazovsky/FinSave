@@ -240,6 +240,18 @@
             <button class="btn btn-success" id="exportBtn"><i class="bi bi-upload mr-2"></i>Exportar CSV</button>
         </div>
 
+        <div id="eurusd-converter">
+            <h2>Conversor EUR → USD</h2>
+
+            <label for="eurAmount">Cantidad en euros:</label>
+            <input type="number" id="eurAmount" step="0.01" placeholder="Ej: 50">
+
+            <button id="convertBtn">Convertir</button>
+
+            <p id="eurusdResult"></p>
+        </div>
+
+        <script src="live-prices.js"></script> <!-- o el JS que uses en esa página -->
 
         <!-- Filtros -->
         <div>

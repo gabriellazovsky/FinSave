@@ -211,6 +211,323 @@ function updateChartFromMovements(movimientos) {
     }
 }
 
+// ---------------- Floating comparative chart widget (dynamic) ----------------
+let lastMovimientos = [];
+let selectedTipos = new Set(['ingreso', 'gasto']);
+let selectedCategories = null; // null -> all
+let selectedYears = null; // null = all
+let selectedMonths = null; // null = all
+
+function extractCategoryFromMovimiento(m) {
+    let desc = (m.descripcion || '').trim();
+    if (!desc) return 'otros';
+    const match = desc.match(/[\p{L}\p{N}]+/u);
+    if (match && match[0]) return match[0].toLowerCase();
+    return 'otros';
+}
+
+function loadScriptOnce(src) {
+    return new Promise((resolve, reject) => {
+        if (document.querySelector(`script[src="${src}"]`)) return resolve();
+        const s = document.createElement('script');
+        s.src = src;
+        s.onload = () => resolve();
+        s.onerror = (e) => reject(e);
+        document.head.appendChild(s);
+    });
+}
+
+async function ensureChartJs() {
+    if (typeof Chart !== 'undefined') return;
+    await loadScriptOnce('https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js');
+    await loadScriptOnce('https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js');
+}
+
+function createFloatingWidget() {
+    if (document.getElementById('finsaveChartWidget')) return;
+    const w = document.createElement('div');
+    w.id = 'finsaveChartWidget';
+    Object.assign(w.style, {
+        position: 'fixed', right: '18px', bottom: '18px', width: '520px', maxWidth: 'calc(100% - 36px)',
+        background: 'white', border: '1px solid rgba(0,0,0,0.08)', borderRadius: '10px', boxShadow: '0 6px 24px rgba(0,0,0,0.12)',
+        zIndex: 99999, padding: '12px', fontFamily: 'system-ui, sans-serif'
+    });
+
+    w.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <strong>Comparativa</strong>
+            <button id="finsaveChartClose" style="background:none;border:none;cursor:pointer;font-size:16px">✕</button>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;margin-bottom:8px">
+            <label style="font-size:13px"><input type="checkbox" id="finsaveToggleIngresos" checked> Ingresos</label>
+            <label style="font-size:13px"><input type="checkbox" id="finsaveToggleGastos" checked> Gastos</label>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+            <div style="font-size:13px;color:#555">Año:</div>
+            <div id="finsaveYearDropdown" style="position:relative">
+                <button id="finsaveYearBtn" style="padding:6px;border-radius:6px;border:1px solid #ddd;background:white;cursor:pointer">Seleccionar años ▾</button>
+                <div id="finsaveYearMenu" style="display:none;position:absolute;left:0;top:36px;background:white;border:1px solid #ddd;padding:8px;border-radius:6px;max-height:180px;overflow:auto;z-index:100000"></div>
+            </div>
+            <div style="font-size:13px;color:#555">Mes:</div>
+            <div id="finsaveMonthDropdown" style="position:relative">
+                <button id="finsaveMonthBtn" style="padding:6px;border-radius:6px;border:1px solid #ddd;background:white;cursor:pointer">Seleccionar meses ▾</button>
+                <div id="finsaveMonthMenu" style="display:none;position:absolute;left:0;top:36px;background:white;border:1px solid #ddd;padding:8px;border-radius:6px;max-height:220px;overflow:auto;z-index:100000"></div>
+            </div>
+        </div>
+        <div style="margin-bottom:8px"><div style="font-size:13px;color:#555;margin-bottom:6px">Categorías</div><div id="finsaveCategoryFilters" style="display:flex;flex-wrap:wrap;gap:6px"></div></div>
+        <div style="height:260px"><canvas id="finsaveComparisonChart"></canvas></div>
+    `;
+
+    document.body.appendChild(w);
+    document.getElementById('finsaveChartClose').addEventListener('click', () => {
+        try { if (_finsaveChartInstance) { _finsaveChartInstance.destroy(); _finsaveChartInstance = null; } } catch (e) { console.warn('Error destroying chart', e); }
+        w.remove();
+    });
+
+    document.getElementById('finsaveToggleIngresos').addEventListener('change', (e) => {
+        if (e.target.checked) selectedTipos.add('ingreso'); else selectedTipos.delete('ingreso');
+        rebuildFloatingChart();
+    });
+    document.getElementById('finsaveToggleGastos').addEventListener('change', (e) => {
+        if (e.target.checked) selectedTipos.add('gasto'); else selectedTipos.delete('gasto');
+        rebuildFloatingChart();
+    });
+}
+
+function renderCategoryFilters(categories) {
+    createFloatingWidget();
+    const container = document.getElementById('finsaveCategoryFilters');
+    if (!container) return;
+    container.innerHTML = '';
+    if (selectedCategories === null) selectedCategories = new Set(categories);
+
+    categories.forEach(cat => {
+        const btn = document.createElement('button');
+        btn.textContent = cat;
+        btn.dataset.cat = cat;
+        Object.assign(btn.style, { padding: '6px 8px', fontSize: '13px', borderRadius: '6px', border: '1px solid #ddd', background: selectedCategories.has(cat) ? '#0ea5a4' : '#f5f5f5', color: selectedCategories.has(cat) ? 'white' : '#333', cursor: 'pointer' });
+        btn.addEventListener('click', () => {
+            if (selectedCategories.has(cat)) selectedCategories.delete(cat); else selectedCategories.add(cat);
+            btn.style.background = selectedCategories.has(cat) ? '#0ea5a4' : '#f5f5f5';
+            btn.style.color = selectedCategories.has(cat) ? 'white' : '#333';
+            rebuildFloatingChart();
+        });
+        container.appendChild(btn);
+    });
+}
+
+function populateYearMonthSelects(movimientos) {
+    createFloatingWidget();
+    const yearMenu = document.getElementById('finsaveYearMenu');
+    const monthMenu = document.getElementById('finsaveMonthMenu');
+    const yearBtn = document.getElementById('finsaveYearBtn');
+    const monthBtn = document.getElementById('finsaveMonthBtn');
+    if (!yearMenu || !monthMenu || !yearBtn || !monthBtn) return;
+
+    const byYear = {};
+    movimientos.forEach(m => {
+        const date = new Date(m.fecha);
+        if (isNaN(date)) return;
+        const y = date.getFullYear();
+        const mo = date.getMonth() + 1;
+        byYear[y] = byYear[y] || new Set();
+        byYear[y].add(mo);
+    });
+
+    const years = Object.keys(byYear).map(Number).sort((a,b)=>b-a);
+
+    yearMenu.innerHTML = '';
+    years.forEach(y => {
+        const id = `fy_${y}`;
+        const wrapper = document.createElement('label');
+        wrapper.style.display = 'flex'; wrapper.style.alignItems = 'center'; wrapper.style.gap = '8px'; wrapper.style.marginBottom = '6px';
+        const cb = document.createElement('input'); cb.type = 'checkbox'; cb.value = String(y); cb.id = id; cb.checked = true;
+        cb.addEventListener('change', () => {
+            const sel = Array.from(yearMenu.querySelectorAll('input[type=checkbox]:checked')).map(i => Number(i.value));
+            if (sel.length === 0 || sel.length === years.length) selectedYears = null; else selectedYears = new Set(sel);
+            // actualiza los menús de mes para reflejar la unión de meses para los años seleccionados
+            const monthsUnion = new Set();
+            const yearsToCheck = selectedYears === null ? Object.keys(byYear).map(Number) : Array.from(selectedYears);
+            yearsToCheck.forEach(yy => (byYear[yy] || new Set()).forEach(mo => monthsUnion.add(mo)));
+            // reconstruye el menú de meses manteniendo las selecciones previas
+            const prevSelected = selectedMonths === null ? null : new Set(Array.from(monthMenu.querySelectorAll('input[type=checkbox]:checked')).map(i=>Number(i.value)));
+            monthMenu.innerHTML = '';
+            const monthsArray = monthsUnion.size ? Array.from(monthsUnion).sort((a,b)=>a-b) : Array.from({length:12}, (_,i)=>i+1);
+            monthsArray.forEach(mo => {
+                const mid = `fm_${mo}`;
+                const mwrap = document.createElement('label'); mwrap.style.display='flex'; mwrap.style.alignItems='center'; mwrap.style.gap='8px'; mwrap.style.marginBottom='6px';
+                const mcb = document.createElement('input'); mcb.type='checkbox'; mcb.value=String(mo); mcb.id=mid; mcb.checked = prevSelected === null ? true : prevSelected.has(mo);
+                mcb.addEventListener('change', () => {
+                    const selm = Array.from(monthMenu.querySelectorAll('input[type=checkbox]:checked')).map(i=>Number(i.value));
+                    selectedMonths = (selm.length === 0 || selm.length === monthMenu.querySelectorAll('input[type=checkbox]').length) ? null : new Set(selm);
+                    rebuildFloatingChart();
+                });
+                const txt = document.createElement('span'); txt.textContent = String(mo).padStart(2,'0');
+                mwrap.appendChild(mcb); mwrap.appendChild(txt); monthMenu.appendChild(mwrap);
+            });
+            const selmNow = Array.from(monthMenu.querySelectorAll('input[type=checkbox]:checked')).map(i=>Number(i.value));
+            selectedMonths = (selmNow.length === 0 || selmNow.length === monthMenu.querySelectorAll('input[type=checkbox]').length) ? null : new Set(selmNow);
+            rebuildFloatingChart();
+        });
+        const txt = document.createElement('span'); txt.textContent = String(y);
+        wrapper.appendChild(cb); wrapper.appendChild(txt); yearMenu.appendChild(wrapper);
+    });
+
+    monthMenu.innerHTML = '';
+    for (let mo = 1; mo <= 12; mo++) {
+        const mid = `fm_${mo}`;
+        const mwrap = document.createElement('label'); mwrap.style.display='flex'; mwrap.style.alignItems='center'; mwrap.style.gap='8px'; mwrap.style.marginBottom='6px';
+        const mcb = document.createElement('input'); mcb.type='checkbox'; mcb.value=String(mo); mcb.id=mid; mcb.checked = true;
+        mcb.addEventListener('change', () => {
+            const selm = Array.from(monthMenu.querySelectorAll('input[type=checkbox]:checked')).map(i=>Number(i.value));
+            selectedMonths = (selm.length === 0 || selm.length === monthMenu.querySelectorAll('input[type=checkbox]').length) ? null : new Set(selm);
+            rebuildFloatingChart();
+        });
+        const txt = document.createElement('span'); txt.textContent = String(mo).padStart(2,'0');
+        mwrap.appendChild(mcb); mwrap.appendChild(txt); monthMenu.appendChild(mwrap);
+    }
+    selectedYears = null; selectedMonths = null;
+
+    function toggleMenu(menu, btn) {
+        const visible = menu.style.display === 'block';
+        document.querySelectorAll('#finsaveYearMenu, #finsaveMonthMenu').forEach(m => m.style.display = 'none');
+        if (!visible) menu.style.display = 'block';
+    }
+    yearBtn.onclick = (e) => { e.stopPropagation(); toggleMenu(yearMenu, yearBtn); };
+    monthBtn.onclick = (e) => { e.stopPropagation(); toggleMenu(monthMenu, monthBtn); };
+
+    document.addEventListener('click', (ev) => {
+        const p = ev.target;
+        if (!yearMenu.contains(p) && p !== yearBtn) yearMenu.style.display = 'none';
+        if (!monthMenu.contains(p) && p !== monthBtn) monthMenu.style.display = 'none';
+    });
+}
+
+let _finsaveChartInstance = null;
+
+async function rebuildFloatingChart() {
+    await ensureChartJs();
+    const movimientos = lastMovimientos || [];
+    // aplica los filtros
+    const filtered = movimientos.filter(m => {
+        const tipo = (m.tipo || '').toLowerCase();
+        if (!selectedTipos.has(tipo)) return false;
+
+        const date = new Date(m.fecha);
+        if (!isNaN(date)) {
+            if (selectedYears && !selectedYears.has(date.getFullYear())) return false;
+            if (selectedMonths && !selectedMonths.has(date.getMonth() + 1)) return false;
+        }
+
+        if (!selectedCategories || selectedCategories.size === 0) return false;
+        const cat = extractCategoryFromMovimiento(m);
+        return selectedCategories.has(cat);
+    });
+
+    // suma el mes
+    const byMonth = {};
+    filtered.forEach(m => {
+        const date = new Date(m.fecha);
+        if (isNaN(date)) return;
+        const key = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}`;
+        if (!byMonth[key]) byMonth[key] = { ingreso: 0, gasto: 0 };
+        const tipo = (m.tipo || '').toLowerCase();
+        const monto = Number(m.monto) || 0;
+        if (tipo === 'ingreso') byMonth[key].ingreso += monto;
+        else if (tipo === 'gasto') byMonth[key].gasto += monto;
+    });
+
+    const months = Object.keys(byMonth).sort();
+    const ingresos = months.map(k => byMonth[k].ingreso || 0);
+    const gastos = months.map(k => byMonth[k].gasto || 0);
+
+    const ctx = document.getElementById('finsaveComparisonChart');
+    if (!ctx) return;
+
+    const data = {
+        labels: months,
+        datasets: [
+            { label: 'Ingresos', data: ingresos, borderColor: 'rgba(34,197,94,0.95)', backgroundColor: 'rgba(34,197,94,0.12)', tension: 0.2, pointRadius: 3 },
+            { label: 'Gastos', data: gastos, borderColor: 'rgba(239,68,68,0.95)', backgroundColor: 'rgba(239,68,68,0.12)', tension: 0.2, pointRadius: 3 }
+        ]
+    };
+
+    const options = {
+        responsive: true, maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: { legend: { position: 'top' }, tooltip: { callbacks: { label(ctx){ return `${ctx.dataset.label}: ${formatCurrency(ctx.parsed.y)}`; } } }, zoom: { pan:{enabled:true,mode:'x'}, zoom:{wheel:{enabled:true}, pinch:{enabled:true}, mode:'x'} } },
+        scales: { x: { title: { display: true, text: 'Mes' } }, y: { ticks: { callback: v => formatCurrency(v) } } }
+    };
+
+    if (_finsaveChartInstance) {
+        try {
+            if (_finsaveChartInstance.canvas && _finsaveChartInstance.canvas === ctx) {
+                _finsaveChartInstance.data = data;
+                _finsaveChartInstance.options = options;
+                _finsaveChartInstance.update();
+                return;
+            }
+            _finsaveChartInstance.destroy();
+            _finsaveChartInstance = null;
+        } catch (e) {
+            console.warn('Error updating/destroying previous chart instance', e);
+            _finsaveChartInstance = null;
+        }
+    }
+
+    _finsaveChartInstance = new Chart(ctx.getContext('2d'), { type: 'line', data, options });
+}
+
+function buildFloatingChartWidget(movimientos) {
+    lastMovimientos = movimientos || [];
+    // determine categories
+    const cats = Array.from(new Set(lastMovimientos.map(m => extractCategoryFromMovimiento(m)))).sort();
+    if (cats.length === 0) cats.push('otros');
+    // initialize selectedCategories if first time
+    if (selectedCategories === null) selectedCategories = new Set(cats);
+    renderCategoryFilters(cats);
+    populateYearMonthSelects(lastMovimientos);
+    rebuildFloatingChart();
+}
+
+// ---------------- Toggle button for comparative widget ----------------
+function createComparativeToggleButton() {
+    if (document.getElementById('finsaveComparativeBtn')) return;
+    const btn = document.createElement('button');
+    btn.id = 'finsaveComparativeBtn';
+    btn.title = 'Mostrar comparativa';
+    btn.textContent = 'Comparativa';
+    Object.assign(btn.style, {
+        position: 'fixed', left: '18px', bottom: '18px', zIndex: 99999,
+        background: '#0ea5a4', color: 'white', border: 'none', padding: '10px 14px', borderRadius: '10px', cursor: 'pointer', boxShadow: '0 6px 18px rgba(0,0,0,0.12)'
+    });
+    document.body.appendChild(btn);
+
+    btn.addEventListener('click', async () => {
+        const existing = document.getElementById('finsaveChartWidget');
+        if (existing) {
+            try { if (_finsaveChartInstance) { _finsaveChartInstance.destroy(); _finsaveChartInstance = null; } } catch (e) { console.warn('Error destroying chart', e); }
+            existing.remove();
+            return;
+        }
+
+        if (lastMovimientos && lastMovimientos.length > 0) {
+            buildFloatingChartWidget(lastMovimientos);
+            return;
+        }
+
+        try {
+            await verHistorial();
+        } catch (e) {
+            console.warn('No se pudo cargar historial para comparativa', e);
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    try { createComparativeToggleButton(); } catch (e) { console.warn('Could not create comparative button', e); }
+});
+
 // ---------------- API helpers ----------------
 async function getCuentaIdFromEmail(email) {
     const res = await fetch(`/cuenta-por-email/${encodeURIComponent(email)}`, {
@@ -250,6 +567,7 @@ async function verHistorial() {
             tbody.appendChild(tr);
         });
         updateChartFromMovements(movimientos);
+        try { buildFloatingChartWidget(movimientos); } catch (e) { console.warn('Floating chart build failed', e); }
     } catch (err) {
         alert(err.message || 'Error al cargar historial');
     }

@@ -132,7 +132,6 @@ function updateAchievementsUI() {
     document.getElementById('progress-text').textContent = `${pct}% Completado (${completedCount}/${achievements.length})`;
 }
 
-function simulateAchievements() { achievements.forEach(a => { if (Math.random() < 0.6 && !a.completed) { a.completed = true; showAchievementNotification(a.name); } }); updateAchievementsUI(); }
 function resetAchievements() { achievements.forEach(a => a.completed = false); updateAchievementsUI(); }
 function completeAchievement(id) { const a = achievements.find(x => x.id === id); if (a && !a.completed) { a.completed = true; showAchievementNotification(a.name); updateAchievementsUI(); } }
 
@@ -902,7 +901,6 @@ document.getElementById('exportBtn').addEventListener('click', async () => {
 
 
 // ---------------- Logros: botones ----------------
-document.getElementById('simulate-btn').addEventListener('click', simulateAchievements);
 document.getElementById('reset-btn').addEventListener('click', resetAchievements);
 updateAchievementsUI();
 

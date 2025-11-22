@@ -84,19 +84,51 @@ if (getToken() && localStorage.getItem("userName")) {
     mostrarBienvenida();
 }
 
+//la condenada lógica de logros segun el usuario
+function getUserIdFromToken(token) {
+    try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        return payload.id || payload.userId || payload.uid;
+    } catch {
+        return null;
+    }
+}
+
+const token = localStorage.getItem('token');
+const userId = getUserIdFromToken(token);
+
+const achievementsKey = `achievements_${userId}`;
+
+function loadUserAchievements() {
+    const saved = localStorage.getItem(achievementsKey);
+    if (saved) {
+        achievements = JSON.parse(saved);
+    } else {
+        return [
+            { id: 1, name: "Ahorrar 100€", completed: false },
+            { id: 2, name: "Ahorrar 500€", completed: false },
+            { id: 3, name: "Registrar 10 movimientos", completed: false },
+            { id: 4, name: "Registrar 50 movimientos", completed: false },
+            { id: 5, name: "Primer gasto registrado", completed: false },
+            { id: 6, name: "Primer ingreso registrado", completed: false },
+            { id: 7, name: "Ahorrar 1000€", completed: false },
+            { id: 8, name: "Gasto en comida < 50€ en un mes", completed: false },
+            { id: 9, name: "3 meses consecutivos de ahorro", completed: false },
+            { id: 10, name: "Exportar tu historial a CSV", completed: false }
+        ];
+    }
+}
+
+let achievements = loadUserAchievements();
+
+function saveUserAchievements() {
+    localStorage.setItem(achievementsKey, JSON.stringify(achievements));
+}
+
+
+
 // ---------------- Achievements (unchanged core) ----------------
-let achievements = [
-    { id: 1, name: "Ahorrar 100€", completed: false },
-    { id: 2, name: "Ahorrar 500€", completed: false },
-    { id: 3, name: "Registrar 10 movimientos", completed: false },
-    { id: 4, name: "Registrar 50 movimientos", completed: false },
-    { id: 5, name: "Primer gasto registrado", completed: false },
-    { id: 6, name: "Primer ingreso registrado", completed: false },
-    { id: 7, name: "Ahorrar 1000€", completed: false },
-    { id: 8, name: "Gasto en comida < 50€ en un mes", completed: false },
-    { id: 9, name: "3 meses consecutivos de ahorro", completed: false },
-    { id: 10, name: "Exportar tu historial a CSV", completed: false }
-];
+
 
 function showAchievementNotification(achievementName) {
     const notification = document.createElement('div');
@@ -132,9 +164,20 @@ function updateAchievementsUI() {
     document.getElementById('progress-text').textContent = `${pct}% Completado (${completedCount}/${achievements.length})`;
 }
 
-function resetAchievements() { achievements.forEach(a => a.completed = false); updateAchievementsUI(); }
-function completeAchievement(id) { const a = achievements.find(x => x.id === id); if (a && !a.completed) { a.completed = true; showAchievementNotification(a.name); updateAchievementsUI(); } }
-
+function resetAchievements() { 
+    achievements.forEach(a => a.completed = false);
+    updateAchievementsUI(); 
+    saveUserAchievements();
+}
+function completeAchievement(id) { 
+    const a = achievements.find(x => x.id === id);
+     if (a && !a.completed) {
+        a.completed = true;
+        showAchievementNotification(a.name); 
+        updateAchievementsUI();
+        saveUserAchievements();
+    }
+}
 
 //Achievements automatic check 
 function checkAchievements(movimientos) {

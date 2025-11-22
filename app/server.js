@@ -394,6 +394,7 @@ let upstreamOpen = false;
 let sendQueue = [];
 const clients = new Set();
 let pingTimer = null;
+let btcMostrado = false;
 
 function ensureUpstream() {
     if (upstream && (upstream.readyState === WebSocket.CONNECTING || upstream.readyState === WebSocket.OPEN)) {
@@ -427,8 +428,20 @@ function ensureUpstream() {
 
     upstream.on('message', (data) => {
         const text = data.toString();
-         console.log('[WS] from upstream msg', data.toString());
-        for (const c of clients) { try { c.send(data); } catch {} }
+        try {
+            const msg = JSON.parse(text);
+            if (msg.event === 'price' && !btcMostrado) {
+                //console.log('Valores de BTC');
+                btcMostrado = true;
+            }
+        } catch (e) {
+        }
+        for (const c of clients) {
+            try {
+                c.send(data);
+            } catch {
+            }
+        }
     });
 
     upstream.on('close', (code, reason) => {
@@ -437,7 +450,7 @@ function ensureUpstream() {
         clearInterval(pingTimer);
         const notice = JSON.stringify({ event: 'upstream-closed', code, reason: String(reason || '') });
         for (const c of clients) { try { c.send(notice); } catch {} }
-        setTimeout(ensureUpstream, 1500); // backoff & reconnect
+        setTimeout(ensureUpstream, 1500);
     });
 
     upstream.on('error', (e) => console.error('[WS] upstream error', e.message));

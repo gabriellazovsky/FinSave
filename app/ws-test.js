@@ -12,21 +12,21 @@ ws.on('open', () => {
     console.log('Connected.');
     const subscribeMsg = {
         action: 'subscribe',
-        params: { symbols: 'AAPL' }
+        params: {symbols: 'AAPL'}
     };
     ws.send(JSON.stringify(subscribeMsg));
 });
 
+let alreadyShown = false;
+
 ws.on('message', (data) => {
     try {
         const msg = JSON.parse(data);
-        if (msg.event !== 'price') {
-            console.log('Non price event: ', msg);
-        } else {
-            console.log('Price: ', msg.symbol, msg.price, '@', msg.timestamp);
+        if (!alreadyShown && msg.event === 'price') {
+            //console.log('Valores de BTC');
+            alreadyShown = true;
         }
     } catch (e) {
-        console.log('Raw message:', data.toString());
     }
 });
 

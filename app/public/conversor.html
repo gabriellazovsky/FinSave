@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Conversor de Moneda – Pro</title>
     <style>
+
         * {
             margin: 0;
             padding: 0;
@@ -479,13 +480,13 @@
 <header>
     <nav>
         <div class="nav-left">
-            <a href="/persona.html" class="back-btn">← Volver</a>
-            <h1>Conversor</h1>
+            <a href="/persona.html" class="back-btn" data-i18n="back">← Volver</a>
+            <h1 data-i18n="converter">Conversor</h1>
         </div>
         <div class="nav-right">
             <div class="status-badge" id="statusBadge">
                 <span class="status-dot"></span>
-                <span id="statusText">Online</span>
+                <span id="statusText" data-i18n="online">Online</span>
             </div>
             <button class="theme-toggle">
                 <div class="toggle-circle">☀️</div>
@@ -496,11 +497,11 @@
 
 <main>
     <div class="card">
-        <h2>Convertir Moneda</h2>
+        <h2 data-i18n="convertCurrency">Convertir Moneda</h2>
 
         <form id="converterForm">
             <div class="form-group">
-                <label for="amount">Cantidad</label>
+                <label for="amount" data-i18n="amount">Cantidad</label>
                 <input
                         id="amount"
                         type="number"
@@ -512,10 +513,10 @@
             </div>
 
             <div class="form-group">
-                <label>Monedas</label>
+                <label data-i18n="currencies">Monedas</label>
                 <div class="currency-pair">
                     <div class="currency-wrapper">
-                        <label style="font-size: 0.85rem; font-weight: 500; color: #666;">Desde</label>
+                        <label style="font-size: 0.85rem; font-weight: 500; color: #666;" data-i18n="from">Desde</label>
                         <select id="from">
                             <option value="EUR">EUR – Euro</option>
                             <option value="USD">USD – Dólar</option>
@@ -529,7 +530,7 @@
                     </div>
 
                     <div class="currency-wrapper">
-                        <label style="font-size: 0.85rem; font-weight: 500; color: #666;">Hacia</label>
+                        <label style="font-size: 0.85rem; font-weight: 500; color: #666;" data-i18n="to">Hacia</label>
                         <select id="to">
                             <option value="USD">USD – Dólar</option>
                             <option value="EUR">EUR – Euro</option>
@@ -544,7 +545,7 @@
                 </div>
             </div>
 
-            <button type="submit" class="convert-btn">Convertir</button>
+            <button type="submit" class="convert-btn" data-i18n="convert">Convertir</button>
         </form>
 
         <div id="result" class="result">
@@ -555,20 +556,23 @@
         </div>
 
         <div class="footer">
-            Tasas en tiempo real vía exchangerate.host
+            <span data-i18n="ratesInfo">Tasas en tiempo real vía exchangerate.host</span>
             <br>
-            Cálculo aproximado sin conexión
+            <span data-i18n="offlineCalc">Cálculo aproximado sin conexión</span>
         </div>
     </div>
 
     <div class="card history-card">
-        <h3>📊 Historial</h3>
+        <h3 data-i18n="history">📊 Historial</h3>
         <div class="history-list" id="historyList">
-            <div class="history-empty">Sin historial</div>
+            <div class="history-empty" data-i18n="noHistory">Sin historial</div>
         </div>
-        <button class="history-clear" id="historyClear">Limpiar historial</button>
+        <button class="history-clear" id="historyClear" data-i18n="clearHistory">Limpiar historial</button>
     </div>
 </main>
+
+<!-- AGREGAR EL SCRIPT DE TRADUCCIONES -->
+<script src="translations.js"></script>
 
 <script>
     // ========== ESTADO CONEXIÓN ==========
@@ -647,7 +651,7 @@
 
     function renderHistory() {
         if (history.length === 0) {
-            historyList.innerHTML = '<div class="history-empty">Sin historial</div>';
+            historyList.innerHTML = '<div class="history-empty" data-i18n="noHistory">Sin historial</div>';
             return;
         }
 

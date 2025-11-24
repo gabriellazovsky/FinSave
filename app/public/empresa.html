@@ -138,8 +138,8 @@
 
 <header class="w-full bg-white dark:bg-gray-800 shadow-sm">
     <nav class="container mx-auto flex justify-between items-center px-4 py-3">
-        <a href="persona.html" class="hover:text-blue-600 font-semibold">← Volver</a>
-        <h1 class="text-xl font-bold text-gray-800 dark:text-gray-100">Dashboard Profesional</h1>
+        <a href="persona.html" class="hover:text-blue-600 font-semibold" data-i18n="back">← Volver</a>
+        <h1 class="text-xl font-bold text-gray-800 dark:text-gray-100" data-i18n="professionalDashboard">Dashboard Profesional</h1>
 
         <div class="header-actions">
             <div class="ml-4 relative group" title="Activa modo oscuro/claro">
@@ -149,34 +149,37 @@
                     <i class="fas fa-sun">🌙</i>
                     <span class="ball"></span>
                 </label>
-                <span class="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 rounded bg-gray-800 text-white text-xs px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">Light / Dark Mode</span>
+                <span class="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 rounded bg-gray-800 text-white text-xs px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity" data-i18n="themeToggle">Light / Dark Mode</span>
             </div>
-            <button id="exportPdf" class="bg-blue-600 text-white px-3 py-2 rounded-md hover:bg-blue-700 ml-2">Exportar PDF</button>
-            <button id="clearAll" class="bg-red-600 text-white px-3 py-2 rounded-md hover:bg-red-700">Eliminar Todo</button>
-            <button id="logoutBtn" class="bg-gray-800 text-white px-3 py-2 rounded-md hover:bg-gray-900 ml-2">Cerrar Sesión</button>
+            <button id="exportPdf" class="bg-blue-600 text-white px-3 py-2 rounded-md hover:bg-blue-700 ml-2" data-i18n="exportPDF">Exportar PDF</button>
+            <button id="clearAll" class="bg-red-600 text-white px-3 py-2 rounded-md hover:bg-red-700" data-i18n="deleteAll">Eliminar Todo</button>
+            <button id="logoutBtn" class="bg-gray-800 text-white px-3 py-2 rounded-md hover:bg-gray-900 ml-2" data-i18n="logout">Cerrar Sesión</button>
         </div>
     </nav>
 </header>
 
 <div class="flex">
     <aside class="w-64 bg-white dark:bg-gray-800 shadow-md min-h-screen p-4">
-        <h2 class="text-lg font-bold mb-4">Widgets</h2>
-        <button class="w-full mb-2 btn-add" onclick="addWidget('line')">Gráfico Lineal</button>
-        <button class="w-full mb-2 btn-add" onclick="addWidget('bar')">Gráfico de Barras</button>
-        <button class="w-full mb-2 btn-add" onclick="addWidget('pie')">Gráfico Circular</button>
-        <button class="w-full mb-2 btn-add" onclick="addWidget('table')">Tabla</button>
-        <button class="w-full mb-2 btn-add" onclick="addWidget('text')">Texto</button>
-        <button class="w-full mb-2 btn-add" onclick="addWidget('kpi')">KPI</button>
+        <h2 class="text-lg font-bold mb-4" data-i18n="widgets">Widgets</h2>
+        <button class="w-full mb-2 btn-add" onclick="addWidget('line')" data-i18n="lineChart">Gráfico Lineal</button>
+        <button class="w-full mb-2 btn-add" onclick="addWidget('bar')" data-i18n="barChart">Gráfico de Barras</button>
+        <button class="w-full mb-2 btn-add" onclick="addWidget('pie')" data-i18n="pieChart">Gráfico Circular</button>
+        <button class="w-full mb-2 btn-add" onclick="addWidget('table')" data-i18n="table">Tabla</button>
+        <button class="w-full mb-2 btn-add" onclick="addWidget('text')" data-i18n="text">Texto</button>
+        <button class="w-full mb-2 btn-add" onclick="addWidget('kpi')" data-i18n="kpi">KPI</button>
     </aside>
 
     <main class="flex-1 p-6">
-        <h2 class="text-2xl font-bold mb-6">Dashboard Profesional</h2>
+        <h2 class="text-2xl font-bold mb-6" data-i18n="professionalDashboard">Dashboard Profesional</h2>
         <div id="dashboard"></div>
     </main>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<!-- AGREGAR EL SCRIPT DE TRADUCCIONES -->
+<script src="translations.js"></script>
 
 <script>
     // ================= USER / TOKEN
@@ -229,27 +232,27 @@
 
         if(!saved){
             if(type==='line'||type==='bar'||type==='pie'){
-                widget.innerHTML=`<h3 class="editable" contenteditable="true">Gráfico</h3>
+                widget.innerHTML=`<h3 class="editable" contenteditable="true" data-i18n="chart">Gráfico</h3>
             <canvas class="chart-canvas"></canvas>
-            <input class="chart-data-input form-control mt-2" placeholder="10,20,30">
-            <input class="chart-labels-input form-control mt-1" placeholder="Ene,Feb,Mar">
+            <input class="chart-data-input form-control mt-2" placeholder="10,20,30" data-i18n-placeholder="chartData">
+            <input class="chart-labels-input form-control mt-1" placeholder="Ene,Feb,Mar" data-i18n-placeholder="chartLabels">
             <div class="resize-handle"></div>`;
             }
             else if(type==='table'){
-                widget.innerHTML=`<h3 class="editable" contenteditable="true">Tabla</h3>
-            <input class="table-search form-control mb-2" placeholder="Buscar...">
+                widget.innerHTML=`<h3 class="editable" contenteditable="true" data-i18n="table">Tabla</h3>
+            <input class="table-search form-control mb-2" placeholder="Buscar..." data-i18n-placeholder="search">
             <table class="table-auto w-full table-fintech" contenteditable="true">
-            <thead><tr><th>Cliente</th><th>Saldo</th></tr></thead><tbody><tr><td>Juan</td><td>$1200</td></tr></tbody></table>
-            <button class="btn btn-sm btn-success mt-2 add-row">Agregar fila</button>
+            <thead><tr><th data-i18n="client">Cliente</th><th data-i18n="balance">Saldo</th></tr></thead><tbody><tr><td data-i18n="john">Juan</td><td>$1200</td></tr></tbody></table>
+            <button class="btn btn-sm btn-success mt-2 add-row" data-i18n="addRow">Agregar fila</button>
             <div class="resize-handle"></div>`;
             }
             else if(type==='text'){
-                widget.innerHTML=`<h3 class="editable" contenteditable="true">Notas</h3>
-            <textarea class="form-control" rows="4">Escribe tus notas...</textarea>
+                widget.innerHTML=`<h3 class="editable" contenteditable="true" data-i18n="notes">Notas</h3>
+            <textarea class="form-control" rows="4" data-i18n-placeholder="writeNotes">Escribe tus notas...</textarea>
             <div class="resize-handle"></div>`;
             }
             else if(type==='kpi'){
-                widget.innerHTML=`<h3 class="editable" contenteditable="true">KPI</h3>
+                widget.innerHTML=`<h3 class="editable" contenteditable="true" data-i18n="kpi">KPI</h3>
             <div class="kpi-card" contenteditable="true">12345</div>
             <div class="resize-handle"></div>`;
             }
@@ -307,7 +310,7 @@
             e.stopPropagation();
             const tbody=widget.querySelector('table tbody');
             const tr=document.createElement('tr');
-            tr.innerHTML='<td>Nuevo</td><td>0</td>';
+            tr.innerHTML='<td data-i18n="new">Nuevo</td><td>0</td>';
             tbody.appendChild(tr);
             saveDashboard();
         });

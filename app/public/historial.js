@@ -20,23 +20,6 @@ if (!userId) window.location.href = "persona.html";
 
 const key = `feedbacks_${userId}`;
 
-// Función para traducir tipos de feedback
-function traducirTipoFeedback(tipo) {
-    const currentLang = localStorage.getItem('lang') || 'es';
-    
-    const traducciones = {
-        'sugerencia': { es: 'Sugerencia', en: 'Suggestion' },
-        'bug': { es: 'Reporte de Error', en: 'Bug Report' },
-        'general': { es: 'General', en: 'General' }
-    };
-    
-    if (traducciones[tipo] && traducciones[tipo][currentLang]) {
-        return traducciones[tipo][currentLang];
-    }
-    
-    return tipo; // Fallback al tipo original
-}
-
 document.addEventListener('DOMContentLoaded', function() {
     cargarHistorial();
 });
@@ -88,17 +71,32 @@ function mostrarFeedbacks(feedbacks) {
     listaFeedbacks.parentElement.style.display = 'table';
 
     listaFeedbacks.innerHTML = reversedFeedbacks.map(feedback => {
-        // Traducir el tipo de feedback
-        const tipoTraducido = traducirTipoFeedback(feedback.tipo || '');
+        // Crear fila con data-i18n para que translations.js la traduzca
+        const tipoKey = getTranslationKeyForTipo(feedback.tipo);
         
         return `
         <tr>
-            <td>${tipoTraducido}</td>
+            <td><span data-i18n="${tipoKey}">${feedback.tipo || ''}</span></td>
             <td>${feedback.comentario || ''}</td>
             <td>${new Date(feedback.fecha).toLocaleDateString('es-ES') || ''}</td>
         </tr>
         `;
     }).join('');
+    
+    // Forzar traducción de todas las filas
+    if (typeof translatePage === 'function') {
+        translatePage();
+    }
+}
+
+// Función para mapear tipos de feedback a keys de traducción
+function getTranslationKeyForTipo(tipo) {
+    const mapping = {
+        'sugerencia': 'feedback.suggestion',
+        'bug': 'feedback.bug_report',
+        'general': 'feedback.general'
+    };
+    return mapping[tipo] || 'feedback.general';
 }
 
 function mostrarError(mensaje) {

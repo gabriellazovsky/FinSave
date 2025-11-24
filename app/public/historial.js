@@ -70,33 +70,13 @@ function mostrarFeedbacks(feedbacks) {
     if(noFeedbacksMessage) noFeedbacksMessage.remove();
     listaFeedbacks.parentElement.style.display = 'table';
 
-    listaFeedbacks.innerHTML = reversedFeedbacks.map(feedback => {
-        // Crear fila con data-i18n para que translations.js la traduzca
-        const tipoKey = getTranslationKeyForTipo(feedback.tipo);
-        
-        return `
+    listaFeedbacks.innerHTML = reversedFeedbacks.map(feedback => `
         <tr>
-            <td><span data-i18n="${tipoKey}">${feedback.tipo || ''}</span></td>
+            <td>${feedback.tipo || ''}</td>
             <td>${feedback.comentario || ''}</td>
             <td>${new Date(feedback.fecha).toLocaleDateString('es-ES') || ''}</td>
         </tr>
-        `;
-    }).join('');
-    
-    // Forzar traducción de todas las filas
-    if (typeof translatePage === 'function') {
-        translatePage();
-    }
-}
-
-// Función para mapear tipos de feedback a keys de traducción
-function getTranslationKeyForTipo(tipo) {
-    const mapping = {
-        'sugerencia': 'feedback.suggestion',
-        'bug': 'feedback.bug_report',
-        'general': 'feedback.general'
-    };
-    return mapping[tipo] || 'feedback.general';
+    `).join('');
 }
 
 function mostrarError(mensaje) {

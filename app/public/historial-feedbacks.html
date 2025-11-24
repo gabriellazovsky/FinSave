@@ -7,51 +7,51 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="index.css">
-    <title>Historial de Feedbacks - FinSave</title>
+    <title data-i18n="feedbackHistory">Historial de Feedbacks - FinSave</title>
     <link rel="stylesheet" href="/consejo.css">
     <link rel="icon" href="favicon.png" type="image/png">
-
 </head>
 <body class="feedback-page">
     <header class="w-full bg-white shadow-sm">
         <nav class="container mx-auto flex justify-between items-center px-4 py-3">
             <div class="flex gap-6">
-                <a href="feedback.html" class="hover:text-blue-600 font-semibold">← Volver a Feedback</a>
+                <a href="feedback.html" class="hover:text-blue-600 font-semibold" data-i18n="back">← Volver a Feedback</a>
             </div>
-            <h1 class="text-xl font-bold text-gray-800">Historial de Feedbacks</h1>
-            </div>
-            <div class="ml-4 relative group" title="Activa modo oscuro/claro">
+            <h1 class="text-xl font-bold text-gray-800" data-i18n="feedbackHistory">Historial de Feedbacks</h1>
+            <div class="ml-4 relative group" title="Activa modo oscuro/claro" data-i18n-title="theme.toggle_title">
                 <input type="checkbox" class="checkbox" id="checkbox">
                 <label for="checkbox" class="checkbox-label">
                     <i class="fas fa-moon">☀️</i>
                     <i class="fas fa-sun">🌙</i>
                     <span class="ball"></span>
                 </label>
-                <span class="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 rounded bg-gray-800 text-white text-xs px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">Light / Dark Mode</span>
+                <span class="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 rounded bg-gray-800 text-white text-xs px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity" data-i18n="theme.toggle_label">Light / Dark Mode</span>
             </div>
-            <button class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors" id="logoutBtnHistorial">Cerrar Sesión</button>
+            <button class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors" id="logoutBtnHistorial" data-i18n="nav.logout">Cerrar Sesión</button>
         </nav>
     </header>
 
     <div class="feedback-container mx-auto p-4 max-w-4xl mt-8">
-        <h1 class="text-3xl font-bold mb-6 text-gray-800">Historial de Feedbacks</h1>
+        <h1 class="text-3xl font-bold mb-6 text-gray-800" data-i18n="feedbackHistory">Historial de Feedbacks</h1>
         
-        <div id="loading" class="text-center text-blue-500 my-4" style="display: none;">Cargando historial...</div>
+        <div id="loading" class="text-center text-blue-500 my-4" style="display: none;" data-i18n="loading.historial">Cargando historial...</div>
         <div id="errorMessage" class="error" style="display: none;"></div>
         
         <table class="table table-striped mt-4">
             <thead>
                 <tr>
-                    <th scope="col" class="w-25">Tipo de Feedback</th>
-                    <th scope="col">Mensaje</th>
-                    <th scope="col" class="w-10">Fecha</th>
+                    <th scope="col" class="w-25" data-i18n="feedback.feedback_type">Tipo de Feedback</th>
+                    <th scope="col" data-i18n="feedback.message">Mensaje</th>
+                    <th scope="col" class="w-10" data-i18n="table.date">Fecha</th>
                 </tr>
             </thead>
             <tbody id="lista-feedbacks"> 
             </tbody>
         </table>
-        </div>
+    </div>
 
+    <!-- Añade translations.js aquí -->
+    <script src="translations.js"></script>
     <script src="historial.js"></script>
     <script src="/consejo.js"></script>
 </body>

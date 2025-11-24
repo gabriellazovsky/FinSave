@@ -20,6 +20,20 @@ if (!userId) window.location.href = "persona.html";
 
 const key = `feedbacks_${userId}`;
 
+// Función para obtener traducciones
+function getTranslation(key) {
+    const currentLang = localStorage.getItem('lang') || 'es';
+    // Asegúrate de que 'translations' esté disponible globalmente
+    if (window.translations && window.translations[currentLang] && window.translations[currentLang][key]) {
+        return window.translations[currentLang][key];
+    }
+    // Fallback en español
+    const fallbackTranslations = {
+        'feedback.no_feedbacks': 'No hay feedbacks enviados aún',
+        'loading.historial': 'Cargando historial...'
+    };
+    return fallbackTranslations[key] || key;
+}
 
 document.addEventListener('DOMContentLoaded', function() {
     cargarHistorial();
@@ -49,10 +63,13 @@ function mostrarFeedbacks(feedbacks) {
 
         parentTable.style.display = 'none';
 
+        // USAR TRADUCCIÓN AQUÍ
+        const noFeedbacksText = getTranslation('feedback.no_feedbacks');
+        
         container.innerHTML += `
             <div id="noFeedbacksMessage" class="text-center text-gray-500 py-8">
                 <i class="bi bi-inbox display-4"></i>
-                <p class="mt-2">No hay feedbacks enviados aún</p>
+                <p class="mt-2">${noFeedbacksText}</p>
             </div>
         `;
         return;

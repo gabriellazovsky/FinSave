@@ -61,7 +61,7 @@
                 <input id="correo" type="email"
                        class="mt-1 w-full p-2 border rounded-md focus:ring focus:ring-blue-200"
                 />
-                <p id="emailError" class="text-red-500 text-sm mt-1 hidden">Por favor, ingresa un correo electrónico válido</p>
+                <p id="emailError" class="text-red-500 text-sm mt-1 hidden">Por favor, ingresa un correo electrónico válido (ejemplo: usuario@dominio.com)</p>
             </div>
 
             <div>
@@ -131,11 +131,13 @@
        VALIDACIÓN DE CORREO
     ============================ */
     function validarCorreo(correo) {
-        // Verificar que tenga @ y al menos un punto después del @
-        const tieneArroba = correo.includes('@');
-        const tienePuntoDespuesArroba = correo.split('@')[1]?.includes('.');
+        // Verificar que tenga contenido antes del @, un @ y al menos un punto después del @
+        const partes = correo.split('@');
+        const tieneContenidoAntes = partes[0] && partes[0].length > 0;
+        const tieneArroba = partes.length === 2;
+        const tienePuntoDespuesArroba = partes[1]?.includes('.');
         
-        return tieneArroba && tienePuntoDespuesArroba;
+        return tieneContenidoAntes && tieneArroba && tienePuntoDespuesArroba;
     }
 
     /* ============================

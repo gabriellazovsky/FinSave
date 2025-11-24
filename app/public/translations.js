@@ -113,6 +113,12 @@ const translations = {
         "clickForMore": "Haz click aquí para saber más",
         "seeMore": "Ver más",
 
+        // historialfeedback
+"feedbackHistory": "Historial de Feedbacks",
+"loading.historial": "Cargando historial...",
+"feedback.feedback_type": "Tipo de Feedback", 
+"feedback.message": "Mensaje",
+
         // CONTENIDO DE ARTÍCULOS - NUEVAS TRADUCCIONES
         "article.5WaysSave": "5 formas reales de ahorrar cada mes",
         "article.5WaysSaveText": "1. Automatiza tus ahorros\n2. Reduce gastos innecesarios\n3. Compra con lista\n4. Evita deudas costosas\n5. Revisa tus suscripciones",
@@ -340,6 +346,13 @@ const translations = {
         "allRightsReserved": "All rights reserved",
         "clickForMore": "Click here to learn more",
         "seeMore": "See more",
+
+          // historialfeedback
+"feedbackHistory": "Feedback History",
+"loading.historial": "Loading history...",
+"feedback.feedback_type": "Feedback Type",
+"feedback.message": "Message",
+
 
         // CONTENIDO DE ARTÍCULOS - NUEVAS TRADUCCIONES
         "article.5WaysSave": "5 real ways to save every month",

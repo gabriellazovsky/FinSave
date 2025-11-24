@@ -119,6 +119,9 @@ const translations = {
 "feedback.feedback_type": "Tipo de Feedback", 
 "feedback.message": "Mensaje",
         "feedback.no_feedbacks": "No hay feedbacks enviados aún",
+        "feedback.suggestion": "Sugerencia",
+"feedback.bug_report": "Reporte de Error",
+"feedback.general": "General",
 
         // CONTENIDO DE ARTÍCULOS - NUEVAS TRADUCCIONES
         "article.5WaysSave": "5 formas reales de ahorrar cada mes",
@@ -354,6 +357,9 @@ const translations = {
 "feedback.feedback_type": "Feedback Type",
 "feedback.message": "Message",
           "feedback.no_feedbacks": "No feedbacks sent yet",
+        "feedback.suggestion": "Suggestion", 
+"feedback.bug_report": "Bug Report",
+"feedback.general": "General",
 
 
         // CONTENIDO DE ARTÍCULOS - NUEVAS TRADUCCIONES

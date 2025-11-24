@@ -118,6 +118,7 @@ const translations = {
 "loading.historial": "Cargando historial...",
 "feedback.feedback_type": "Tipo de Feedback", 
 "feedback.message": "Mensaje",
+        "feedback.no_feedbacks": "No hay feedbacks enviados aún",
 
         // CONTENIDO DE ARTÍCULOS - NUEVAS TRADUCCIONES
         "article.5WaysSave": "5 formas reales de ahorrar cada mes",
@@ -352,6 +353,7 @@ const translations = {
 "loading.historial": "Loading history...",
 "feedback.feedback_type": "Feedback Type",
 "feedback.message": "Message",
+          "feedback.no_feedbacks": "No feedbacks sent yet",
 
 
         // CONTENIDO DE ARTÍCULOS - NUEVAS TRADUCCIONES

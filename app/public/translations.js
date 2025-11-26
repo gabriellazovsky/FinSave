@@ -1,6 +1,7 @@
 const translations = {
     es: {
         welcome: "Bienvenido, ",
+         "welcomeUser": "Bienvenido, {user}!",
         profile: "Perfil",
         logout: "Cerrar sesión",
         email: "Correo",
@@ -240,6 +241,7 @@ const translations = {
     },
     en: {
         welcome: "Welcome, ",
+         "welcomeUser": "Welcome, {user}!",
         profile: "Profile",
         logout: "Sign Out",
         email: "Email",

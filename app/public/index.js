@@ -1049,10 +1049,29 @@ function mostrarBienvenida() {
         span.classList.add("text-blue-600", "font-semibold", "ml-4");
         navbar.appendChild(span);
     } else {
-        document.getElementById("bienvenido-user").textContent = welcomeText;
+        document.getElementById("bienvenida-user").textContent = welcomeText;
     }
 }
 
+// CONECTAR EL CAMBIO DE IDIOMA - ESTO ES LO QUE FALTA
+document.addEventListener('DOMContentLoaded', function() {
+    // Ejecutar al cargar la página
+    mostrarBienvenida();
+    
+    // Conectar el evento de cambio de idioma
+    const langSelect = document.getElementById('langSelect');
+    if (langSelect) {
+        langSelect.addEventListener('change', function(e) {
+            const lang = e.target.value;
+            localStorage.setItem("language", lang);
+            mostrarBienvenida(); // ¡IMPORTANTE! Actualizar la bienvenida
+        });
+    }
+});
+
+// También asegúrate de que se llame cuando el usuario haga login
+// En tu función de login, después de setToken, llama a:
+// mostrarBienvenida();
 // ---------------- PROFILE DATA ----------------
 function loadUserProfile() {
     const name = localStorage.getItem("userName") || "Usuario";

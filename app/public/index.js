@@ -1031,23 +1031,26 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
 // ---------------- BIENVENIDA ----------------
 function mostrarBienvenida() {
     const nombre = localStorage.getItem("userName") || "Usuario";
+    const currentLang = localStorage.getItem("language") || "es";
     const navbar = document.querySelector("header nav");
+    
+    // Traducción manual solo para la bienvenida
+    const translations = {
+        es: `Bienvenido, ${nombre}!`,
+        en: `Welcome, ${nombre}!`
+    };
+    
+    const welcomeText = translations[currentLang] || translations.es;
     
     if (!document.getElementById("bienvenido-user")) {
         const span = document.createElement("span");
         span.id = "bienvenido-user";
-        span.setAttribute('data-i18n', 'welcomeUser');
-        span.setAttribute('data-i18n-params', JSON.stringify({user: nombre}));
+        span.textContent = welcomeText;
         span.classList.add("text-blue-600", "font-semibold", "ml-4");
         navbar.appendChild(span);
     } else {
-        // Actualizar el elemento existente
-        const span = document.getElementById("bienvenido-user");
-        span.setAttribute('data-i18n', 'welcomeUser');
-        span.setAttribute('data-i18n-params', JSON.stringify({user: nombre}));
+        document.getElementById("bienvenido-user").textContent = welcomeText;
     }
-    
-    // El sistema de traducciones de translations.js se encargará del resto automáticamente
 }
 
 // ---------------- PROFILE DATA ----------------

@@ -119,6 +119,9 @@ const translations = {
 "feedback.feedback_type": "Tipo de Feedback", 
 "feedback.message": "Mensaje",
         "feedback.no_feedbacks": "No hay feedbacks enviados aún",
+
+//validacion
+                "emailError": "Por favor, ingresa un correo electrónico válido (ejemplo: usuario@dominio.com)",
     
 
         // CONTENIDO DE ARTÍCULOS - NUEVAS TRADUCCIONES
@@ -355,6 +358,10 @@ const translations = {
 "feedback.feedback_type": "Feedback Type",
 "feedback.message": "Message",
           "feedback.no_feedbacks": "No feedbacks sent yet",
+
+
+            //validacion
+        "emailError": "Please enter a valid email address (example: user@domain.com)",
       
 
         // CONTENIDO DE ARTÍCULOS - NUEVAS TRADUCCIONES
@@ -542,6 +549,18 @@ function setCurrency(cur) {
     }
 }
 
+
+
+//funcion
+function translatePage(lang) {
+    document.querySelectorAll('[data-i18n]').forEach(element => {
+        const key = element.getAttribute('data-i18n');
+        if (translations[lang] && translations[lang][key]) {
+            element.textContent = translations[lang][key];
+        }
+    });
+
+    
 // Cargar cuando la página esté lista
 document.addEventListener("DOMContentLoaded", function() {
     // Configurar selectores de idioma y moneda

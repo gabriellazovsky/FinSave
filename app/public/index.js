@@ -1032,18 +1032,22 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
 function mostrarBienvenida() {
     const nombre = localStorage.getItem("userName") || "Usuario";
     const navbar = document.querySelector("header nav");
-
     
     if (!document.getElementById("bienvenido-user")) {
         const span = document.createElement("span");
         span.id = "bienvenido-user";
-        span.textContent = `Bienvenido, ${nombre}!`;
+        span.setAttribute('data-i18n', 'welcomeUser');
+        span.setAttribute('data-i18n-params', JSON.stringify({user: nombre}));
         span.classList.add("text-blue-600", "font-semibold", "ml-4");
         navbar.appendChild(span);
     } else {
-        
-        document.getElementById("bienvenido-user").textContent = `Bienvenido, ${nombre}!`;
+        // Actualizar el elemento existente
+        const span = document.getElementById("bienvenido-user");
+        span.setAttribute('data-i18n', 'welcomeUser');
+        span.setAttribute('data-i18n-params', JSON.stringify({user: nombre}));
     }
+    
+    // El sistema de traducciones de translations.js se encargará del resto automáticamente
 }
 
 // ---------------- PROFILE DATA ----------------

@@ -1031,47 +1031,29 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
 // ---------------- BIENVENIDA ----------------
 function mostrarBienvenida() {
     const nombre = localStorage.getItem("userName") || "Usuario";
-    const currentLang = localStorage.getItem("language") || "es";
+    const langSelect = document.getElementById('langSelect');
+    const currentLang = langSelect ? langSelect.value : "es";
+    
+    const welcomeText = currentLang === 'en' 
+        ? `Welcome, ${nombre}!`
+        : `Bienvenido, ${nombre}!`;
+    
+    console.log("Mostrando:", welcomeText); // Debug
+    
+    let welcomeElement = document.getElementById("bienvenido-user");
     const navbar = document.querySelector("header nav");
     
-    // Traducción manual solo para la bienvenida
-    const translations = {
-        es: `Bienvenido, ${nombre}!`,
-        en: `Welcome, ${nombre}!`
-    };
+    if (!welcomeElement && navbar) {
+        welcomeElement = document.createElement("span");
+        welcomeElement.id = "bienvenido-user";
+        welcomeElement.classList.add("text-blue-600", "font-semibold", "ml-4");
+        navbar.appendChild(welcomeElement);
+    }
     
-    const welcomeText = translations[currentLang] || translations.es;
-    
-    if (!document.getElementById("bienvenido-user")) {
-        const span = document.createElement("span");
-        span.id = "bienvenido-user";
-        span.textContent = welcomeText;
-        span.classList.add("text-blue-600", "font-semibold", "ml-4");
-        navbar.appendChild(span);
-    } else {
-        document.getElementById("bienvenida-user").textContent = welcomeText;
+    if (welcomeElement) {
+        welcomeElement.textContent = welcomeText;
     }
 }
-
-// CONECTAR EL CAMBIO DE IDIOMA - ESTO ES LO QUE FALTA
-document.addEventListener('DOMContentLoaded', function() {
-    // Ejecutar al cargar la página
-    mostrarBienvenida();
-    
-    // Conectar el evento de cambio de idioma
-    const langSelect = document.getElementById('langSelect');
-    if (langSelect) {
-        langSelect.addEventListener('change', function(e) {
-            const lang = e.target.value;
-            localStorage.setItem("language", lang);
-            mostrarBienvenida(); // ¡IMPORTANTE! Actualizar la bienvenida
-        });
-    }
-});
-
-// También asegúrate de que se llame cuando el usuario haga login
-// En tu función de login, después de setToken, llama a:
-// mostrarBienvenida();
 // ---------------- PROFILE DATA ----------------
 function loadUserProfile() {
     const name = localStorage.getItem("userName") || "Usuario";

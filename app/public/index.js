@@ -1031,27 +1031,19 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
 // ---------------- BIENVENIDA ----------------
 function mostrarBienvenida() {
     const nombre = localStorage.getItem("userName") || "Usuario";
-    const langSelect = document.getElementById('langSelect');
-    const currentLang = langSelect ? langSelect.value : "es";
-    
-    const welcomeText = currentLang === 'en' 
-        ? `Welcome, ${nombre}!`
-        : `Bienvenido, ${nombre}!`;
-    
-    console.log("Mostrando:", welcomeText); // Debug
-    
-    let welcomeElement = document.getElementById("bienvenido-user");
     const navbar = document.querySelector("header nav");
+    const currentLang = localStorage.getItem("lang") || "es";
     
-    if (!welcomeElement && navbar) {
-        welcomeElement = document.createElement("span");
-        welcomeElement.id = "bienvenido-user";
-        welcomeElement.classList.add("text-blue-600", "font-semibold", "ml-4");
-        navbar.appendChild(welcomeElement);
-    }
+    const welcomeText = translations[currentLang].welcome + nombre + "!";
     
-    if (welcomeElement) {
-        welcomeElement.textContent = welcomeText;
+    if (!document.getElementById("bienvenido-user")) {
+        const span = document.createElement("span");
+        span.id = "bienvenido-user";
+        span.textContent = welcomeText;
+        span.classList.add("text-blue-600", "font-semibold", "ml-4");
+        navbar.appendChild(span);
+    } else {
+        document.getElementById("bienvenido-user").textContent = welcomeText;
     }
 }
 // ---------------- PROFILE DATA ----------------

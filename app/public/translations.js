@@ -495,28 +495,15 @@ function setLanguage(lang) {
     }
 }
 
-function translatePage(lang) {
-    document.querySelectorAll('[data-i18n]').forEach(element => {
-        const key = element.getAttribute('data-i18n');
-        if (translations[lang] && translations[lang][key]) {
-            let text = translations[lang][key];
-            
-            // Procesar parámetros dinámicos como {user}
-            const paramsAttr = element.getAttribute('data-i18n-params');
-            if (paramsAttr) {
-                try {
-                    const params = JSON.parse(paramsAttr);
-                    // Reemplazar {user} por el valor real
-                    text = text.replace(/{user}/g, params.user || 'Usuario');
-                } catch (e) {
-                    console.warn('Error parsing i18n params:', e);
-                }
-            }
-            
-            element.textContent = text;
+
+function translatePage() {
+    // TRADUCE SIEMPRE - sin condiciones restrictivas
+    document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        if (translations[currentLang][key]) {
+            el.textContent = translations[currentLang][key];
         }
     });
-}
 
     document.querySelectorAll("option[data-i18n]").forEach(option => {
         const key = option.getAttribute("data-i18n");

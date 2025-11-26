@@ -61,7 +61,7 @@
                 <input id="correo" type="email"
                        class="mt-1 w-full p-2 border rounded-md focus:ring focus:ring-blue-200"
                 />
-                <p id="emailError" class="text-red-500 text-sm mt-1 hidden">Por favor, ingresa un correo electrónico válido (ejemplo: usuario@dominio.com)</p>
+                <p id="emailError" class="text-red-500 text-sm mt-1 hidden" data-i18n="emailError">Por favor, ingresa un correo electrónico válido (ejemplo: usuario@dominio.com)</p>
             </div>
 
             <div>
@@ -263,6 +263,21 @@
     document.getElementById("logoutBtn").addEventListener("click", () => {
         localStorage.clear();
         window.location.href = "login.html";
+    });
+
+    /* ============================
+       LANGUAGE CHANGE
+    ============================ */
+    document.getElementById("langSelect").addEventListener("change", function() {
+        // Aquí iría la lógica para cambiar el idioma
+        // Por ahora solo actualizamos el mensaje de error si está visible
+        const emailError = document.getElementById("emailError");
+        if (!emailError.classList.contains('hidden')) {
+            // Forzar la actualización del texto cuando cambie el idioma
+            setTimeout(() => {
+                // El texto se actualizará automáticamente por translations.js
+            }, 100);
+        }
     });
 
     /* Inicializar */

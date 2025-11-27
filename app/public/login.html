@@ -36,8 +36,11 @@
                     <div class="mb-3">
                         <input type="email" class="form-control" id="emailLogin" placeholder="Correo" required>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3 input-group">
                         <input type="password" class="form-control" id="passwordLogin" placeholder="Contraseña" required>
+                        <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                            <i class="bi bi-eye" id="togglePasswordIcon"></i>
+                        </button>
                     </div>
                     <div class="mb-3 text-end">
                         <a href="recuperar.html" class="small">¿Olvidaste tu contraseña?</a>
@@ -57,8 +60,11 @@
                     <div class="mb-3">
                         <input type="email" class="form-control" id="emailRegistro" placeholder="Correo" required>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3 input-group">
                         <input type="password" class="form-control" id="passwordRegistro" placeholder="Contraseña" required>
+                        <button class="btn btn-outline-secondary" type="button" id="togglePasswordRegistro">
+                            <i class="bi bi-eye" id="togglePasswordRegistroIcon"></i>
+                        </button>
                     </div>
                     <div class="mb-3" id="registroMsg"></div>
                     <button class="btn btn-success w-100" type="submit">Registrarse</button>

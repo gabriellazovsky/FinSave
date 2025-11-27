@@ -87,3 +87,33 @@ function handleCredentialResponse(response) {
     alert("Inicio de sesión con Google exitoso!");
     window.location.href = "/persona.html"; // Redirige al dashboard
 }
+
+// ---------------- Mostrar/Ocultar Contraseña ----------------
+document.getElementById("togglePassword").addEventListener("click", () => {
+    const passwordInput = document.getElementById("passwordLogin");
+    const icon = document.getElementById("togglePasswordIcon");
+    if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        icon.classList.remove("bi-eye");
+        icon.classList.add("bi-eye-slash");
+    } else {
+        passwordInput.type = "password";
+        icon.classList.remove("bi-eye-slash");
+        icon.classList.add("bi-eye");
+    }
+});
+
+// ---------------- Mostrar/Ocultar Contraseña Registro ----------------
+document.getElementById("togglePasswordRegistro").addEventListener("click", () => {
+    const passwordInput = document.getElementById("passwordRegistro");
+    const icon = document.getElementById("togglePasswordRegistroIcon");
+    if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        icon.classList.remove("bi-eye");
+        icon.classList.add("bi-eye-slash");
+    } else {
+        passwordInput.type = "password";
+        icon.classList.remove("bi-eye-slash");
+        icon.classList.add("bi-eye");
+    }
+});

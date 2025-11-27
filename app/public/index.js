@@ -79,9 +79,6 @@ function onUserLogin(token) {
 
     updateAchievementsUI();
 }
-
-
-
 // ---------------- Achievements (unchanged core) ----------------
 function showAchievementNotification(achievementName) {
     const notification = document.createElement('div');
@@ -1104,6 +1101,46 @@ window.onload = function () {
         }
     );
 };
+// ---------------- Mostrar/Ocultar Contraseña ----------------
+document.addEventListener("DOMContentLoaded", () => {
+
+    // ---------------- Mostrar/Ocultar Contraseña ----------------
+    const togglePasswordElement = document.getElementById("togglePassword");
+    if (togglePasswordElement) {
+        togglePasswordElement.addEventListener("click", () => {
+            const passwordInput = document.getElementById("passwordLogin");
+            const icon = document.getElementById("togglePasswordIcon");
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                icon.classList.remove("bi-eye");
+                icon.classList.add("bi-eye-slash");
+            } else {
+                passwordInput.type = "password";
+                icon.classList.remove("bi-eye-slash");
+                icon.classList.add("bi-eye");
+            }
+        });
+    }
+
+    // ---------------- Mostrar/Ocultar Contraseña Registro ----------------
+    const togglePasswordRegistroElement = document.getElementById("togglePasswordRegistro");
+    if (togglePasswordRegistroElement) {
+        togglePasswordRegistroElement.addEventListener("click", () => {
+            const passwordInput = document.getElementById("passwordRegistro");
+            const icon = document.getElementById("togglePasswordRegistroIcon");
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                icon.classList.remove("bi-eye");
+                icon.classList.add("bi-eye-slash");
+            } else {
+                passwordInput.type = "password";
+                icon.classList.remove("bi-eye-slash");
+                icon.classList.add("bi-eye");
+            }
+        });
+    }
+
+});
 
 async function handleCredentialResponse(response) {
     try {
@@ -1246,5 +1283,5 @@ window.addEventListener("load", () => {
     loadUserProfile();
 });
 
-})();
+});
 

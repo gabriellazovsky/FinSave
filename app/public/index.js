@@ -15,9 +15,43 @@ const loginSection = document.getElementById("login-pantalla");
 const appSection = document.getElementById("website-pantalla");
 const logrosSection = document.getElementById("logros-pantalla");
 
-function showLogin() { appSection.classList.add("hidden"); logrosSection.classList.add("hidden"); loginSection.classList.remove("hidden"); }
-function showApp()   { loginSection.classList.add("hidden"); logrosSection.classList.add("hidden"); appSection.classList.remove("hidden"); }
-function showLogros(){ loginSection.classList.add("hidden"); appSection.classList.add("hidden"); logrosSection.classList.remove("hidden"); }
+function showLogin() {
+    appSection.classList.add("hidden");
+    logrosSection.classList.add("hidden");
+    loginSection.classList.remove("hidden");
+
+    const compBtn = document.getElementById("finsaveComparativeBtn");
+    if (compBtn) compBtn.style.display = "none";
+
+    const widget = document.getElementById("finsaveChartWidget");
+    if (widget) widget.remove();
+
+    const marketBtn = document.getElementById("marketTab");
+    if (marketBtn) marketBtn.style.display = "none";
+}
+
+function showApp() {
+    loginSection.classList.add("hidden");
+    logrosSection.classList.add("hidden");
+    appSection.classList.remove("hidden");
+
+    // mostrar comparativa cuando exista
+    setTimeout(() => {
+        const compBtn = document.getElementById("finsaveComparativeBtn");
+        if (compBtn) compBtn.style.display = "block";
+    }, 50);
+
+    // mostrar market cuando exista
+    setTimeout(() => {
+        const marketBtn = document.getElementById("marketTab");
+        if (marketBtn) marketBtn.style.display = "block";
+    }, 50);
+}
+function showLogros(){ 
+    loginSection.classList.add("hidden"); 
+    appSection.classList.add("hidden"); 
+    logrosSection.classList.remove("hidden"); 
+}
 
 if (getToken()) showApp(); else showLogin();
 if (getToken() && localStorage.getItem("userName")) {

@@ -602,15 +602,13 @@ async function verHistorial() {
         const res = await fetch('/historial-mio', { headers: { ...authHeaders() } });
         if (!res.ok) throw new Error('Error al cargar historial');
         const movimientos = await res.json();
-
         const tbody = document.getElementById("tablaCuerpo");
         tbody.innerHTML = "";
         movimientos.forEach(m => {
             const tr = document.createElement("tr");
             tr.innerHTML = `
                 <td>${m.tipo}</td>
-            <td>${formatCurrency(m.monto)}</td>
-
+                <td>${formatCurrency(m.monto)}</td>
                 <td>${new Date(m.fecha).toLocaleDateString()}</td>
                 <td>${m.descripcion || ""}</td>
                 <td>
@@ -622,11 +620,12 @@ async function verHistorial() {
         });
         updateChartFromMovements(movimientos);
         checkAchievements(movimientos);
-        try { buildFloatingChartWidget(movimientos); } catch (e) { console.warn('Floating chart build failed', e); }
+        lastMovimientos = movimientos;
     } catch (err) {
         alert(err.message || 'Error al cargar historial');
     }
 }
+
 
 // Evento para eliminar movimiento
 document.addEventListener('click', async (e) => {

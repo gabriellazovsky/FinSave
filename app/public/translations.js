@@ -101,7 +101,7 @@ const translations = {
         new: "Nuevo",
 
         //Comparativa
-        {
+        
   "comparativa": {
     "title": "Comparativa",
     "ingresos": "Ingresos",
@@ -110,9 +110,8 @@ const translations = {
     "month": "Mes:",
     "selectYearsBtn": "Seleccionar años ▾",
     "selectMonthsBtn": "Seleccionar meses ▾",
-    "categories": "Categorías"
-  }
-}
+    "categories": "Categorías",
+  
 
 
         // CONSEJOS - NUEVAS TRADUCCIONES
@@ -356,7 +355,7 @@ const translations = {
         new: "New",
 
              //Comparativa
-{
+
   "comparativa": {
     "title": "Comparison",
     "ingresos": "Income",
@@ -365,12 +364,11 @@ const translations = {
     "month": "Month:",
     "selectYearsBtn": "Select years ▾",
     "selectMonthsBtn": "Select months ▾",
-    "categories": "Categories"
-  }
-}
+    "categories": "Categories",
+  
+
 
             
-
         // CONSEJOS - NUEVAS TRADUCCIONES
         "helpCenter": "Educational Center",
         "categories.saving": "Saving",

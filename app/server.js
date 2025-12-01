@@ -383,7 +383,7 @@ app.post("/password-reset/confirm", async (req, res) => {
 
 // --- WebSocket Twelve Data ---
 const WebSocket = require('ws');
-const API_KEY = process.env.TWELVEDATA_KEY;         // put this in .env
+const API_KEY = process.env.TWELVEDATA_KEY;
 const TD_URL  = `wss://ws.twelvedata.com/v1/quotes/price?apikey=${API_KEY}`;
 
 const server = http.createServer(app);
@@ -411,7 +411,7 @@ function ensureUpstream() {
 
         upstream.send(JSON.stringify({
             action: 'subscribe',
-            params: { symbols: "AAPL,EUR/USD,BTC/USD"}
+            params: { symbols: "EUR/USD,BTC/USD"}
         }));
 
 

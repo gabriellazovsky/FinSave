@@ -679,23 +679,95 @@ document.addEventListener('click', async (e) => {
 });
 
 // Abrir modal al hacer click en "Editar"
+// document.addEventListener('click', (e) => {
+//     if (e.target.classList.contains('btn-editar')) {
+//         const id = e.target.dataset.id;
+//         const movimiento = Array.from(document.querySelectorAll("#tablaCuerpo tr"))
+//             .map(tr => ({
+//                 id: tr.querySelector('.btn-editar').dataset.id,
+//                 tipo: tr.cells[0].textContent,
+//                 monto: parseFloat(tr.cells[1].textContent.replace('$','')),
+//                 fecha: tr.cells[2].textContent,
+//                 descripcion: tr.cells[3].textContent
+//             }))
+//             .find(m => m.id === id);
+//         if (!movimiento) return;
+//         document.getElementById('editId').value = movimiento.id;
+//         document.getElementById('editTipo').value = movimiento.tipo;
+//         document.getElementById('editMonto').value = movimiento.monto;
+//         document.getElementById('editFecha').value = movimiento.fecha.split('/').reverse().join('-'); // formato yyyy-mm-dd
+//         document.getElementById('editDescripcion').value = movimiento.descripcion;
+//         document.getElementById('editModal').style.display = 'block';
+//     }
+// });
+
+// Abrir modal al hacer click en "Editar"
 document.addEventListener('click', (e) => {
     if (e.target.classList.contains('btn-editar')) {
         const id = e.target.dataset.id;
         const movimiento = Array.from(document.querySelectorAll("#tablaCuerpo tr"))
-            .map(tr => ({
-                id: tr.querySelector('.btn-editar').dataset.id,
-                tipo: tr.cells[0].textContent,
-                monto: parseFloat(tr.cells[1].textContent.replace('$','')),
-                fecha: tr.cells[2].textContent,
-                descripcion: tr.cells[3].textContent
-            }))
+            .map(tr => {
+                const idBtn = tr.querySelector('.btn-editar')?.dataset.id;
+                const tipo = tr.cells[0]?.textContent?.trim() || '';
+                const montoText = tr.cells[1]?.textContent?.trim() || '';
+                // parse moneda de forma robusta (maneja €/$, separadores miles y decimales ,/.)
+                const parseCurrency = (s) => {
+                    const cleaned = (s || '').replace(/[^\d\-,.]/g, '').trim();
+                    if (!cleaned) return NaN;
+                    const hasComma = cleaned.indexOf(',') !== -1;
+                    const hasDot = cleaned.indexOf('.') !== -1;
+                    if (hasComma && hasDot) {
+                        // si la última coma viene después del último punto -> coma decimal
+                        if (cleaned.lastIndexOf(',') > cleaned.lastIndexOf('.')) {
+                            return parseFloat(cleaned.replace(/\./g, '').replace(',', '.'));
+                        } else {
+                            // punto decimal, comas como miles
+                            return parseFloat(cleaned.replace(/,/g, ''));
+                        }
+                    } else if (hasComma) {
+                        return parseFloat(cleaned.replace(',', '.'));
+                    } else {
+                        return parseFloat(cleaned);
+                    }
+                };
+                const monto = parseCurrency(montoText);
+
+                const fechaText = tr.cells[2]?.textContent?.trim() || '';
+                // parse fecha display -> yyyy-mm-dd para input[type=date]
+                const parseDisplayDate = (s) => {
+                    if (!s) return '';
+                    // ya en formato yyyy-mm-dd
+                    if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+                    // formatos dd/mm/yyyy o dd-mm-yyyy o dd.mm.yyyy
+                    const m = s.match(/^\s*(\d{1,2})[\/\.-](\d{1,2})[\/\.-](\d{4})\s*$/);
+                    if (m) {
+                        const dd = m[1].padStart(2, '0');
+                        const mm = m[2].padStart(2, '0');
+                        const yyyy = m[3];
+                        return `${yyyy}-${mm}-${dd}`;
+                    }
+                    // intentar Date.parse y convertir
+                    const d = new Date(s);
+                    if (!isNaN(d)) return d.toISOString().slice(0, 10);
+                    return '';
+                };
+                const fecha = parseDisplayDate(fechaText);
+
+                const descripcion = tr.cells[3]?.textContent?.trim() || '';
+                return { id: idBtn, tipo, monto, fecha, descripcion };
+            })
             .find(m => m.id === id);
         if (!movimiento) return;
         document.getElementById('editId').value = movimiento.id;
         document.getElementById('editTipo').value = movimiento.tipo;
-        document.getElementById('editMonto').value = movimiento.monto;
-        document.getElementById('editFecha').value = movimiento.fecha.split('/').reverse().join('-'); // formato yyyy-mm-dd
+        // solo asignar monto si es número válido
+        document.getElementById('editMonto').value = Number.isFinite(movimiento.monto) ? movimiento.monto : '';
+        // solo asignar fecha si el parseo devolvió una cadena yyyy-mm-dd válida
+        if (movimiento.fecha) {
+            document.getElementById('editFecha').value = movimiento.fecha;
+        } else {
+            document.getElementById('editFecha').value = '';
+        }
         document.getElementById('editDescripcion').value = movimiento.descripcion;
         document.getElementById('editModal').style.display = 'block';
     }

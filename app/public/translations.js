@@ -102,7 +102,6 @@ const translations = {
 
         //Comparativa
         
-  "comparativa": {
     "title": "Comparativa",
     "ingresos": "Ingresos",
     "gastos": "Gastos",
@@ -356,7 +355,6 @@ const translations = {
 
              //Comparativa
 
-  "comparativa": {
     "title": "Comparison",
     "ingresos": "Income",
     "gastos": "Expenses",

@@ -100,6 +100,19 @@ const translations = {
         writeNotes: "Escribe tus notas...",
         new: "Nuevo",
 
+        //Comparativa
+        
+    "comparison.title": "Comparativa",
+        "comparison.income": "Ingresos",
+        "comparison.expenses": "Gastos",
+        "comparison.year": "Año:",
+        "comparison.month": "Mes:",
+        "comparison.select_years": "Seleccionar años",
+        "comparison.select_months": "Seleccionar meses",
+        "comparison.categories": "Categorías",
+  
+
+
         // CONSEJOS - NUEVAS TRADUCCIONES
         "helpCenter": "Centro Educativo",
         "categories.saving": "Ahorro",
@@ -340,6 +353,20 @@ const translations = {
         writeNotes: "Write your notes...",
         new: "New",
 
+             //Comparativa
+
+ "comparison.title": "Comparison",
+        "comparison.income": "Income",
+        "comparison.expenses": "Expenses",
+        "comparison.year": "Year:",
+        "comparison.month": "Month:",
+        "comparison.select_years": "Select years",
+        "comparison.select_months": "Select months",
+        "comparison.categories": "Categories",
+  
+
+
+            
         // CONSEJOS - NUEVAS TRADUCCIONES
         "helpCenter": "Educational Center",
         "categories.saving": "Saving",

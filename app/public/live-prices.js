@@ -5,6 +5,11 @@
     const list   = document.getElementById('lp-list');
     const clear  = document.getElementById('lp-clear');
 
+
+    const marketTabButton = document.getElementById('marketTab');
+    const livePricesOffcanvas = document.getElementById('livePrices');
+
+
     if (!form || !input || !status || !list) return;
 
     const proto = location.protocol === 'https:' ? 'wss' : 'ws';
@@ -137,10 +142,19 @@
         if (btn) {
             btn.addEventListener("click", convertirEurUsd);
         }
+
+
+        if (livePricesOffcanvas && marketTabButton) {
+
+            livePricesOffcanvas.addEventListener('show.bs.offcanvas', function () {
+                marketTabButton.classList.add('hidden');
+            });
+
+
+            livePricesOffcanvas.addEventListener('hide.bs.offcanvas', function () {
+                marketTabButton.classList.remove('hidden');
+            });
+        }
     });
 
-
-
 })();
-
-

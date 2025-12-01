@@ -362,16 +362,17 @@ background: #2c3e50;
             top: 50%;
             right: 0.75rem;
             transform: translateY(-50%);
-            z-index: 1061; /* above content, below modals */
+            z-index: 1061;
             border-radius: 9999px;
             padding: 10px 12px;
             display: inline-flex;
             align-items: center;
             gap: 6px;
+
         }
 
         .market-tab .market-tab-label { display: none; } /* icon-only pill */
-        body.offcanvas-open .market-tab { opacity: 0.25; pointer-events: none; }
+        body.offcanvas-open .market-tab { opacity: 0.01; pointer-events: none; display: block; }
 
 
         .market-tab .market-tab-label {
@@ -405,3 +406,5 @@ background: #2c3e50;
         }
         body.offcanvas-open #marketTab { display: none; }
 
+        #marketTab.hidden {
+            display: none}

@@ -102,14 +102,14 @@ const translations = {
 
         //Comparativa
         
-    "title": "Comparativa",
-    "ingresos": "Ingresos",
-    "gastos": "Gastos",
-    "year": "Año:",
-    "month": "Mes:",
-    "selectYearsBtn": "Seleccionar años ▾",
-    "selectMonthsBtn": "Seleccionar meses ▾",
-    "categories": "Categorías",
+    "comparison.title": "Comparativa",
+        "comparison.income": "Ingresos",
+        "comparison.expenses": "Gastos",
+        "comparison.year": "Año:",
+        "comparison.month": "Mes:",
+        "comparison.select_years": "Seleccionar años",
+        "comparison.select_months": "Seleccionar meses",
+        "comparison.categories": "Categorías",
   
 
 
@@ -355,14 +355,14 @@ const translations = {
 
              //Comparativa
 
-    "title": "Comparison",
-    "ingresos": "Income",
-    "gastos": "Expenses",
-    "year": "Year:",
-    "month": "Month:",
-    "selectYearsBtn": "Select years ▾",
-    "selectMonthsBtn": "Select months ▾",
-    "categories": "Categories",
+ "comparison.title": "Comparison",
+        "comparison.income": "Income",
+        "comparison.expenses": "Expenses",
+        "comparison.year": "Year:",
+        "comparison.month": "Month:",
+        "comparison.select_years": "Select years",
+        "comparison.select_months": "Select months",
+        "comparison.categories": "Categories",
   
 
 

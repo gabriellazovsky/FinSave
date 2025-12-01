@@ -411,8 +411,10 @@ function ensureUpstream() {
 
         upstream.send(JSON.stringify({
             action: 'subscribe',
-            params: { symbols: 'BTC/USD' }
+            params: { symbols: "AAPL,EUR/USD,BTC/USD"}
         }));
+
+
 
         for (const msg of sendQueue) upstream.send(msg);
         sendQueue = [];
@@ -468,7 +470,6 @@ wss.on('connection', (client, req) => {
 
     ensureUpstream();
 
-
     client.on('message', (data) => {
         try { console.log('[WS] from browser ->', JSON.stringify(JSON.parse(data.toString()))); }
         catch { console.log('[WS] from browser ->', data.toString()); }
@@ -479,7 +480,6 @@ wss.on('connection', (client, req) => {
             sendQueue.push(data);
         }
     });
-
     client.on('close', () => clients.delete(client));
     client.on('error', () => clients.delete(client));
 });
@@ -514,13 +514,7 @@ app.get("/api/eurusd", async (req, res) => {
 });
 
 
-
-
-
-
-
 module.exports = { app };
-
 if (require.main === module) {
     server.listen(PORT, () => console.log(`Servidor escuchando en http://localhost:${PORT}`));
 }

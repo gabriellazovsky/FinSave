@@ -1133,20 +1133,24 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
 // ---------------- BIENVENIDA ----------------
 function mostrarBienvenida() {
     const nombre = localStorage.getItem("userName") || "Usuario";
-    const navbar = document.querySelector("header nav");
+
+    const navbarRight = document.querySelector(
+        "#website-pantalla header nav .flex.items-center.gap-4"
+    );
+    if (!navbarRight) return;
+
     const currentLang = localStorage.getItem("lang") || "es";
-    
     const welcomeText = translations[currentLang].welcome + nombre + "!";
-    
-    if (!document.getElementById("bienvenido-user")) {
-        const span = document.createElement("span");
+
+    let span = document.getElementById("bienvenido-user");
+    if (!span) {
+        span = document.createElement("span");
         span.id = "bienvenido-user";
-        span.textContent = welcomeText;
         span.classList.add("text-blue-600", "font-semibold", "ml-4");
-        navbar.appendChild(span);
-    } else {
-        document.getElementById("bienvenido-user").textContent = welcomeText;
+
+        navbarRight.appendChild(span);
     }
+    span.textContent = welcomeText;
 }
 // ---------------- PROFILE DATA ----------------
 function loadUserProfile() {

@@ -374,7 +374,9 @@ background: #2c3e50;
         .market-tab .market-tab-label { display: none; } /* icon-only pill */
         body.offcanvas-open .market-tab { opacity: 0.01; pointer-events: none; display: block; }
 
-
+        #lp-form {
+            display: none !important;
+        }
         .market-tab .market-tab-label {
             writing-mode: vertical-rl;
             text-orientation: mixed;

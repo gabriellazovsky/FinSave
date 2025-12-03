@@ -619,3 +619,41 @@ background: #2c3e50;
   -ms-transform: translateY(-50%);
   transform: translateY(-50%);
 }
+
+/* === WIDGET COMPARATIVA: SIEMPRE FONDO CLARO + TEXTO OSCURO === */
+
+/* Caja flotante */
+#finsaveChartWidget {
+  background: #ffffff !important;
+  color: #111827 !important;
+}
+
+/* Títulos: "Comparativa", "Ingresos", "Gastos" */
+#finsaveChartWidget strong,
+#finsaveChartWidget b,
+#finsaveChartWidget .finsave-title {
+  color: #111827 !important;
+}
+
+/* Textos pequeños: "Mes", "Categorías", etc. */
+#finsaveChartWidget div,
+#finsaveChartWidget span,
+#finsaveChartWidget label {
+  color: #111827 !important;
+}
+
+/* Botones de filtros y desplegables */
+#finsaveChartWidget button,
+#finsaveChartWidget input,
+#finsaveChartWidget select {
+  color: #111827 !important;
+  background-color: #ffffff !important;
+}
+
+/* Menús desplegables "Seleccionar años" y "Seleccionar meses" */
+#finsaveYearMenu,
+#finsaveMonthMenu {
+  background-color: #ffffff !important;
+  color: #111827 !important;
+  border-color: #d1d5db !important;
+}

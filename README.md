@@ -5,7 +5,7 @@ cd /Finsave/app<br>
 npm install<br>
 npm i json2csv jsonwebtoken cookie-parser morgan dotenv<br>
 npm run dev<br> 
-
+version demo
 
 
 

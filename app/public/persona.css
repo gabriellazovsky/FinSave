@@ -251,3 +251,24 @@
   -ms-transform: translateY(-50%);
   transform: translateY(-50%);
 }
+
+.user-menu .dropdown,
+#dropdown-menu {
+  background: #ffffff !important;
+  color: #111827 !important;
+}
+
+.user-menu .dropdown a,
+.user-menu .dropdown span,
+.user-menu .dropdown p,
+#dropdown-menu a,
+#dropdown-menu span,
+#dropdown-menu p {
+  color: #111827 !important;
+}
+
+.user-menu .dropdown .menu-item:hover,
+#dropdown-menu .menu-item:hover {
+  background: #f0f4ff !important;
+  color: #111827 !important;
+}

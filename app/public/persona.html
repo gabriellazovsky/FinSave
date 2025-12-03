@@ -206,8 +206,8 @@
                 <button id="botonFiltro" class="btn btn-info border border-dark px-4 py-2 rounded shadow-sm"><i class="bi bi-filter mr-2"></i><span data-i18n="filters.filter_table">Filtrar tabla</span></button>
                 <button class="btn btn-secondary" id="btnVerHistorial"><i class="bi bi-file-earmark-text mr-1"></i><span data-i18n="filters.view_history">Ver Historial</span></button>
             </div>
-            <div id="editModal" style="display:none; position:fixed; top:20%; left:50%; transform:translateX(-50%); background:#fff; border:1px solid #ccc; padding:20px; z-index:1000; width: 400px; max-width: 90%;">
-                <div class="modal-content">
+            <div id="editModal" style="display:none; position:fixed; inset:0; width:100vw; height:100vh; background:rgba(20,20,20,0.85); z-index:10000; align-items:center; justify-content:center; overflow:hidden; overscroll-behavior: none; touch-action: none;">
+                <div class="modal-content" style="background:#fff; border:1px solid #ccc; padding:20px; width: 400px; max-width: 90%; border-radius: 6px; box-shadow: 0 6px 20px rgba(0,0,0,0.25);">
                     <div class="modal-header">
                         <h2 class="modal-title mb-2" data-i18n="edit.title">Editar Movimiento</h2>
                     </div>

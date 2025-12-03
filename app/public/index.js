@@ -684,28 +684,41 @@ document.addEventListener('click', async (e) => {
     }
 });
 
-// Abrir modal al hacer click en "Editar"
-// document.addEventListener('click', (e) => {
-//     if (e.target.classList.contains('btn-editar')) {
-//         const id = e.target.dataset.id;
-//         const movimiento = Array.from(document.querySelectorAll("#tablaCuerpo tr"))
-//             .map(tr => ({
-//                 id: tr.querySelector('.btn-editar').dataset.id,
-//                 tipo: tr.cells[0].textContent,
-//                 monto: parseFloat(tr.cells[1].textContent.replace('$','')),
-//                 fecha: tr.cells[2].textContent,
-//                 descripcion: tr.cells[3].textContent
-//             }))
-//             .find(m => m.id === id);
-//         if (!movimiento) return;
-//         document.getElementById('editId').value = movimiento.id;
-//         document.getElementById('editTipo').value = movimiento.tipo;
-//         document.getElementById('editMonto').value = movimiento.monto;
-//         document.getElementById('editFecha').value = movimiento.fecha.split('/').reverse().join('-'); // formato yyyy-mm-dd
-//         document.getElementById('editDescripcion').value = movimiento.descripcion;
-//         document.getElementById('editModal').style.display = 'block';
-//     }
-// });
+(function(){
+  const editModal = document.getElementById('editModal');
+  if (!editModal) return;
+
+  // asegurar oculto al cargar
+  editModal.style.display = 'none';
+  document.body.style.overflow = document.body.style.overflow || '';
+
+  // abrir/cerrar y bloquear/desbloquear scroll del body (simple)
+  document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('btn-editar')) {
+      // abrir overlay centrado y bloquear scroll de fondo
+      editModal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+    if (e.target.id === 'cancelEdit') {
+      // cerrar overlay y restaurar scroll
+      editModal.style.display = 'none';
+      document.body.style.overflow = '';
+    }
+  });
+
+  // por seguridad: cerrar con Escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && editModal.style.display !== 'none') {
+      editModal.style.display = 'none';
+      document.body.style.overflow = '';
+    }
+  });
+
+  // limpiar al recargar/navegar
+  window.addEventListener('beforeunload', () => {
+    document.body.style.overflow = '';
+  });
+})();
 
 // Abrir modal al hacer click en "Editar"
 document.addEventListener('click', (e) => {
@@ -775,7 +788,7 @@ document.addEventListener('click', (e) => {
             document.getElementById('editFecha').value = '';
         }
         document.getElementById('editDescripcion').value = movimiento.descripcion;
-        document.getElementById('editModal').style.display = 'block';
+        document.getElementById('editModal').style.display = 'flex';
     }
 });
 
@@ -1399,4 +1412,6 @@ window.addEventListener("load", () => {
 });
 
 });
+
+
 

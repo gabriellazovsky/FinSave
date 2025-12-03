@@ -251,6 +251,7 @@
   -ms-transform: translateY(-50%);
   transform: translateY(-50%);
 }
+/* === DROPDOWN MENU USUARIO SIEMPRE BLANCO === */
 
 .user-menu .dropdown,
 #dropdown-menu {
@@ -272,3 +273,42 @@
   background: #f0f4ff !important;
   color: #111827 !important;
 }
+
+/* === MODAL EDITAR MOVIMIENTO SIEMPRE BLANCO === */
+
+#editModal .modal-content {
+  background: #ffffff !important;
+  color: #111827 !important;
+  border-color: #d1d5db !important;
+}
+
+#editModal .modal-header,
+#editModal .modal-title {
+  background: #ffffff !important;
+  color: #111827 !important;
+}
+
+#editModal .modal-body,
+#editModal label,
+#editModal input,
+#editModal .form-control {
+  background-color: #ffffff !important;
+  color: #111827 !important;
+}
+
+#editModal .form-control::placeholder {
+  color: #6b7280 !important;
+}
+
+#editModal .btn-primary {
+  background-color: #0d6efd !important;
+  border-color: #0d6efd !important;
+  color: #ffffff !important;
+}
+
+#editModal .btn-secondary {
+  background-color: #6c757d !important;
+  border-color: #6c757d !important;
+  color: #ffffff !important;
+}
+

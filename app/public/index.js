@@ -643,7 +643,13 @@ async function verHistorial() {
             tr.innerHTML = `
                 <td>${m.tipo}</td>
                 <td>${formatCurrency(m.monto)}</td>
-                <td>${new Date(m.fecha).toLocaleDateString()}</td>
+                <td>${
+                (() => {
+                    const d = new Date(m.fecha);
+                    if (isNaN(d)) return '';
+                    return new Intl.DateTimeFormat('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(d);
+                })()
+                }</td>
                 <td>${m.descripcion || ""}</td>
                 <td>
                     <button class="btn-editar" data-id="${m._id}">✏️</button>

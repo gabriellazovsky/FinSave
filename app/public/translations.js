@@ -100,20 +100,7 @@ const translations = {
         writeNotes: "Escribe tus notas...",
         new: "Nuevo",
 
-        //Comparativa
-        
-  "comparison.title": "Comparativa",
-"comparison.income": "Ingresos",
-"comparison.expenses": "Gastos",
-"comparison.year": "Año:",
-"comparison.month": "Mes:",
-"comparison.select_years": "Seleccionar años",
-"comparison.select_months": "Seleccionar meses",
-"comparison.categories": "Categorías",
-"comparison.all": "Todos",
-"comparison.loading": "Cargando...",
-"comparison.no_data": "Sin datos",
-"comparison.filter": "Filtrar",
+
   //CONSEJOS- PERSONALIZADOS 
         
 "back": "← Volver a Consejos",
@@ -372,20 +359,7 @@ const translations = {
         writeNotes: "Write your notes...",
         new: "New",
 
-             //Comparativa
 
-"comparison.title": "Comparison",
-"comparison.income": "Income",
-"comparison.expenses": "Expenses",
-"comparison.year": "Year:",
-"comparison.month": "Month:",
-"comparison.select_years": "Select years",
-"comparison.select_months": "Select months",
-"comparison.categories": "Categories",
-"comparison.all": "All",
-"comparison.loading": "Loading...",
-"comparison.no_data": "No data",
-"comparison.filter": "Filter",
   //consejos personalizados 
         "back": "← Back to Tips",
 "personalizedAdvice": "Personalized Tips",

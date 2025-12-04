@@ -100,16 +100,6 @@ const translations = {
         writeNotes: "Escribe tus notas...",
         new: "Nuevo",
 
-//comaprativa
-
-        comparison: "Comparativa",
-        income: "Ingresos",
-        expenses: "Gastos", 
-        year: "Año",
-        month: "Mes",
-        selectYears: "Seleccionar años",
-        selectMonths: "Seleccionar meses",
-        categories: "Categorías",
 
 
   //CONSEJOS- PERSONALIZADOS 
@@ -370,17 +360,6 @@ const translations = {
         writeNotes: "Write your notes...",
         new: "New",
 
-//comparativa
-
-         comparison: "Comparison",
-        income: "Income",
-        expenses: "Expenses",
-        year: "Year",
-        month: "Month",
-        selectYears: "Select years",
-        selectMonths: "Select months",
-        categories: "Categories",
-    
   //consejos personalizados 
         "back": "← Back to Tips",
 "personalizedAdvice": "Personalized Tips",

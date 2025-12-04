@@ -52,6 +52,8 @@ const translations = {
         bugReport: "Reporte de Error",
         general: "General",
         sendFeedback: "Enviar Feedback",
+        "feedbackSent": "¡Gracias! Tu Feedback ha sido enviado.",
+
         
         // FAQ
         helpCenter: "Centro de Ayuda",
@@ -314,6 +316,8 @@ const translations = {
         bugReport: "Bug Report",
         general: "General",
         sendFeedback: "Send Feedback",
+        "feedbackSent": "Thank you! Your feedback has been sent.",
+
         // FAQ
         helpCenter: "Help Center",
         faqTitle: "Frequently Asked Questions",

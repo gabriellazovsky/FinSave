@@ -110,7 +110,16 @@ const translations = {
         "comparison.select_years": "Seleccionar años",
         "comparison.select_months": "Seleccionar meses",
         "comparison.categories": "Categorías",
-  
+  //CONSEJOS- PERSONALIZADOS 
+        
+"back": "← Volver a Consejos",
+"personalizedAdvice": "Consejos Personalizados",
+"loadingRecommendations": "Cargando recomendaciones...",
+"refresh": "Refrescar",
+"viewDiagnosis": "Ver diagnóstico",
+"diagnosis": "Diagnóstico",
+"allRightsReserved": "Todos los derechos reservados.",
+
 
 
         // CONSEJOS - NUEVAS TRADUCCIONES
@@ -363,7 +372,14 @@ const translations = {
         "comparison.select_years": "Select years",
         "comparison.select_months": "Select months",
         "comparison.categories": "Categories",
-  
+  //consejos personalizados 
+        "back": "← Back to Tips",
+"personalizedAdvice": "Personalized Tips",
+"loadingRecommendations": "Loading recommendations...",
+"refresh": "Refresh",
+"viewDiagnosis": "View diagnosis",
+"diagnosis": "Diagnosis",
+"allRightsReserved": "All rights reserved.",
 
 
             

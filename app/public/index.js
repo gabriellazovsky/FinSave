@@ -344,45 +344,29 @@ function createFloatingWidget() {
 height:260px"><canvas id="finsaveComparisonChart"></canvas></div>
 
     
-    w.innerHTML = `
+   w.innerHTML = `
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-            <strong data-i18n="comparison.title"></strong>
-            <button id="finsaveChartClose" style="background:none;border:none;cursor:pointer;font-size:16px" aria-label="Close">✕</button>
+            <strong>Comparativa</strong>
+            <button id="finsaveChartClose" style="background:none;border:none;cursor:pointer;font-size:16px">✕</button>
         </div>
-
         <div style="display:flex;gap:10px;align-items:center;margin-bottom:8px">
-            <label style="font-size:13px">
-                <input type="checkbox" id="finsaveToggleIngresos" checked>
-                <span data-i18n="comparison.income"></span>
-            </label>
-            <label style="font-size:13px">
-                <input type="checkbox" id="finsaveToggleGastos" checked>
-                <span data-i18n="comparison.expenses"></span>
-            </label>
+            <label style="font-size:13px"><input type="checkbox" id="finsaveToggleIngresos" checked> Ingresos</label>
+            <label style="font-size:13px"><input type="checkbox" id="finsaveToggleGastos" checked> Gastos</label>
         </div>
-
         <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
-            <div style="font-size:13px;color:#555" data-i18n="comparison.year"></div>
+            <div style="font-size:13px;color:#555">Año:</div>
             <div id="finsaveYearDropdown" style="position:relative">
-                <button id="finsaveYearBtn" style="padding:6px;border-radius:6px;border:1px solid #ddd;background:white;cursor:pointer" data-i18n="comparison.select_years"></button>
+                <button id="finsaveYearBtn" style="padding:6px;border-radius:6px;border:1px solid #ddd;background:white;cursor:pointer">Seleccionar años ▾</button>
                 <div id="finsaveYearMenu" style="display:none;position:absolute;left:0;top:36px;background:white;border:1px solid #ddd;padding:8px;border-radius:6px;max-height:180px;overflow:auto;z-index:100000"></div>
             </div>
-
-            <div style="font-size:13px;color:#555" data-i18n="comparison.month"></div>
+            <div style="font-size:13px;color:#555">Mes:</div>
             <div id="finsaveMonthDropdown" style="position:relative">
-                <button id="finsaveMonthBtn" style="padding:6px;border-radius:6px;border:1px solid #ddd;background:white;cursor:pointer" data-i18n="comparison.select_months"></button>
+                <button id="finsaveMonthBtn" style="padding:6px;border-radius:6px;border:1px solid #ddd;background:white;cursor:pointer">Seleccionar meses ▾</button>
                 <div id="finsaveMonthMenu" style="display:none;position:absolute;left:0;top:36px;background:white;border:1px solid #ddd;padding:8px;border-radius:6px;max-height:220px;overflow:auto;z-index:100000"></div>
             </div>
         </div>
-
-        <div style="margin-bottom:8px">
-            <div style="font-size:13px;color:#555;margin-bottom:6px" data-i18n="comparison.categories"></div>
-            <div id="finsaveCategoryFilters" style="display:flex;flex-wrap:wrap;gap:6px"></div>
-        </div>
-
-        <div style="height:260px">
-            <canvas id="finsaveComparisonChart"></canvas>
-        </div>
+        <div style="margin-bottom:8px"><div style="font-size:13px;color:#555;margin-bottom:6px">Categorías</div><div id="finsaveCategoryFilters" style="display:flex;flex-wrap:wrap;gap:6px"></div></div>
+        <div style="height:260px"><canvas id="finsaveComparisonChart"></canvas></div>
     `;
 
 

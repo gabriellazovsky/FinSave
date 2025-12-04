@@ -100,6 +100,18 @@ const translations = {
         writeNotes: "Escribe tus notas...",
         new: "Nuevo",
 
+// En tu objeto `translations.es`
+"recommendations.recordMovements": "Registra al menos 2-4 semanas de movimientos reales para recomendaciones precisas.",
+"recommendations.automateSavings": "Empieza automatizando {pct}% de cada ingreso a una cuenta de ahorro separada.",
+"recommendations.reviewTopExpenses": "Revisa y anota tus 3 mayores gastos mensuales; ahí suele estar la mayor oportunidad.",
+"recommendations.noSpendWeek": "Haz una semana de «no gastar» cada mes para identificar gastos por impulso.",
+"recommendations.listSubscriptions": "Lista tus suscripciones y decide cuáles no usas en 30 días.",
+"recommendations.reduceCategory": "Reduce gastos en {category}: actualmente ~{amount}/mes ({pct}%). Prueba un presupuesto de {weeklyTarget}/semana — ahorro estimado {estimatedSave}/mes.",
+"recommendations.checkSubscriptions": "Revisa estas suscripciones: {subs}. Considera pausar o cambiar el plan; ahorrarás hasta {total}/mes si cancelas las menos usadas.",
+"recommendations.micropayments": "He detectado {count} micropagos (<{maxAmount}). Control semanal: limita a 3 micropagos/semana y ahorra aproximadamente {monthlySave}/mes.",
+"recommendations.suggestedSaving": "Automatiza al menos {suggested}/mes hacia ahorro (regla simple: 10% de ingresos). Usa transferencias programadas justo al recibir el sueldo.",
+"recommendations.emergencyFund": "Fondo de emergencia: apunta a 3 meses ≈ {amount} — empieza con aportes pequeños regulares.",
+"recommendations.noIncome": "Si no registras ingresos, empieza por anotar entradas de dinero para calcular cuánto puedes ahorrar.",
 
 
   //CONSEJOS- PERSONALIZADOS 
@@ -359,6 +371,20 @@ const translations = {
         notes: "Notes",
         writeNotes: "Write your notes...",
         new: "New",
+
+        // En tu objeto `translations.es`
+"recommendations.recordMovements": "Registra al menos 2-4 semanas de movimientos reales para recomendaciones precisas.",
+"recommendations.automateSavings": "Empieza automatizando {pct}% de cada ingreso a una cuenta de ahorro separada.",
+"recommendations.reviewTopExpenses": "Revisa y anota tus 3 mayores gastos mensuales; ahí suele estar la mayor oportunidad.",
+"recommendations.noSpendWeek": "Haz una semana de «no gastar» cada mes para identificar gastos por impulso.",
+"recommendations.listSubscriptions": "Lista tus suscripciones y decide cuáles no usas en 30 días.",
+"recommendations.reduceCategory": "Reduce gastos en {category}: actualmente ~{amount}/mes ({pct}%). Prueba un presupuesto de {weeklyTarget}/semana — ahorro estimado {estimatedSave}/mes.",
+"recommendations.checkSubscriptions": "Revisa estas suscripciones: {subs}. Considera pausar o cambiar el plan; ahorrarás hasta {total}/mes si cancelas las menos usadas.",
+"recommendations.micropayments": "He detectado {count} micropagos (<{maxAmount}). Control semanal: limita a 3 micropagos/semana y ahorra aproximadamente {monthlySave}/mes.",
+"recommendations.suggestedSaving": "Automatiza al menos {suggested}/mes hacia ahorro (regla simple: 10% de ingresos). Usa transferencias programadas justo al recibir el sueldo.",
+"recommendations.emergencyFund": "Fondo de emergencia: apunta a 3 meses ≈ {amount} — empieza con aportes pequeños regulares.",
+"recommendations.noIncome": "Si no registras ingresos, empieza por anotar entradas de dinero para calcular cuánto puedes ahorrar.",
+
 
   //consejos personalizados 
         "back": "← Back to Tips",

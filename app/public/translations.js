@@ -120,7 +120,13 @@ const translations = {
 "diagnosis": "Diagnóstico",
 "allRightsReserved": "Todos los derechos reservados.",
 
+//consejo.js
 
+        "loadingRecommendations": "Cargando recomendaciones...",
+"noRecommendations": "No hay recomendaciones personalizadas disponibles aún.",
+"showingRecommendations": "Mostrando {count} recomendación(es)",
+"tipNumber": "Consejo {number}",
+"errorLoadingRecommendations": "Error cargando recomendaciones.",
 
         // CONSEJOS - NUEVAS TRADUCCIONES
         "helpCenter": "Centro Educativo",
@@ -380,7 +386,13 @@ const translations = {
 "viewDiagnosis": "View diagnosis",
 "diagnosis": "Diagnosis",
 "allRightsReserved": "All rights reserved.",
+//consejo.js 
 
+        "loadingRecommendations": "Loading recommendations...",
+"noRecommendations": "No personalized recommendations available yet.",
+"showingRecommendations": "Showing {count} recommendation(s)",
+"tipNumber": "Tip {number}",
+"errorLoadingRecommendations": "Error loading recommendations.",
 
             
         // CONSEJOS - NUEVAS TRADUCCIONES

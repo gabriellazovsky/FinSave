@@ -52,6 +52,7 @@ const translations = {
         bugReport: "Reporte de Error",
         general: "General",
         sendFeedback: "Enviar Feedback",
+        
         // FAQ
         helpCenter: "Centro de Ayuda",
         faqTitle: "Preguntas Frecuentes",

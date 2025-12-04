@@ -1,4 +1,22 @@
+// Función para obtener traducción
+function getTranslation(key, defaultValue = '') {
+    const lang = localStorage.getItem('lang') || 'es';
+    if (translations && translations[lang] && translations[lang][key]) {
+        return translations[lang][key];
+    }
+    return defaultValue;
+}
 
+// Función para actualizar todos los textos traducidos
+function updateWidgetTranslations() {
+    document.querySelectorAll('[data-i18n]').forEach(element => {
+        const key = element.getAttribute('data-i18n');
+        const translation = getTranslation(key);
+        if (translation) {
+            element.textContent = translation;
+        }
+    });
+}
 
 // ---------------- Helpers ----------------
 const getToken = () => localStorage.getItem("token");
@@ -341,30 +359,30 @@ function createFloatingWidget() {
         zIndex: 99999, padding: '12px', fontFamily: 'system-ui, sans-serif'
     });
 
- w.innerHTML = `
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-            <strong>Comparativa</strong>
-            <button id="finsaveChartClose" style="background:none;border:none;cursor:pointer;font-size:16px">✕</button>
+w.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <strong data-i18n="comparison">Comparativa</strong>
+        <button id="finsaveChartClose" style="background:none;border:none;cursor:pointer;font-size:16px">✕</button>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;margin-bottom:8px">
+        <label style="font-size:13px"><input type="checkbox" id="finsaveToggleIngresos" checked> <span data-i18n="income">Ingresos</span></label>
+        <label style="font-size:13px"><input type="checkbox" id="finsaveToggleGastos" checked> <span data-i18n="expenses">Gastos</span></label>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+        <div style="font-size:13px;color:#555" data-i18n="year">Año:</div>
+        <div id="finsaveYearDropdown" style="position:relative">
+            <button id="finsaveYearBtn" style="padding:6px;border-radius:6px;border:1px solid #ddd;background:white;cursor:pointer"><span data-i18n="selectYears">Seleccionar años</span> ▾</button>
+            <div id="finsaveYearMenu" style="display:none;position:absolute;left:0;top:36px;background:white;border:1px solid #ddd;padding:8px;border-radius:6px;max-height:180px;overflow:auto;z-index:100000"></div>
         </div>
-        <div style="display:flex;gap:10px;align-items:center;margin-bottom:8px">
-            <label style="font-size:13px"><input type="checkbox" id="finsaveToggleIngresos" checked> Ingresos</label>
-            <label style="font-size:13px"><input type="checkbox" id="finsaveToggleGastos" checked> Gastos</label>
+        <div style="font-size:13px;color:#555" data-i18n="month">Mes:</div>
+        <div id="finsaveMonthDropdown" style="position:relative">
+            <button id="finsaveMonthBtn" style="padding:6px;border-radius:6px;border:1px solid #ddd;background:white;cursor:pointer"><span data-i18n="selectMonths">Seleccionar meses</span> ▾</button>
+            <div id="finsaveMonthMenu" style="display:none;position:absolute;left:0;top:36px;background:white;border:1px solid #ddd;padding:8px;border-radius:6px;max-height:220px;overflow:auto;z-index:100000"></div>
         </div>
-        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
-            <div style="font-size:13px;color:#555">Año:</div>
-            <div id="finsaveYearDropdown" style="position:relative">
-                <button id="finsaveYearBtn" style="padding:6px;border-radius:6px;border:1px solid #ddd;background:white;cursor:pointer">Seleccionar años ▾</button>
-                <div id="finsaveYearMenu" style="display:none;position:absolute;left:0;top:36px;background:white;border:1px solid #ddd;padding:8px;border-radius:6px;max-height:180px;overflow:auto;z-index:100000"></div>
-            </div>
-            <div style="font-size:13px;color:#555">Mes:</div>
-            <div id="finsaveMonthDropdown" style="position:relative">
-                <button id="finsaveMonthBtn" style="padding:6px;border-radius:6px;border:1px solid #ddd;background:white;cursor:pointer">Seleccionar meses ▾</button>
-                <div id="finsaveMonthMenu" style="display:none;position:absolute;left:0;top:36px;background:white;border:1px solid #ddd;padding:8px;border-radius:6px;max-height:220px;overflow:auto;z-index:100000"></div>
-            </div>
-        </div>
-        <div style="margin-bottom:8px"><div style="font-size:13px;color:#555;margin-bottom:6px">Categorías</div><div id="finsaveCategoryFilters" style="display:flex;flex-wrap:wrap;gap:6px"></div></div>
-        <div style="height:260px"><canvas id="finsaveComparisonChart"></canvas></div>
-    `;
+    </div>
+    <div style="margin-bottom:8px"><div style="font-size:13px;color:#555;margin-bottom:6px" data-i18n="categories">Categorías</div><div id="finsaveCategoryFilters" style="display:flex;flex-wrap:wrap;gap:6px"></div></div>
+    <div style="height:260px"><canvas id="finsaveComparisonChart"></canvas></div>
+`;
 
     document.body.appendChild(w);
     document.getElementById('finsaveChartClose').addEventListener('click', () => {
@@ -584,7 +602,10 @@ function createComparativeToggleButton() {
     const btn = document.createElement('button');
     btn.id = 'finsaveComparativeBtn';
     btn.title = 'Mostrar comparativa';
-    btn.textContent = 'Comparativa';
+    btn.textContent = getTranslation('comparison', 'Comparativa');
+// O si usas data-i18n en el botón:
+btn.setAttribute('data-i18n', 'comparison');
+btn.textContent = 'Comparativa';
     Object.assign(btn.style, {
         position: 'fixed', left: '18px', bottom: '18px', zIndex: 99999,
         background: '#0ea5a4', color: 'white', border: 'none', padding: '10px 14px', borderRadius: '10px', cursor: 'pointer', boxShadow: '0 6px 18px rgba(0,0,0,0.12)'

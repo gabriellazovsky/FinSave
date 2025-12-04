@@ -341,10 +341,7 @@ function createFloatingWidget() {
         zIndex: 99999, padding: '12px', fontFamily: 'system-ui, sans-serif'
     });
 
-height:260px"><canvas id="finsaveComparisonChart"></canvas></div>
-
-    
-   w.innerHTML = `
+ w.innerHTML = `
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
             <strong>Comparativa</strong>
             <button id="finsaveChartClose" style="background:none;border:none;cursor:pointer;font-size:16px">✕</button>
@@ -368,7 +365,6 @@ height:260px"><canvas id="finsaveComparisonChart"></canvas></div>
         <div style="margin-bottom:8px"><div style="font-size:13px;color:#555;margin-bottom:6px">Categorías</div><div id="finsaveCategoryFilters" style="display:flex;flex-wrap:wrap;gap:6px"></div></div>
         <div style="height:260px"><canvas id="finsaveComparisonChart"></canvas></div>
     `;
-
 
     document.body.appendChild(w);
     document.getElementById('finsaveChartClose').addEventListener('click', () => {

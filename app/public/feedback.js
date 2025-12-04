@@ -28,29 +28,30 @@ const key = `feedbacks_${userId}`;
 
 // Guardar feedback
 if (feedbackForm) {
-    feedbackForm.addEventListener('submit', (e) => {
-        e.preventDefault();
+   feedbackForm.addEventListener('submit', (e) => {
+    e.preventDefault();
 
-        const comentario = document.getElementById('comentario').value.trim();
-        const tipo = document.getElementById('tipo').value;
-        if (!comentario || !tipo) return;
+    const comentario = document.getElementById('comentario').value.trim();
+    const tipo = document.getElementById('tipo').value;
+    if (!comentario || !tipo) return;
 
-        const feedbacks = JSON.parse(localStorage.getItem(key)) || [];
+    const feedbacks = JSON.parse(localStorage.getItem(key)) || [];
 
-        feedbacks.push({
-            comentario,
-            tipo,
-            fecha: new Date().toISOString()
-        });
-
-        localStorage.setItem(key, JSON.stringify(feedbacks));
-
-        feedbackForm.reset();
-        feedbackMessage.textContent = "¡Gracias! Tu Feedback ha sido enviado.";
-        feedbackMessage.style.display = 'block';
-
-        setTimeout(() => feedbackMessage.style.display = 'none', 5000);
+    feedbacks.push({
+        comentario,
+        tipo,
+        fecha: new Date().toISOString()
     });
+
+    localStorage.setItem(key, JSON.stringify(feedbacks));
+
+    feedbackForm.reset();
+    feedbackMessage.textContent = translations[currentLang]['feedbackSent'] || "¡Gracias! Tu Feedback ha sido enviado.";
+    feedbackMessage.style.display = 'block';
+
+    setTimeout(() => feedbackMessage.style.display = 'none', 5000);
+});
+
 }
 
 if (logoutBtnFeedback) {

@@ -9,7 +9,7 @@ const diagContent = document.getElementById('diagContent');
 
 async function loadRecommendations(debug = false) {
     try {
-        statusEl.textContent = i18n("loadingRecommendations");
+        statusEl.textContent = 'Cargando recomendaciones...';
         recsEl.innerHTML = '';
         diagEl.classList.add('hidden');
 
@@ -23,19 +23,18 @@ async function loadRecommendations(debug = false) {
         const recs = data.recommendations || [];
 
         if (recs.length === 0) {
-            statusEl.textContent = i18n("noRecommendations");
+            statusEl.textContent = 'No hay recomendaciones personalizadas disponibles aún.';
             return;
         }
 
-        statusEl.textContent = i18n("showingRecommendations")
-            .replace("{count}", recs.length);
+        statusEl.textContent = `Mostrando ${recs.length} recomendaci${recs.length===1? 'ón':'ones'}`;
 
         recs.forEach((r, i) => {
             const card = document.createElement('div');
             card.className = 'card-contenido card-small p-3';
             card.innerHTML = `
                 <div style="font-size:28px">💡</div>
-                <h3 class="text-lg font-semibold">${i18n("tipNumber").replace("{number}", i+1)}</h3>
+                <h3 class="text-lg font-semibold">Consejo ${i+1}</h3>
                 <p class="text-gray-700">${r}</p>
             `;
             recsEl.appendChild(card);
@@ -47,7 +46,7 @@ async function loadRecommendations(debug = false) {
         }
     } catch (err) {
         console.error(err);
-        statusEl.textContent = i18n("errorLoadingRecommendations");
+        statusEl.textContent = 'Error cargando recomendaciones.';
         recsEl.innerHTML = `<div class="text-danger">${err.message}</div>`;
     }
 }
@@ -57,3 +56,4 @@ document.getElementById('btnDiag').addEventListener('click', () => loadRecommend
 
 // Cargar al inicio
 loadRecommendations(false);
+

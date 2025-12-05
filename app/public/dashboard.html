@@ -245,6 +245,14 @@
 <script src="translations.js"></script>
     
 <script>
+
+    // Función para clave única del avatar
+function getUserAvatarKey() {
+    const userEmail = document.getElementById('correo').value || 
+                     localStorage.getItem('userEmail') || 
+                     'default';
+    return `avatar_${userEmail.toLowerCase().trim()}`;
+}
     /* ============================
        FUNCIONALIDAD DEL AVATAR
     ============================ */
@@ -307,7 +315,7 @@
         reader.onload = function(event) {
             const imageData = event.target.result;
             // Guardar en localStorage
-            localStorage.setItem('userAvatar', imageData);
+            localStorage.setItem(getUserAvatarKey(), imageData);
             
             // Actualizar vista previa
             const userName = document.getElementById('nombre').value;
@@ -323,7 +331,7 @@
     
     // Resetear a inicial
     function resetAvatar() {
-        localStorage.removeItem('userAvatar');
+        localStorage.removeItem(getUserAvatarKey());
         const userName = document.getElementById('nombre').value;
         updateAvatarPreview(null, userName);
         showAvatarMessage('Avatar restablecido a la inicial del nombre', 'success');
@@ -348,7 +356,7 @@
     
     // Actualizar avatar cuando cambia el nombre
     document.getElementById('nombre').addEventListener('input', function() {
-        const savedAvatar = localStorage.getItem('userAvatar');
+        const savedAvatar = localStorage.getItem(getUserAvatarKey());
         if (!savedAvatar) {
             updateAvatarPreview(null, this.value);
         }
@@ -532,5 +540,6 @@
 
 </body>
 </html>
+
 
 

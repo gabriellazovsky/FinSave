@@ -147,34 +147,35 @@
     <div class="max-w-3xl mx-auto bg-white shadow-md rounded-xl p-8">
         <h1 class="text-2xl font-bold mb-6 text-blue-700" data-i18n="userProfile">Perfil del Usuario</h1>
 
-        <!-- ==================== SECCIÓN DEL AVATAR ==================== -->
-        <div class="avatar-upload-section mb-8">
-            <h2 class="text-xl font-bold text-blue-700 mb-4 text-center" data-i18n="avatarSection">Avatar Personalizado</h2>
-            
-            <!-- Vista previa del avatar -->
-            <div class="avatar-preview-container" id="avatarPreview" onclick="document.getElementById('avatarInput').click()">
-                <!-- Aquí se mostrará la imagen o la inicial -->
-            </div>
-            
-            <!-- Input oculto para subir archivo -->
-            <input type="file" id="avatarInput" accept="image/*" class="hidden-file-input">
-            
-            <!-- Botones de control -->
-            <button class="avatar-upload-btn" onclick="document.getElementById('avatarInput').click()">
-                <i class="bi bi-upload mr-2"></i> Subir Nueva Imagen
-            </button>
-            
-            <button class="avatar-reset-btn" onclick="resetAvatar()">
-                Usar Inicial del Nombre
-            </button>
-            
-            <div class="avatar-instructions">
-                Haz clic en el avatar o en el botón para subir una imagen (JPG, PNG, máximo 2MB). 
-                Si no subes nada, se usará la inicial de tu nombre en todas las secciones.
-            </div>
-            
-            <!-- Mensaje de estado -->
-            <div id="avatarMessage" class="avatar-message"></div>
+      <!-- ==================== SECCIÓN DEL AVATAR ==================== -->
+<div class="avatar-upload-section mb-8">
+    <h2 class="text-xl font-bold text-blue-700 mb-4 text-center" data-i18n="avatar.title">Avatar Personalizado</h2>
+    
+    <!-- Vista previa del avatar -->
+    <div class="avatar-preview-container" id="avatarPreview" onclick="document.getElementById('avatarInput').click()">
+        <!-- Aquí se mostrará la imagen o la inicial -->
+    </div>
+    
+    <!-- Input oculto para subir archivo -->
+    <input type="file" id="avatarInput" accept="image/*" class="hidden-file-input">
+    
+    <!-- Botones de control -->
+    <button class="avatar-upload-btn" onclick="document.getElementById('avatarInput').click()">
+        <span data-i18n="avatar.upload_button">Subir Nueva Imagen</span>
+    </button>
+    
+    <button class="avatar-reset-btn" onclick="resetAvatar()">
+        <span data-i18n="avatar.reset_button">Usar Inicial del Nombre</span>
+    </button>
+    
+    <div class="avatar-instructions" data-i18n="avatar.instructions">
+        Haz clic en el avatar o en el botón para subir una imagen (JPG, PNG, máximo 2MB). 
+        Si no subes nada, se usará la inicial de tu nombre en todas las secciones.
+    </div>
+    
+    <!-- Mensaje de estado -->
+    <div id="avatarMessage" class="avatar-message"></div>
+</div>
         </div>
 
         <!-- Datos de usuario -->
@@ -532,3 +533,4 @@
 
 </body>
 </html>
+

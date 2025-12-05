@@ -1,249 +1,282 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title data-i18n="app.title">FinSave</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - FinSave</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="index.css"/>
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <link rel="stylesheet" href="/consejo.css">
-    <link rel="stylesheet" href="/persona.css">
-    <link rel="icon" href="favicon.png" type="image/png">
-
-    <script src="translations.js"></script>
-    
     <style>
-    /* Asegurar que el modal esté por encima */
-    #movModal.modal {
-        z-index: 2000 !important;
-    }
-    .modal-backdrop {
-        z-index: 1500 !important;
-    }
-    #movModal.modal.show {
-        z-index: 2000 !important;
-    }
+        .avatar-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 2rem 0;
+        }
+        .avatar-preview {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            cursor: pointer;
+            border: 4px solid white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .avatar-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .file-input-wrapper {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+        .file-input-wrapper input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        .btn-upload {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-upload:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        .btn-reset {
+            background: #f8f9fa;
+            color: #6c757d;
+            border: 1px solid #dee2e6;
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-reset:hover {
+            background: #e9ecef;
+        }
+        .instructions {
+            color: #6c757d;
+            font-size: 0.9rem;
+            text-align: center;
+            margin-top: 1rem;
+            max-width: 300px;
+        }
+        .save-message {
+            margin-top: 1rem;
+            padding: 0.5rem;
+            border-radius: 8px;
+            text-align: center;
+            display: none;
+        }
+        .save-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .save-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
     </style>
 </head>
-
 <body class="bg-light">
-
-<section id="login-pantalla" class="min-vh-100 d-flex align-items-center justify-content-center">
-    <div class="card shadow p-4 mx-auto" style="max-width:400px; width:100%;">
-        <div class="text-center mb-4">
-            <h2>FinSave</h2>
-            <p class="text-muted">Administra tus finanzas fácilmente</p>
-        </div>
-
-        <ul class="nav nav-tabs mb-3" id="authTab" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#login" type="button">Login</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="registro-tab" data-bs-toggle="tab" data-bs-target="#registro" type="button">Registro</button>
-            </li>
-        </ul>
-
-        <div class="tab-content">
-            <!-- LOGIN -->
-            <div class="tab-pane fade show active" id="login">
-                <form id="loginForm">
-                    <div class="mb-3">
-                        <input type="email" class="form-control" id="emailLogin" placeholder="Correo" required>
-                    </div>
-                    <div class="mb-3 input-group">
-                        <input type="password" class="form-control" id="passwordLogin" placeholder="Contraseña" required>
-                        <button class="btn btn-outline-secondary" type="button" id="togglePassword">
-                            <i class="bi bi-eye" id="togglePasswordIcon"></i>
-                        </button>
-                    </div>
-                    <div class="mb-3 text-end">
-                        <a href="recuperar.html" class="small">¿Olvidaste tu contraseña?</a>
-                    </div>
-                    <div class="mb-3 text-danger" id="loginMsg"></div>
-                    <button class="btn btn-primary w-100" type="submit">Entrar</button>
-                </form>
-                <div id="googleSignInDiv" class="mt-3 text-center"></div>
-            </div>
-
-            <!-- REGISTRO -->
-            <div class="tab-pane fade" id="registro">
-                <form id="registroForm">
-                    <div class="mb-3">
-                        <input type="text" class="form-control" id="nombreRegistro" placeholder="Nombre" required>
-                    </div>
-                    <div class="mb-3">
-                        <input type="email" class="form-control" id="emailRegistro" placeholder="Correo" required>
-                    </div>
-                    <div class="mb-3 input-group">
-                        <input type="password" class="form-control" id="passwordRegistro" placeholder="Contraseña" required>
-                        <button class="btn btn-outline-secondary" type="button" id="togglePasswordRegistro">
-                            <i class="bi bi-eye" id="togglePasswordRegistroIcon"></i>
-                        </button>
-                    </div>
-                    <div class="mb-3" id="registroMsg"></div>
-                    <button class="btn btn-success w-100" type="submit">Registrarse</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- =================== APP PRINCIPAL =================== -->
-<section id="website-pantalla" class="hidden">
-    <header class="w-full bg-white border-b">
+    <!-- Header similar al index.html -->
+    <header class="w-full bg-white border-b shadow-sm">
         <nav class="container mx-auto flex justify-between items-center px-4 py-3">
             <div class="flex gap-6">
-                <a href="empresa.html" class="hover:text-blue-600 font-semibold" data-i18n="nav.company">Empresa</a>
-                <a href="consejo.html" class="hover:text-blue-600 font-semibold" data-i18n="nav.advice">Consejo</a>
-                <a href="faq.html" class="hover:text-blue-600 font-semibold" data-i18n="nav.faq">FAQ</a>
-                <a href="#" class="hover:text-blue-600 font-semibold" id="logrosLinkHeader" data-i18n="nav.achievements">Logros</a>
-                <a href="feedback.html" class="hover:text-blue-600 font-semibold" data-i18n="nav.contact">Contáctanos</a>
-                <a href="conversor.html" class="hover:text-blue-600 font-semibold" data-i18n="nav.converter">Conversor</a>
+                <a href="index.html" class="hover:text-blue-600 font-semibold">Inicio</a>
+                <a href="empresa.html" class="hover:text-blue-600 font-semibold">Empresa</a>
+                <a href="consejo.html" class="hover:text-blue-600 font-semibold">Consejo</a>
+                <a href="persona.html" class="hover:text-blue-600 font-semibold">Perfil</a>
             </div>
             <div class="flex items-center gap-4">
-                <label class="theme-switch ml-4" title="Activa modo oscuro/claro" data-i18n-title="theme.toggle_title">
-                <input type="checkbox" class="theme-switch__checkbox" id="checkbox">
-                <div class="theme-switch__container">
-                    <div class="theme-switch__circle-container">
-                        <div class="theme-switch__sun-moon-container">
-                            <div class="theme-switch__moon">
-                                <div class="theme-switch__spot"></div>
-                                <div class="theme-switch__spot"></div>
-                                <div class="theme-switch__spot"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="theme-switch__clouds"></div>
-                    <div class="theme-switch__stars-container">✦✦✦</div>
-                </div>
-                </label>
-
-                <button class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors" id="logoutBtnHeader" data-i18n="nav.change_account">Cambiar cuenta</button>
-
-                <!-- ================== AVATAR ================== -->
-                <div class="user-menu" style="position: relative; display: inline-block;">
-                    <!-- Avatar circular -->
-                    <div id="user-avatar"
-                        style="
-                            width: 50px;
-                            height: 50px;
-                            background: #4A8CFF;
-                            color: white;
-                            border-radius: 50%;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            font-size: 20px;
-                            font-weight: bold;
-                            cursor: pointer;
-                            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-                            overflow: hidden;
-                        ">
-                        ?
-                    </div>
-
-                    <!-- Dropdown -->
-                    <div id="dropdown-menu"
-                        class="hidden"
-                        style="
-                            position: absolute;
-                            top: 60px;
-                            right: 0;
-                            width: 230px;
-                            background: white;
-                            border-radius: 15px;
-                            padding: 20px;
-                            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-                            z-index: 9999;
-                        ">
-                        <p class="dropdown-title mb-2 font-bold" data-i18n="dropdown.app_name">FinSave</p>
-                        <a href="dashboard.html" class="menu-item d-block mb-2">
-                            👤 <span data-i18n="dropdown.profile">Perfil</span>
-                        </a>
-                        <button id="logout-btn" class="w-full text-start bg-none border-0 p-0 cursor-pointer d-flex align-items-center gap-2">
-                            ⬅️ <span data-i18n="dropdown.logout">Cerrar sesión</span>
-                        </button>
-                    </div>
-                </div>
+                <button class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors" 
+                        onclick="window.location.href='persona.html'">
+                    Ver Perfil
+                </button>
             </div>
         </nav>
     </header>
 
-    <!-- Aquí sigue todo tu dashboard, canvas, tabla, filtros y modales tal cual los tenías -->
-    <!-- ... manteniendo todas las líneas originales ... -->
+    <main class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold text-center mb-2">Configuración de Perfil</h1>
+        <p class="text-gray-600 text-center mb-8">Personaliza tu avatar que se mostrará en tu perfil</p>
 
-</section>
+        <div class="max-w-2xl mx-auto bg-white rounded-2xl shadow-lg p-6">
+            <!-- Avatar Preview and Upload Section -->
+            <div class="avatar-container">
+                <div class="avatar-preview" id="avatarPreview" onclick="document.getElementById('avatarInput').click()">
+                    <!-- Aquí se mostrará la imagen o la inicial -->
+                </div>
+                
+                <div class="file-input-wrapper">
+                    <button class="btn-upload">Subir Nueva Imagen</button>
+                    <input type="file" id="avatarInput" accept="image/*" class="form-control">
+                </div>
+                
+                <button class="btn-reset" onclick="resetAvatar()">Usar Inicial</button>
+                
+                <div class="instructions">
+                    Haz clic en el avatar o en el botón para subir una imagen. Si no subes nada, se usará la inicial de tu nombre.
+                </div>
+            </div>
 
-<!-- =================== LOGROS =================== -->
-<section id="logros-pantalla" class="hidden">
-<!-- Mantener todo igual, tal como lo tenías -->
-</section>
+            <!-- User Info Section -->
+            <div class="mt-8 border-t pt-8">
+                <h2 class="text-xl font-bold mb-4">Información Personal</h2>
+                <form id="userInfoForm">
+                    <div class="mb-4">
+                        <label class="form-label">Nombre</label>
+                        <input type="text" id="userName" class="form-control" placeholder="Tu nombre" value="Irene">
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">Email</label>
+                        <input type="email" id="userEmail" class="form-control" placeholder="tu@email.com" value="irene@example.com">
+                    </div>
+                    <button type="button" class="btn btn-primary w-100 mt-4" onclick="saveProfile()">
+                        Guardar Cambios
+                    </button>
+                </form>
+            </div>
 
-<!-- =================== MARKET =================== -->
-<!-- Mantener botones de Market y offcanvas exactamente igual -->
+            <!-- Save Message -->
+            <div id="saveMessage" class="save-message"></div>
+        </div>
+    </main>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="live-prices.js" defer></script>
+    <script>
+        // Elementos del DOM
+        const avatarPreview = document.getElementById('avatarPreview');
+        const avatarInput = document.getElementById('avatarInput');
+        const userNameInput = document.getElementById('userName');
+        const saveMessage = document.getElementById('saveMessage');
 
-<script>
-// ================== AVATAR CON IMAGEN O INICIAL ==================
-async function loadUserAvatar() {
-    const token = localStorage.getItem("token");
-    if (!token) return;
-
-    try {
-        const res = await fetch("/api/me", {
-            headers: { "Authorization": "Bearer " + token }
+        // Cargar datos al iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProfile();
         });
 
-        if (!res.ok) return;
-        const user = await res.json();
-
-        const avatarEl = document.getElementById("user-avatar");
-
-        if (user.imagen) {
-            // si hay imagen
-            avatarEl.innerHTML = `<img src="${user.imagen}" alt="avatar" style="width:100%; height:100%; object-fit:cover;">`;
-        } else {
-            // si no hay imagen, iniciales
-            const iniciales = 
-                (user.nombre?.[0] || "").toUpperCase() +
-                (user.apellido?.[0] || "").toUpperCase();
-            avatarEl.textContent = iniciales || "?";
+        // Cargar perfil desde localStorage
+        function loadProfile() {
+            // Cargar nombre
+            const savedName = localStorage.getItem('userName') || 'Irene';
+            userNameInput.value = savedName;
+            
+            // Cargar avatar
+            const savedAvatar = localStorage.getItem('userAvatar');
+            const userName = savedName;
+            
+            updateAvatarPreview(savedAvatar, userName);
         }
 
-    } catch (error) {
-        console.error("Error cargando avatar:", error);
-    }
-}
+        // Actualizar vista previa del avatar
+        function updateAvatarPreview(imageData, userName) {
+            if (imageData) {
+                // Mostrar imagen
+                avatarPreview.innerHTML = `<img src="${imageData}" alt="Avatar">`;
+            } else {
+                // Mostrar inicial del nombre
+                const initial = userName.charAt(0).toUpperCase();
+                avatarPreview.innerHTML = `<span>${initial}</span>`;
+                avatarPreview.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+            }
+        }
 
-const avatar = document.getElementById("user-avatar");
-const dropdown = document.getElementById("dropdown-menu");
+        // Manejar subida de imagen
+        avatarInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
 
-avatar?.addEventListener("click", () => {
-    dropdown.classList.toggle("hidden");
-});
+            // Validar tipo de archivo
+            if (!file.type.match('image.*')) {
+                showMessage('Por favor, selecciona una imagen válida', 'error');
+                return;
+            }
 
-document.addEventListener("click", (e) => {
-    if (!e.target.closest(".user-menu")) {
-        dropdown.classList.add("hidden");
-    }
-});
+            // Validar tamaño (max 2MB)
+            if (file.size > 2 * 1024 * 1024) {
+                showMessage('La imagen debe ser menor a 2MB', 'error');
+                return;
+            }
 
-document.getElementById("logout-btn").addEventListener("click", () => {
-    localStorage.removeItem("token");
-    window.location.href = "/index.html";
-});
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const imageData = event.target.result;
+                localStorage.setItem('userAvatar', imageData);
+                updateAvatarPreview(imageData, userNameInput.value);
+                showMessage('Imagen cargada correctamente', 'success');
+            };
+            reader.readAsDataURL(file);
+        });
 
-loadUserAvatar();
-</script>
+        // Resetear a inicial
+        function resetAvatar() {
+            localStorage.removeItem('userAvatar');
+            updateAvatarPreview(null, userNameInput.value);
+            showMessage('Avatar restablecido a la inicial', 'success');
+        }
 
-<script src="index.js" defer></script>
-<script src="/consejo.js" defer></script>
+        // Guardar perfil
+        function saveProfile() {
+            const name = userNameInput.value.trim();
+            const email = document.getElementById('userEmail').value.trim();
+
+            if (!name) {
+                showMessage('Por favor, ingresa tu nombre', 'error');
+                return;
+            }
+
+            // Guardar en localStorage
+            localStorage.setItem('userName', name);
+            localStorage.setItem('userEmail', email);
+
+            // Actualizar vista previa
+            const savedAvatar = localStorage.getItem('userAvatar');
+            updateAvatarPreview(savedAvatar, name);
+
+            showMessage('Perfil guardado correctamente', 'success');
+            
+            // Mostrar mensaje por 3 segundos
+            setTimeout(() => {
+                saveMessage.style.display = 'none';
+            }, 3000);
+        }
+
+        // Mostrar mensajes
+        function showMessage(text, type) {
+            saveMessage.textContent = text;
+            saveMessage.className = 'save-message ' + (type === 'success' ? 'save-success' : 'save-error');
+            saveMessage.style.display = 'block';
+        }
+
+        // También guardar cuando cambie el nombre (para actualizar inicial)
+        userNameInput.addEventListener('input', function() {
+            const savedAvatar = localStorage.getItem('userAvatar');
+            if (!savedAvatar) {
+                updateAvatarPreview(null, userNameInput.value);
+            }
+        });
+    </script>
 </body>
 </html>

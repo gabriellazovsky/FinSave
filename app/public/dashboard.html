@@ -3,52 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - FinSave</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>FinSave – Panel de Usuario</title>
+
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="icon" href="favicon.png" type="image/png">
     <style>
-        .avatar-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        /* Estilos para el avatar */
+        .avatar-upload-section {
             margin: 2rem 0;
+            padding: 1.5rem;
+            background: #f8fafc;
+            border-radius: 12px;
+            border: 2px dashed #cbd5e1;
         }
-        .avatar-preview {
-            width: 120px;
-            height: 120px;
+        .avatar-preview-container {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 1.5rem;
             border-radius: 50%;
+            overflow: hidden;
+            border: 4px solid white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 3rem;
+            font-size: 3.5rem;
             font-weight: bold;
-            margin-bottom: 1.5rem;
-            overflow: hidden;
             cursor: pointer;
-            border: 4px solid white;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            position: relative;
         }
-        .avatar-preview img {
+        .avatar-preview-container img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
-        .file-input-wrapper {
-            position: relative;
-            margin-bottom: 1rem;
-        }
-        .file-input-wrapper input[type="file"] {
-            position: absolute;
-            left: 0;
-            top: 0;
-            opacity: 0;
-            width: 100%;
-            height: 100%;
-            cursor: pointer;
-        }
-        .btn-upload {
+        .avatar-upload-btn {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
@@ -57,12 +49,14 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
+            display: block;
+            margin: 0 auto 0.5rem;
         }
-        .btn-upload:hover {
+        .avatar-upload-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
         }
-        .btn-reset {
+        .avatar-reset-btn {
             background: #f8f9fa;
             color: #6c757d;
             border: 1px solid #dee2e6;
@@ -70,213 +64,471 @@
             border-radius: 50px;
             cursor: pointer;
             transition: all 0.3s ease;
+            display: block;
+            margin: 0 auto;
         }
-        .btn-reset:hover {
+        .avatar-reset-btn:hover {
             background: #e9ecef;
         }
-        .instructions {
+        .avatar-instructions {
             color: #6c757d;
             font-size: 0.9rem;
             text-align: center;
             margin-top: 1rem;
-            max-width: 300px;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
         }
-        .save-message {
+        .avatar-message {
             margin-top: 1rem;
-            padding: 0.5rem;
+            padding: 0.75rem;
             border-radius: 8px;
             text-align: center;
             display: none;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
         }
-        .save-success {
+        .avatar-success {
             background-color: #d4edda;
             color: #155724;
             border: 1px solid #c3e6cb;
         }
-        .save-error {
+        .avatar-error {
             background-color: #f8d7da;
             color: #721c24;
             border: 1px solid #f5c6cb;
         }
+        .hidden-file-input {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
     </style>
 </head>
-<body class="bg-light">
-    <!-- Header similar al index.html -->
-    <header class="w-full bg-white border-b shadow-sm">
-        <nav class="container mx-auto flex justify-between items-center px-4 py-3">
-            <div class="flex gap-6">
-                <a href="index.html" class="hover:text-blue-600 font-semibold">Inicio</a>
-                <a href="empresa.html" class="hover:text-blue-600 font-semibold">Empresa</a>
-                <a href="consejo.html" class="hover:text-blue-600 font-semibold">Consejo</a>
-                <a href="persona.html" class="hover:text-blue-600 font-semibold">Perfil</a>
-            </div>
-            <div class="flex items-center gap-4">
-                <button class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors" 
-                        onclick="window.location.href='persona.html'">
-                    Ver Perfil
+
+<body class="bg-gray-100 text-gray-900">
+
+<!-- NAVBAR -->
+<header class="w-full bg-white shadow-sm fixed top-0 left-0 z-50">
+    <nav class="container mx-auto flex justify-between items-center px-6 py-3">
+        <a href="persona.html" class="hover:text-blue-600 font-semibold" data-i18n="back">← Volver</a>
+
+        <div class="flex items-center gap-2">
+            <img src="favicon.png" class="w-10 h-10">
+            <span class="text-xl font-bold text-blue-600">FinSave</span>
+        </div>
+
+        <!-- User Avatar -->
+        <div class="relative">
+            <button id="userAvatar"
+                    class="w-10 h-10 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center cursor-pointer">
+            </button>
+
+            <div id="dropdown"
+                 class="hidden absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-xl text-sm">
+                <a href="persona.html" class="block px-4 py-2 hover:bg-gray-100" data-i18n="home">Inicio</a>
+                <button id="logoutBtn"
+                        class="block w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600" data-i18n="logout">
+                    Cerrar sesión
                 </button>
             </div>
-        </nav>
-    </header>
-
-    <main class="container mx-auto px-4 py-8">
-        <h1 class="text-3xl font-bold text-center mb-2">Configuración de Perfil</h1>
-        <p class="text-gray-600 text-center mb-8">Personaliza tu avatar que se mostrará en tu perfil</p>
-
-        <div class="max-w-2xl mx-auto bg-white rounded-2xl shadow-lg p-6">
-            <!-- Avatar Preview and Upload Section -->
-            <div class="avatar-container">
-                <div class="avatar-preview" id="avatarPreview" onclick="document.getElementById('avatarInput').click()">
-                    <!-- Aquí se mostrará la imagen o la inicial -->
-                </div>
-                
-                <div class="file-input-wrapper">
-                    <button class="btn-upload">Subir Nueva Imagen</button>
-                    <input type="file" id="avatarInput" accept="image/*" class="form-control">
-                </div>
-                
-                <button class="btn-reset" onclick="resetAvatar()">Usar Inicial</button>
-                
-                <div class="instructions">
-                    Haz clic en el avatar o en el botón para subir una imagen. Si no subes nada, se usará la inicial de tu nombre.
-                </div>
-            </div>
-
-            <!-- User Info Section -->
-            <div class="mt-8 border-t pt-8">
-                <h2 class="text-xl font-bold mb-4">Información Personal</h2>
-                <form id="userInfoForm">
-                    <div class="mb-4">
-                        <label class="form-label">Nombre</label>
-                        <input type="text" id="userName" class="form-control" placeholder="Tu nombre" value="Irene">
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label">Email</label>
-                        <input type="email" id="userEmail" class="form-control" placeholder="tu@email.com" value="irene@example.com">
-                    </div>
-                    <button type="button" class="btn btn-primary w-100 mt-4" onclick="saveProfile()">
-                        Guardar Cambios
-                    </button>
-                </form>
-            </div>
-
-            <!-- Save Message -->
-            <div id="saveMessage" class="save-message"></div>
         </div>
-    </main>
+    </nav>
+</header>
 
-    <script>
-        // Elementos del DOM
-        const avatarPreview = document.getElementById('avatarPreview');
-        const avatarInput = document.getElementById('avatarInput');
-        const userNameInput = document.getElementById('userName');
-        const saveMessage = document.getElementById('saveMessage');
+<main class="pt-32 px-6">
+    <div class="max-w-3xl mx-auto bg-white shadow-md rounded-xl p-8">
+        <h1 class="text-2xl font-bold mb-6 text-blue-700" data-i18n="userProfile">Perfil del Usuario</h1>
 
-        // Cargar datos al iniciar
-        document.addEventListener('DOMContentLoaded', function() {
-            loadProfile();
-        });
-
-        // Cargar perfil desde localStorage
-        function loadProfile() {
-            // Cargar nombre
-            const savedName = localStorage.getItem('userName') || 'Irene';
-            userNameInput.value = savedName;
+        <!-- ==================== SECCIÓN DEL AVATAR ==================== -->
+        <div class="avatar-upload-section mb-8">
+            <h2 class="text-xl font-bold text-blue-700 mb-4 text-center" data-i18n="avatarSection">Avatar Personalizado</h2>
             
-            // Cargar avatar
-            const savedAvatar = localStorage.getItem('userAvatar');
-            const userName = savedName;
+            <!-- Vista previa del avatar -->
+            <div class="avatar-preview-container" id="avatarPreview" onclick="document.getElementById('avatarInput').click()">
+                <!-- Aquí se mostrará la imagen o la inicial -->
+            </div>
             
-            updateAvatarPreview(savedAvatar, userName);
+            <!-- Input oculto para subir archivo -->
+            <input type="file" id="avatarInput" accept="image/*" class="hidden-file-input">
+            
+            <!-- Botones de control -->
+            <button class="avatar-upload-btn" onclick="document.getElementById('avatarInput').click()">
+                <i class="bi bi-upload mr-2"></i> Subir Nueva Imagen
+            </button>
+            
+            <button class="avatar-reset-btn" onclick="resetAvatar()">
+                Usar Inicial del Nombre
+            </button>
+            
+            <div class="avatar-instructions">
+                Haz clic en el avatar o en el botón para subir una imagen (JPG, PNG, máximo 2MB). 
+                Si no subes nada, se usará la inicial de tu nombre en todas las secciones.
+            </div>
+            
+            <!-- Mensaje de estado -->
+            <div id="avatarMessage" class="avatar-message"></div>
+        </div>
+
+        <!-- Datos de usuario -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label class="font-semibold" data-i18n="name">Nombre</label>
+                <input id="nombre" type="text"
+                       class="mt-1 w-full p-2 border rounded-md focus:ring focus:ring-blue-200"
+                />
+            </div>
+
+            <div>
+                <label class="font-semibold" data-i18n="email">Correo</label>
+                <input id="correo" type="email"
+                       class="mt-1 w-full p-2 border rounded-md focus:ring focus:ring-blue-200"
+                />
+                <p id="emailError" class="text-red-500 text-sm mt-1 hidden" data-i18n="emailError">Por favor, ingresa un correo electrónico válido (ejemplo: usuario@dominio.com)</p>
+            </div>
+
+            <div>
+                <label class="font-semibold" data-i18n="memberSince">Miembro desde</label>
+                <input id="miembroDesde" disabled
+                       class="mt-1 w-full p-2 border rounded-md bg-gray-200"
+                />
+            </div>
+
+            <div>
+                <label class="font-semibold" data-i18n="balance">Balance</label>
+                <input id="balance" disabled
+                       class="mt-1 w-full p-2 border rounded-md bg-gray-200"
+                />
+            </div>
+        </div>
+
+        <hr class="my-8">
+
+        <!-- AJUSTES -->
+        <h2 class="text-xl font-bold text-blue-700 mb-4" data-i18n="profileSettings">Ajustes</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label class="font-semibold" data-i18n="language">Idioma</label>
+                <select id="langSelect" class="w-full mt-1 p-2 border rounded-md">
+                    <option value="es" data-i18n="spanish">Español</option>
+                    <option value="en" data-i18n="english">English</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="font-semibold" data-i18n="currency">Moneda</label>
+                <select id="currencySelect" class="w-full mt-1 p-2 border rounded-md">
+                    <option value="EUR">EUR</option>
+                    <option value="USD">USD</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- BOTONES -->
+        <div class="flex justify-end gap-4 mt-10">
+            <button id="guardarBtn"
+                    class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700" data-i18n="saveChanges">
+                Guardar Cambios
+            </button>
+        </div>
+    </div>
+</main>
+
+<script src="translations.js"></script>
+    
+<script>
+    /* ============================
+       FUNCIONALIDAD DEL AVATAR
+    ============================ */
+    
+    // Elementos del DOM para el avatar
+    const avatarPreview = document.getElementById('avatarPreview');
+    const avatarInput = document.getElementById('avatarInput');
+    const avatarMessage = document.getElementById('avatarMessage');
+    
+    // Función para actualizar la vista previa del avatar
+    function updateAvatarPreview(imageData, userName) {
+        if (imageData) {
+            // Mostrar imagen
+            avatarPreview.innerHTML = `<img src="${imageData}" alt="Avatar">`;
+        } else {
+            // Mostrar inicial del nombre
+            const initial = userName ? userName.charAt(0).toUpperCase() : '?';
+            avatarPreview.innerHTML = `<span>${initial}</span>`;
+            avatarPreview.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
         }
-
-        // Actualizar vista previa del avatar
-        function updateAvatarPreview(imageData, userName) {
-            if (imageData) {
-                // Mostrar imagen
-                avatarPreview.innerHTML = `<img src="${imageData}" alt="Avatar">`;
-            } else {
-                // Mostrar inicial del nombre
-                const initial = userName.charAt(0).toUpperCase();
-                avatarPreview.innerHTML = `<span>${initial}</span>`;
-                avatarPreview.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-            }
+    }
+    
+    // Función para mostrar mensajes
+    function showAvatarMessage(text, type) {
+        avatarMessage.textContent = text;
+        avatarMessage.className = 'avatar-message ' + (type === 'success' ? 'avatar-success' : 'avatar-error');
+        avatarMessage.style.display = 'block';
+        
+        // Ocultar mensaje después de 3 segundos
+        setTimeout(() => {
+            avatarMessage.style.display = 'none';
+        }, 3000);
+    }
+    
+    // Cargar avatar desde localStorage al iniciar
+    function loadAvatar() {
+        const savedName = localStorage.getItem('userName') || document.getElementById('nombre').value;
+        const savedAvatar = localStorage.getItem('userAvatar');
+        updateAvatarPreview(savedAvatar, savedName);
+    }
+    
+    // Manejar subida de imagen
+    avatarInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        // Validar tipo de archivo
+        if (!file.type.match('image.*')) {
+            showAvatarMessage('Por favor, selecciona una imagen válida (JPG, PNG)', 'error');
+            return;
         }
-
-        // Manejar subida de imagen
-        avatarInput.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            // Validar tipo de archivo
-            if (!file.type.match('image.*')) {
-                showMessage('Por favor, selecciona una imagen válida', 'error');
-                return;
-            }
-
-            // Validar tamaño (max 2MB)
-            if (file.size > 2 * 1024 * 1024) {
-                showMessage('La imagen debe ser menor a 2MB', 'error');
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const imageData = event.target.result;
-                localStorage.setItem('userAvatar', imageData);
-                updateAvatarPreview(imageData, userNameInput.value);
-                showMessage('Imagen cargada correctamente', 'success');
-            };
-            reader.readAsDataURL(file);
-        });
-
-        // Resetear a inicial
-        function resetAvatar() {
-            localStorage.removeItem('userAvatar');
-            updateAvatarPreview(null, userNameInput.value);
-            showMessage('Avatar restablecido a la inicial', 'success');
+        
+        // Validar tamaño (max 2MB)
+        if (file.size > 2 * 1024 * 1024) {
+            showAvatarMessage('La imagen debe ser menor a 2MB', 'error');
+            return;
         }
-
-        // Guardar perfil
-        function saveProfile() {
-            const name = userNameInput.value.trim();
-            const email = document.getElementById('userEmail').value.trim();
-
-            if (!name) {
-                showMessage('Por favor, ingresa tu nombre', 'error');
-                return;
-            }
-
+        
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const imageData = event.target.result;
             // Guardar en localStorage
-            localStorage.setItem('userName', name);
-            localStorage.setItem('userEmail', email);
-
-            // Actualizar vista previa
-            const savedAvatar = localStorage.getItem('userAvatar');
-            updateAvatarPreview(savedAvatar, name);
-
-            showMessage('Perfil guardado correctamente', 'success');
+            localStorage.setItem('userAvatar', imageData);
             
-            // Mostrar mensaje por 3 segundos
-            setTimeout(() => {
-                saveMessage.style.display = 'none';
-            }, 3000);
+            // Actualizar vista previa
+            const userName = document.getElementById('nombre').value;
+            updateAvatarPreview(imageData, userName);
+            
+            showAvatarMessage('¡Imagen cargada correctamente! Se mostrará en tu perfil.', 'success');
+            
+            // Actualizar avatar pequeño en el header
+            updateHeaderAvatar(imageData, userName);
+        };
+        reader.readAsDataURL(file);
+    });
+    
+    // Resetear a inicial
+    function resetAvatar() {
+        localStorage.removeItem('userAvatar');
+        const userName = document.getElementById('nombre').value;
+        updateAvatarPreview(null, userName);
+        showAvatarMessage('Avatar restablecido a la inicial del nombre', 'success');
+        
+        // Actualizar avatar pequeño en el header
+        updateHeaderAvatar(null, userName);
+    }
+    
+    // Actualizar avatar pequeño en el header
+    function updateHeaderAvatar(imageData, userName) {
+        const headerAvatar = document.getElementById('userAvatar');
+        if (headerAvatar) {
+            if (imageData) {
+                headerAvatar.innerHTML = `<img src="${imageData}" alt="Avatar" class="w-full h-full rounded-full object-cover">`;
+            } else {
+                const initial = userName ? userName.charAt(0).toUpperCase() : '?';
+                headerAvatar.textContent = initial;
+                headerAvatar.className = 'w-10 h-10 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center cursor-pointer';
+            }
+        }
+    }
+    
+    // Actualizar avatar cuando cambia el nombre
+    document.getElementById('nombre').addEventListener('input', function() {
+        const savedAvatar = localStorage.getItem('userAvatar');
+        if (!savedAvatar) {
+            updateAvatarPreview(null, this.value);
+        }
+    });
+    
+    /* ============================
+       VALIDACIÓN DE CORREO
+    ============================ */
+    function validarCorreo(correo) {
+        const partes = correo.split('@');
+        const tieneContenidoAntes = partes[0] && partes[0].length > 0;
+        const tieneArroba = partes.length === 2;
+        const tienePuntoDespuesArroba = partes[1]?.includes('.');
+        
+        return tieneContenidoAntes && tieneArroba && tienePuntoDespuesArroba;
+    }
+
+    /* ============================
+       LOAD USER INFO
+    ============================ */
+    async function cargarPerfil() {
+        const token = localStorage.getItem("token");
+        if (!token) return window.location.href = "login.html";
+
+        try {
+            // --- Obtener datos del usuario ---
+            const resUser = await fetch("/api/me", {
+                headers: { "Authorization": "Bearer " + token }
+            });
+            const user = await resUser.json();
+
+            document.getElementById("nombre").value = user.nombre;
+            document.getElementById("correo").value = user.correo;
+            document.getElementById("miembroDesde").value = user.miembroDesde;
+            document.getElementById("balance").value = user.balance + " " + user.moneda;
+
+            // Avatar iniciales
+            const iniciales = user.nombre.split(" ").map(w => w[0]).join("").toUpperCase();
+            document.getElementById("userAvatar").textContent = iniciales;
+
+            // --- Cargar avatar desde localStorage ---
+            loadAvatar();
+
+            // --- Obtener ajustes del usuario ---
+            const resSettings = await fetch("/api/settings", {
+                headers: { "Authorization": "Bearer " + token }
+            });
+            const settings = await resSettings.json();
+
+            document.getElementById("langSelect").value = settings.idioma;
+            document.getElementById("currencySelect").value = settings.moneda;
+
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    /* ============================
+       SAVE PROFILE CHANGES
+    ============================ */
+    document.getElementById("guardarBtn").addEventListener("click", async () => {
+        const token = localStorage.getItem("token");
+        const correo = document.getElementById("correo").value;
+        const nombre = document.getElementById("nombre").value;
+        const emailError = document.getElementById("emailError");
+
+        // Validar correo antes de guardar
+        if (!validarCorreo(correo)) {
+            emailError.classList.remove("hidden");
+            document.getElementById("correo").classList.add("border-red-500");
+            document.getElementById("correo").focus();
+            return;
+        } else {
+            emailError.classList.add("hidden");
+            document.getElementById("correo").classList.remove("border-red-500");
         }
 
-        // Mostrar mensajes
-        function showMessage(text, type) {
-            saveMessage.textContent = text;
-            saveMessage.className = 'save-message ' + (type === 'success' ? 'save-success' : 'save-error');
-            saveMessage.style.display = 'block';
-        }
+        try {
+            // Guardar nombre y correo
+            await fetch("/api/me", {
+                method: "PUT",
+                headers: {
+                    "Authorization": "Bearer " + token,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    nombre: nombre,
+                    correo: correo
+                })
+            });
 
-        // También guardar cuando cambie el nombre (para actualizar inicial)
-        userNameInput.addEventListener('input', function() {
+            // Guardar nombre en localStorage para el avatar
+            localStorage.setItem('userName', nombre);
+            localStorage.setItem('userEmail', correo);
+
+            // Guardar ajustes
+            await fetch("/api/settings", {
+                method: "PUT",
+                headers: {
+                    "Authorization": "Bearer " + token,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    idioma: document.getElementById("langSelect").value,
+                    moneda: document.getElementById("currencySelect").value
+                })
+            });
+
+            localStorage.setItem("currency", document.getElementById("currencySelect").value);
+
+            // Actualizar avatar si no hay imagen (usar nueva inicial)
             const savedAvatar = localStorage.getItem('userAvatar');
             if (!savedAvatar) {
-                updateAvatarPreview(null, userNameInput.value);
+                updateAvatarPreview(null, nombre);
+                updateHeaderAvatar(null, nombre);
             }
-        });
-    </script>
+
+            showAvatarMessage('¡Cambios guardados correctamente!', 'success');
+
+        } catch (err) {
+            console.error(err);
+            showAvatarMessage('Error al guardar los cambios', 'error');
+        }
+    });
+
+    /* ============================
+       VALIDACIÓN EN TIEMPO REAL
+    ============================ */
+    document.getElementById("correo").addEventListener("input", function() {
+        const emailError = document.getElementById("emailError");
+        
+        if (!validarCorreo(this.value)) {
+            emailError.classList.remove("hidden");
+            this.classList.add("border-red-500");
+        } else {
+            emailError.classList.add("hidden");
+            this.classList.remove("border-red-500");
+        }
+    });
+
+    /* ============================
+       TOGGLE DROPDOWN
+    ============================ */
+    document.getElementById("userAvatar").addEventListener("click", () => {
+        document.getElementById("dropdown").classList.toggle("hidden");
+    });
+
+    /* ============================
+       LOGOUT
+    ============================ */
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+        localStorage.clear();
+        window.location.href = "login.html";
+    });
+
+    /* ============================
+       LANGUAGE CHANGE
+    ============================ */
+    document.getElementById("langSelect").addEventListener("change", function() {
+        // Aquí iría la lógica para cambiar el idioma
+        // Por ahora solo actualizamos el mensaje de error si está visible
+        const emailError = document.getElementById("emailError");
+        if (!emailError.classList.contains('hidden')) {
+            setTimeout(() => {
+                // El texto se actualizará automáticamente por translations.js
+            }, 100);
+        }
+    });
+
+    /* ============================
+       INICIALIZAR
+    ============================ */
+    document.addEventListener('DOMContentLoaded', function() {
+        cargarPerfil();
+        
+        // Cargar avatar al iniciar
+        loadAvatar();
+    });
+
+</script>
+
 </body>
 </html>

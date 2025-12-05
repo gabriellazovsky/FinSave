@@ -102,7 +102,17 @@ const translations = {
         notes: "Notas",
         writeNotes: "Escribe tus notas...",
         new: "Nuevo",
-
+// Nuevas traducciones para el avatar
+        "avatar.title": "Avatar Personalizado",
+        "avatar.upload_button": "Subir Nueva Imagen",
+        "avatar.reset_button": "Usar Inicial del Nombre",
+        "avatar.instructions": "Haz clic en el avatar o en el botón para subir una imagen (JPG, PNG, máximo 2MB). Si no subes nada, se usará la inicial de tu nombre en todas las secciones.",
+        "avatar.upload_success": "¡Imagen cargada correctamente! Se mostrará en tu perfil.",
+        "avatar.reset_success": "Avatar restablecido a la inicial del nombre",
+        "avatar.save_success": "¡Cambios guardados correctamente!",
+        "avatar.invalid_image": "Por favor, selecciona una imagen válida (JPG, PNG)",
+        "avatar.too_large": "La imagen debe ser menor a 2MB",
+        "avatar.error": "Error al guardar los cambios",
 
 
 
@@ -365,9 +375,19 @@ const translations = {
         notes: "Notes",
         writeNotes: "Write your notes...",
         new: "New",
-            
 
-
+        //nuevas traduciones avatar
+                   "avatar.title": "Custom Avatar",
+        "avatar.upload_button": "Upload New Image",
+        "avatar.reset_button": "Use Name Initial",
+        "avatar.instructions": "Click on the avatar or the button to upload an image (JPG, PNG, max 2MB). If you don't upload anything, your name initial will be used in all sections.",
+        "avatar.upload_success": "Image uploaded successfully! It will appear in your profile.",
+        "avatar.reset_success": "Avatar reset to name initial",
+        "avatar.save_success": "Changes saved successfully!",
+        "avatar.invalid_image": "Please select a valid image (JPG, PNG)",
+        "avatar.too_large": "Image must be less than 2MB",
+        "avatar.error": "Error saving changes",
+    
 
   //consejos personalizados 
         "back": "← Back to Tips",

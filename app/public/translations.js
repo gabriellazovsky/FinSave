@@ -102,7 +102,18 @@ const translations = {
         notes: "Notas",
         writeNotes: "Escribe tus notas...",
         new: "Nuevo",
+//consejos
 
+         "advice.reduceCategory": "Reduce gastos en {category}: actualmente ~€{topAmount}/mes ({pct}%). Prueba un presupuesto de €{weeklyTarget}/semana — ahorro estimado €{estimatedSave}/mes si reduces {reducePct}%.",
+    "advice.reviewSubscriptions": "Revisa estas suscripciones: {subs}. Podrías ahorrar hasta €{total}/mes si cancelas las menos usadas.",
+    "advice.controlMicropagos": "He detectado {count} micropagos (<€5). Limita a 3/semana y ahorra aprox. €{saveEstimate}/mes.",
+    "advice.automateSavingsAmount": "Automatiza al menos €{suggested}/mes hacia ahorro (10% de ingresos).",
+    "advice.emergencyFund": "Fondo de emergencia: apunta a 3 meses ≈ €{fund} — empieza con aportes pequeños.",
+    "advice.recordMore": "Registra al menos 2-4 semanas de movimientos reales para recomendaciones precisas.",
+    "advice.automateSavings": "Empieza automatizando 10% de cada ingreso a una cuenta de ahorro separada.",
+    "advice.reviewTopExpenses": "Revisa y anota tus 3 mayores gastos mensuales; ahí está la mayor oportunidad.",
+    "advice.noSpendWeek": "Haz una semana de «no gastar» cada mes para identificar gastos por impulso.",
+    "advice.checkSubscriptions": "Lista tus suscripciones y decide cuáles no usas en 30 días.",
 
 
 
@@ -365,7 +376,19 @@ const translations = {
         notes: "Notes",
         writeNotes: "Write your notes...",
         new: "New",
+            
+//consejos
 
+   "advice.reduceCategory": "Reduce spending in {category}: currently ~${topAmount}/month ({pct}%). Try a budget of ${weeklyTarget}/week for this category — estimated savings ${estimatedSave}/month if you cut {reducePct}%.",
+    "advice.reviewSubscriptions": "Check these subscriptions: {subs}. You could save up to ${total}/month by cancelling the least used.",
+    "advice.controlMicropagos": "Detected {count} micropayments (<$5). Limit to 3/week and save approx. ${saveEstimate}/month.",
+    "advice.automateSavingsAmount": "Automate at least ${suggested}/month towards savings (10% of income).",
+    "advice.emergencyFund": "Emergency fund: aim for 3 months ≈ ${fund} — start with small regular contributions.",
+    "advice.recordMore": "Record at least 2-4 weeks of real transactions for accurate recommendations.",
+    "advice.automateSavings": "Start by automating 10% of each income to a separate savings account.",
+    "advice.reviewTopExpenses": "Review and note your top 3 monthly expenses; that’s usually the biggest opportunity.",
+    "advice.noSpendWeek": "Have a 'no-spend' week each month to identify impulse expenses.",
+    "advice.checkSubscriptions": "List your subscriptions and decide which you don’t use in 30 days.",         
 
 
 

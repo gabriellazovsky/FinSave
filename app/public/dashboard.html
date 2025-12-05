@@ -118,6 +118,43 @@
 </main>
 
 <script src="translations.js"></script>
+    <script src="recomendations.js"></script>
+<script>
+async function mostrarRecomendaciones() {
+    const movimientos = await fetch('/api/movimientos').then(res => res.json());
+    const recs = generateRecommendations(movimientos, currentLang);
+    const container = document.getElementById('recomendacionesList');
+    container.innerHTML = '';
+
+    if (recs.length === 0) {
+        const p = document.createElement('p');
+        p.setAttribute('data-i18n', 'noRecommendations');
+        p.textContent = translations[currentLang]['noRecommendations'];
+        container.appendChild(p);
+        return;
+    }
+
+    recs.forEach((r, i) => {
+        const p = document.createElement('p');
+        // Reemplazar parámetros
+        let text = translations[currentLang][r.key];
+        for (const [k,v] of Object.entries(r.params || {})) {
+            text = text.replace(new RegExp(`{${k}}`, 'g'), v);
+        }
+        p.textContent = text;
+        container.appendChild(p);
+    });
+}
+
+// Actualizar al cambiar idioma
+document.getElementById('langSelect').addEventListener('change', () => {
+    mostrarRecomendaciones();
+});
+
+// Ejecutar al cargar
+document.addEventListener('DOMContentLoaded', mostrarRecomendaciones);
+</script>
+
 <script>
     /* ============================
        VALIDACIÓN DE CORREO
@@ -276,3 +313,4 @@
 
 </body>
 </html>
+

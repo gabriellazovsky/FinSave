@@ -419,6 +419,18 @@ window.addEventListener('DOMContentLoaded', () => {
 </script>
 
 <script>
+
+    // Función para clave única del avatar
+function getCurrentUserAvatarKey() {
+    // Intentar obtener el email de diferentes fuentes
+    const userEmail = localStorage.getItem('userEmail') || 
+                     document.getElementById('profile-user-email')?.textContent ||
+                     document.querySelector('[data-user-email]')?.getAttribute('data-user-email') ||
+                     'default';
+    
+    return `avatar_${userEmail.toLowerCase().trim()}`;
+}
+    
 // ================== AVATAR CON IMAGEN O INICIAL ==================
 function loadAvatarFromLocalStorage() {
     try {

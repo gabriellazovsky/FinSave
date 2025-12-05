@@ -420,47 +420,52 @@ window.addEventListener('DOMContentLoaded', () => {
 
 <script>
 
-    // Función para clave única del avatar
+// Función para obtener la clave del usuario actual
 function getCurrentUserAvatarKey() {
-    // Intentar obtener el email de diferentes fuentes
-    const userEmail = localStorage.getItem('userEmail') || 
-                     document.getElementById('profile-user-email')?.textContent ||
-                     document.querySelector('[data-user-email]')?.getAttribute('data-user-email') ||
-                     'default';
+    // Primero intentar obtener el email del usuario logeado
+    const token = localStorage.getItem("token");
+    let userEmail = 'default';
     
-    return `avatar_${userEmail.toLowerCase().trim()}`;
+    // Si hay token, intentar obtener email de la API o localStorage
+    if (token) {
+        userEmail = localStorage.getItem('userEmail') || 'default';
+    }
+    
+    // Limpiar el email
+    const cleanEmail = userEmail.toLowerCase().trim().replace(/[^a-z0-9@._-]/g, '');
+    return `avatar_${cleanEmail}`;
 }
+
+
     
 // ================== AVATAR CON IMAGEN O INICIAL ==================
+// Función para cargar avatar específico del usuario
 function loadAvatarFromLocalStorage() {
     try {
-        // Obtener datos del localStorage
-        const savedAvatar = localStorage.getItem('userAvatar');
+        // Obtener clave única del usuario actual
+        const userKey = getCurrentUserAvatarKey();
+        
+        // Obtener avatar CON CLAVE ÚNICA
+        const savedAvatar = localStorage.getItem(userKey);
+        
+        // Obtener nombre del usuario
         const userName = localStorage.getItem('userName') || 'Usuario';
         const userEmail = localStorage.getItem('userEmail') || 'usuario@email.com';
         
         // Elementos del DOM
         const avatarEl = document.getElementById('user-avatar');
-        const profileLargeAvatar = document.getElementById('profile-large-avatar');
-        const profileUserName = document.getElementById('profile-user-name');
-        const profileUserEmail = document.getElementById('profile-user-email');
         
-        // Determinar iniciales para caso sin imagen
+        // Determinar iniciales
         let initials = '?';
         if (userName && userName !== 'Usuario') {
             const nameParts = userName.split(' ');
-            if (nameParts.length > 0) {
-                initials = nameParts[0].charAt(0).toUpperCase();
-                if (nameParts.length > 1) {
-                    initials += nameParts[1].charAt(0).toUpperCase();
-                }
-            }
+            initials = nameParts.map(part => part[0]).join('').toUpperCase().substring(0, 2);
         }
         
         // Actualizar avatar pequeño (header)
         if (avatarEl) {
             if (savedAvatar) {
-                avatarEl.innerHTML = `<img src="${savedAvatar}" alt="avatar">`;
+                avatarEl.innerHTML = `<img src="${savedAvatar}" alt="avatar" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
             } else {
                 avatarEl.textContent = initials;
                 avatarEl.style.background = '#4A8CFF';
@@ -468,32 +473,50 @@ function loadAvatarFromLocalStorage() {
             }
         }
         
-        // Actualizar avatar grande (sección perfil)
-        if (profileLargeAvatar) {
+    } catch (error) {
+        console.error('Error cargando avatar:', error);
+    }
+}// Función para cargar avatar específico del usuario
+function loadAvatarFromLocalStorage() {
+    try {
+        // Obtener clave única del usuario actual
+        const userKey = getCurrentUserAvatarKey();
+        
+        // Obtener avatar CON CLAVE ÚNICA
+        const savedAvatar = localStorage.getItem(userKey);
+        
+        // Obtener nombre del usuario
+        const userName = localStorage.getItem('userName') || 'Usuario';
+        const userEmail = localStorage.getItem('userEmail') || 'usuario@email.com';
+        
+        // Elementos del DOM
+        const avatarEl = document.getElementById('user-avatar');
+        
+        // Determinar iniciales
+        let initials = '?';
+        if (userName && userName !== 'Usuario') {
+            const nameParts = userName.split(' ');
+            initials = nameParts.map(part => part[0]).join('').toUpperCase().substring(0, 2);
+        }
+        
+        // Actualizar avatar pequeño (header)
+        if (avatarEl) {
             if (savedAvatar) {
-                profileLargeAvatar.innerHTML = `<img src="${savedAvatar}" alt="avatar">`;
+                avatarEl.innerHTML = `<img src="${savedAvatar}" alt="avatar" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
             } else {
-                profileLargeAvatar.textContent = initials;
-                profileLargeAvatar.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-                profileLargeAvatar.style.color = 'white';
+                avatarEl.textContent = initials;
+                avatarEl.style.background = '#4A8CFF';
+                avatarEl.style.color = 'white';
             }
         }
         
-        // Actualizar nombre y email
-        if (profileUserName) {
-            profileUserName.textContent = userName;
-        }
-        if (profileUserEmail) {
-            profileUserEmail.textContent = userEmail;
-        }
-        
     } catch (error) {
-        console.error('Error cargando avatar desde localStorage:', error);
+        console.error('Error cargando avatar:', error);
     }
 }
-
 // También cargar desde API (para compatibilidad)
-async function loadUserAvatar() {
+// Función para obtener datos del usuario desde la API
+async function loadUserData() {
     const token = localStorage.getItem("token");
     if (!token) return;
 
@@ -505,19 +528,25 @@ async function loadUserAvatar() {
         if (!res.ok) return;
         const user = await res.json();
 
-        // Guardar nombre en localStorage si no existe
-        if (user.nombre && !localStorage.getItem('userName')) {
-            localStorage.setItem('userName', user.nombre);
-        }
+        // Guardar datos del usuario en localStorage
+        localStorage.setItem('userName', user.nombre);
+        localStorage.setItem('userEmail', user.correo);
+        
+        // Ahora cargar el avatar con los datos correctos
+        loadAvatarFromLocalStorage();
 
     } catch (error) {
-        console.error("Error cargando avatar:", error);
+        console.error("Error cargando datos del usuario:", error);
     }
-    
-    // Siempre cargar desde localStorage
-    loadAvatarFromLocalStorage();
 }
 
+// Cargar cuando la página esté lista
+document.addEventListener('DOMContentLoaded', function() {
+    loadUserData();
+});
+
+    
+    
 // Abrir/cerrar menú dropdown
 const avatar = document.getElementById("user-avatar");
 const dropdown = document.getElementById("dropdown-menu");
@@ -535,8 +564,19 @@ document.addEventListener("click", (e) => {
 });
 
 // Cerrar sesión
-document.getElementById("logout-btn").addEventListener("click", () => {
+/* ============================
+   LOGOUT - LIMPIAR SOLO LO NECESARIO
+============================ */
+document.getElementById("logoutBtn").addEventListener("click", () => {
+    // Solo eliminar el token de autenticación
     localStorage.removeItem("token");
+    
+    // Opcional: también eliminar datos sensibles de sesión
+    // localStorage.removeItem('userEmail');
+    // localStorage.removeItem('userName');
+    
+    // NO ELIMINAR: 'userAvatar_*' (avatars), 'currency', 'language'
+    
     window.location.href = "/index.html";
 });
 

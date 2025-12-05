@@ -27,9 +27,15 @@
     #movModal.modal.show {
         z-index: 2000 !important;
     }
+
+    /* Estilos para el avatar personalizado */
+    #user-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+    }
     </style>
-    
-    
 </head>
 
 <body class="bg-light">
@@ -110,7 +116,6 @@
             </div>
             <div class="flex items-center gap-4">
 
-
                 <label class="theme-switch ml-4" title="Activa modo oscuro/claro" data-i18n-title="theme.toggle_title">
                 <input type="checkbox" class="theme-switch__checkbox" id="checkbox">
                 <div class="theme-switch__container">
@@ -145,6 +150,7 @@
             font-weight: bold;
             cursor: pointer;
             box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            overflow: hidden;
          ">
         ?
     </div>
@@ -164,21 +170,17 @@
             z-index: 9999;
          ">
         
-       
-
-        <a href="dashboard.html" style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
         <p class="dropdown-title" style="margin-bottom:10px; font-weight:bold;" data-i18n="dropdown.app_name">FinSave</p>
 
-        <a href="dashboard.html" class="menu-item">
+        <a href="dashboard.html" class="menu-item" style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
             👤 <span data-i18n="dropdown.profile">Perfil</span>
         </a>
 
-        <button id="logout-btn" style="display:flex; align-items:center; gap:10px; background:none; border:none; cursor:pointer;">
+        <button id="logout-btn" style="display:flex; align-items:center; gap:10px; background:none; border:none; cursor:pointer; padding:0;">
             ⬅️ <span data-i18n="dropdown.logout">Cerrar sesión</span>
         </button>
-
     </div>
-    </div>
+</div>
             </div>
         </nav>
     </header>
@@ -186,6 +188,48 @@
     <canvas id="lienzo" width="150" height="150"></canvas>
     <div class="container mt-8 mb-8">
         <div class="text-center mb-8">
+
+            <!-- Sección del Avatar Personal en Persona.html -->
+            <div class="avatar-personal-section mb-6">
+                <div class="d-flex flex-column align-items-center">
+                    <!-- Avatar grande para perfil -->
+                    <div id="profile-large-avatar" 
+                         style="
+                            width: 120px;
+                            height: 120px;
+                            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                            color: white;
+                            border-radius: 50%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            font-size: 48px;
+                            font-weight: bold;
+                            margin-bottom: 15px;
+                            border: 5px solid white;
+                            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+                            overflow: hidden;
+                         ">
+                        ?
+                    </div>
+                    
+                    <h3 id="profile-user-name" class="mb-1" style="font-size: 1.8rem; font-weight: 700;">Usuario</h3>
+                    <p id="profile-user-email" class="text-muted mb-4">usuario@email.com</p>
+                    
+                    <a href="dashboard.html" class="btn btn-primary btn-sm">
+                        <i class="bi bi-pencil-square me-1"></i> Editar Avatar
+                    </a>
+                    
+                    <div class="avatar-info mt-3" style="max-width: 500px;">
+                        <div class="alert alert-info" style="font-size: 0.9rem;">
+                            <i class="bi bi-info-circle me-2"></i>
+                            Tu avatar personalizado se muestra aquí. 
+                            <a href="dashboard.html" class="alert-link">Haz clic aquí</a> para cambiar tu imagen de perfil.
+                            Si no has subido una imagen, se mostrará la inicial de tu nombre.
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <div class="chart-container mt-4">
                 <div id="centerLabel" class="center-label">€0.00</div>
@@ -226,8 +270,6 @@
                     </div>
                 </div>
             </div>
-
-            
 
             <div id="montoFilterClass" class="filtrosOcultos mt-2">
                 <span data-i18n="filters.amount">Monto:</span>
@@ -296,8 +338,6 @@
             </div>
         </div>
     </div>
-
-    <!-- =================== FINMURU ESTUVO AQUI =================== -->
 </section>
 
 <!-- =================== LOGROS =================== -->
@@ -368,9 +408,7 @@
     </div>
 </section>
 
-<!-- =================== CONTACTO =================== -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
 
 <!-- Collapsible Market Menu (persona.html only) -->
 <button
@@ -403,13 +441,10 @@
     </div>
 </div>
 
-    
-<!-- =================== MARKET =================== -->
 <script src="live-prices.js" defer></script>
 
 <script>
 window.addEventListener('DOMContentLoaded', () => {
-
     // --- PANEL MARKET ---
     const tabBtn = document.getElementById('marketTab');
     const panelEl = document.getElementById('livePrices');
@@ -419,16 +454,72 @@ window.addEventListener('DOMContentLoaded', () => {
         panelEl.addEventListener('show.bs.offcanvas', () => document.body.classList.add('offcanvas-open'));
         panelEl.addEventListener('hidden.bs.offcanvas', () => document.body.classList.remove('offcanvas-open'));
     }
-
 });
 </script>
 
 <script>
+// ================== AVATAR CON IMAGEN O INICIAL ==================
+function loadAvatarFromLocalStorage() {
+    try {
+        // Obtener datos del localStorage
+        const savedAvatar = localStorage.getItem('userAvatar');
+        const userName = localStorage.getItem('userName') || 'Usuario';
+        const userEmail = localStorage.getItem('userEmail') || 'usuario@email.com';
+        
+        // Elementos del DOM
+        const avatarEl = document.getElementById('user-avatar');
+        const profileLargeAvatar = document.getElementById('profile-large-avatar');
+        const profileUserName = document.getElementById('profile-user-name');
+        const profileUserEmail = document.getElementById('profile-user-email');
+        
+        // Determinar iniciales para caso sin imagen
+        let initials = '?';
+        if (userName && userName !== 'Usuario') {
+            const nameParts = userName.split(' ');
+            if (nameParts.length > 0) {
+                initials = nameParts[0].charAt(0).toUpperCase();
+                if (nameParts.length > 1) {
+                    initials += nameParts[1].charAt(0).toUpperCase();
+                }
+            }
+        }
+        
+        // Actualizar avatar pequeño (header)
+        if (avatarEl) {
+            if (savedAvatar) {
+                avatarEl.innerHTML = `<img src="${savedAvatar}" alt="avatar">`;
+            } else {
+                avatarEl.textContent = initials;
+                avatarEl.style.background = '#4A8CFF';
+                avatarEl.style.color = 'white';
+            }
+        }
+        
+        // Actualizar avatar grande (sección perfil)
+        if (profileLargeAvatar) {
+            if (savedAvatar) {
+                profileLargeAvatar.innerHTML = `<img src="${savedAvatar}" alt="avatar">`;
+            } else {
+                profileLargeAvatar.textContent = initials;
+                profileLargeAvatar.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                profileLargeAvatar.style.color = 'white';
+            }
+        }
+        
+        // Actualizar nombre y email
+        if (profileUserName) {
+            profileUserName.textContent = userName;
+        }
+        if (profileUserEmail) {
+            profileUserEmail.textContent = userEmail;
+        }
+        
+    } catch (error) {
+        console.error('Error cargando avatar desde localStorage:', error);
+    }
+}
 
-
-
-// ================== AVATAR ==================
-
+// También cargar desde API (para compatibilidad)
 async function loadUserAvatar() {
     const token = localStorage.getItem("token");
     if (!token) return;
@@ -441,42 +532,59 @@ async function loadUserAvatar() {
         if (!res.ok) return;
         const user = await res.json();
 
-        const iniciales =
-            (user.nombre?.[0] || "").toUpperCase() +
-            (user.apellido?.[0] || "").toUpperCase();
-
-        document.getElementById("user-avatar").textContent = iniciales;
+        // Guardar nombre en localStorage si no existe
+        if (user.nombre && !localStorage.getItem('userName')) {
+            localStorage.setItem('userName', user.nombre);
+        }
 
     } catch (error) {
         console.error("Error cargando avatar:", error);
     }
+    
+    // Siempre cargar desde localStorage
+    loadAvatarFromLocalStorage();
 }
 
+// Abrir/cerrar menú dropdown
 const avatar = document.getElementById("user-avatar");
 const dropdown = document.getElementById("dropdown-menu");
 
-// abrir/cerrar menú
-avatar?.addEventListener("click", () => {
+avatar?.addEventListener("click", (e) => {
+    e.stopPropagation();
     dropdown.classList.toggle("hidden");
 });
 
-// cerrar clic fuera
+// Cerrar al hacer clic fuera
 document.addEventListener("click", (e) => {
     if (!e.target.closest(".user-menu")) {
         dropdown.classList.add("hidden");
     }
 });
 
-// cerrar sesión dentro del menú
+// Cerrar sesión
 document.getElementById("logout-btn").addEventListener("click", () => {
     localStorage.removeItem("token");
     window.location.href = "/index.html";
 });
 
-loadUserAvatar();
+// Escuchar cambios en localStorage para actualizar en tiempo real
+window.addEventListener('storage', function(e) {
+    if (e.key === 'userAvatar' || e.key === 'userName' || e.key === 'userEmail') {
+        loadAvatarFromLocalStorage();
+    }
+});
+
+// Cargar cuando la página esté lista
+document.addEventListener('DOMContentLoaded', function() {
+    loadUserAvatar();
+    
+    // Cargar también si hay cambios en la misma pestaña (para dashboard -> persona)
+    setInterval(loadAvatarFromLocalStorage, 1000);
+});
 </script>
 
 <script>
+// Función para cargar balance
 async function cargarBalancePersona() {
     const token = localStorage.getItem("token");
     if (!token) return;
@@ -487,13 +595,11 @@ async function cargarBalancePersona() {
         });
 
         if (!res.ok) return;
-
         const user = await res.json();
 
         const simbolos = { EUR: "€", USD: "$" };
         const simbolo = simbolos[user.moneda] || "€";
 
-        // ACTUALIZAR EL BALANCE DEL DASHBOARD
         const label = document.getElementById("centerLabel");
         if (label) {
             label.textContent = simbolo + user.balance.toFixed(2);
@@ -509,7 +615,6 @@ document.addEventListener("DOMContentLoaded", cargarBalancePersona);
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-
     const savedCurrency = localStorage.getItem("currency") || "EUR";
     const balanceLabel = document.getElementById("centerLabel");
 
@@ -520,10 +625,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }).format(amount);
     }
 
-    // Observar cuándo /api/me ha colocado el valor en #centerLabel
     const observer = new MutationObserver(() => {
         if (!balanceLabel || balanceLabel.textContent.trim() === "") return;
-
         const raw = balanceLabel.textContent.replace(/[^\d.-]/g, "");
         const amount = parseFloat(raw);
 
@@ -533,10 +636,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    observer.observe(balanceLabel, { childList: true });
-
+    if (balanceLabel) {
+        observer.observe(balanceLabel, { childList: true });
+    }
 });
-
 </script>
     
 <script src="index.js" defer></script>

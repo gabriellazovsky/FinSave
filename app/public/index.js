@@ -132,7 +132,9 @@ function showAchievementNotification(achievementName) {
     `;
     notification.querySelector('.close-btn').addEventListener('click', () => notification.remove());
     document.body.appendChild(notification);
+    animacionSaludo();
     setTimeout(() => notification.remove(), 5000);
+
 }
 
 function updateAchievementsUI() {
@@ -906,6 +908,9 @@ document.getElementById("nuevoRegistro").addEventListener("submit", async (e) =>
     const img10 = new Image();
     const img11 = new Image();
     const img12 = new Image();
+    const salute1 = new Image();
+    const salute2 = new Image();
+    const salute3 = new Image();
 
     img1.src = "animation/finsavePet1.png";
     img2.src = "animation/finsavePet2.png";
@@ -919,6 +924,9 @@ document.getElementById("nuevoRegistro").addEventListener("submit", async (e) =>
     img10.src = "animation/finsavePet10.png";
     img11.src = "animation/finsavePet11.png";
     img12.src = "animation/finsavePet12.png";
+    salute1.src = "animation/salute1.png";
+    salute2.src = "animation/salute2.png";
+    salute3.src = "animation/salute3.png";
 
 function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -969,6 +977,27 @@ function delay(ms) {
             }
         }
 
+        draw();
+        await delay(3000);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    async function animacionSaludo() {
+        let frames = [salute1, salute2, salute3, salute1, salute2, salute3, salute1, salute2, salute3, salute1, salute2, salute3, salute1, salute2, salute3];
+        let index = 0;
+        const frameRate = 6; // frames por segundo
+        function draw() {
+            if (index >= frames.length) return;
+            const img = frames[index];
+            if (img.complete) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                index++;
+                setTimeout(() => requestAnimationFrame(draw), 1000 / frameRate);
+            } else {
+                img.onload = () => draw();
+            }   
+        }
         draw();
         await delay(3000);
         ctx.clearRect(0, 0, canvas.width, canvas.height);

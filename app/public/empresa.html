@@ -218,7 +218,7 @@
     if(!userId) window.location.href="persona.html";
 
     const storageKey=`dashboardWidgets_${userId}`;
-    const darkKey=`darkMode_${userId}`;
+    const darkKey=`darkMode`;
     const dashboard=document.getElementById('dashboard');
     const checkbox=document.getElementById('checkbox');
     const clearAllBtn=document.getElementById('clearAll');
@@ -489,5 +489,6 @@
         pdf.save('dashboard.pdf');
     });
 </script>
+<script src="consejo.js"></script>
 </body>
 </html>

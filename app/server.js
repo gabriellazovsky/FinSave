@@ -383,7 +383,7 @@ app.post("/password-reset/confirm", async (req, res) => {
 
 // --- WebSocket Twelve Data ---
 const WebSocket = require('ws');
-const API_KEY = process.env.TWELVEDATA_KEY;
+const API_KEY = process.env.TWELVEDATA_KEY || process.env.TWELVEDATA_API_KEY;
 const TD_URL  = `wss://ws.twelvedata.com/v1/quotes/price?apikey=${API_KEY}`;
 
 const server = http.createServer(app);
@@ -492,7 +492,7 @@ const fetch = require('node-fetch');
 app.use(express.static(path.join(__dirname, 'public')));
 app.get("/api/eurusd", async (req, res) => {
     try {
-        const apiKey = process.env.TWELVEDATA_API_KEY;
+        const apiKey = process.env.TWELVEDATA_KEY || process.env.TWELVEDATA_API_KEY;
         const url = `https://api.twelvedata.com/exchange_rate?symbol=EUR/USD&apikey=${apiKey}`;
 
         const r = await fetch(url);
@@ -510,6 +510,26 @@ app.get("/api/eurusd", async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: "Error interno del servidor" });
+    }
+});
+
+// Generic Twelve Data price proxy (fallback for non-streaming symbols)
+app.get('/api/price', async (req, res) => {
+    try {
+        const symbol = String(req.query.symbol || '').trim();
+        if (!symbol) return res.status(400).json({ error: 'symbol requerido' });
+        const apiKey = process.env.TWELVEDATA_KEY || process.env.TWELVEDATA_API_KEY;
+        const url = `https://api.twelvedata.com/price?symbol=${encodeURIComponent(symbol)}&apikey=${apiKey}`;
+        const r = await fetch(url);
+        const data = await r.json();
+        if (data.status === 'error') {
+            return res.status(400).json({ error: data.message || 'Error Twelve Data' });
+        }
+        const price = parseFloat(data.price);
+        return res.json({ symbol, price });
+    } catch (err) {
+        console.error('Error proxy /api/price:', err);
+        res.status(500).json({ error: 'Error interno del servidor' });
     }
 });
 

@@ -362,18 +362,30 @@ function getUserAvatarKey() {
         }
     });
     
-    /* ============================
+ /* ============================
        VALIDACIÓN DE CORREO
     ============================ */
     function validarCorreo(correo) {
         const partes = correo.split('@');
         const tieneContenidoAntes = partes[0] && partes[0].length > 0;
         const tieneArroba = partes.length === 2;
-        const tienePuntoDespuesArroba = partes[1]?.includes('.');
         
-        return tieneContenidoAntes && tieneArroba && tienePuntoDespuesArroba;
+        // Verificar que haya contenido después del @
+        if (!partes[1] || partes[1].length === 0) {
+            return false;
+        }
+        
+        // Dividir la parte después del @ por puntos
+        const partesDominio = partes[1].split('.');
+        const tienePuntoDespuesArroba = partesDominio.length > 1;
+        
+        // Verificar que haya contenido después del último punto
+        // y que ese contenido tenga al menos 2 caracteres (ej: com, es, org, etc.)
+        const tieneContenidoDespuesPunto = partesDominio[partesDominio.length - 1] && 
+                                          partesDominio[partesDominio.length - 1].length >= 2;
+        
+        return tieneContenidoAntes && tieneArroba && tienePuntoDespuesArroba && tieneContenidoDespuesPunto;
     }
-
     /* ============================
        LOAD USER INFO
     ============================ */
@@ -540,6 +552,7 @@ function getUserAvatarKey() {
 
 </body>
 </html>
+
 
 
 

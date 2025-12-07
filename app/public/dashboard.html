@@ -393,6 +393,21 @@ function validarCorreo(correo) {
            contenidoEntreArrobaYPunto && // ← NUEVA CONDICIÓN
            tieneContenidoDespuesPunto;
 }
+
+    /* ============================
+       VALIDACIÓN DEL NOMBRE
+    ============================ */
+function validarNombre(nombre) {
+    // Eliminar espacios en blanco al inicio y final
+    const nombreTrimmed = nombre.trim();
+    
+    // Validar que no esté vacío y tenga al menos 2 caracteres
+    return nombreTrimmed.length >= 2;
+    
+    // Si quieres validar que tenga al menos nombre y apellido:
+    // const partesNombre = nombreTrimmed.split(' ').filter(part => part.length > 0);
+    // return partesNombre.length >= 2 && nombreTrimmed.length >= 5;
+}
     /* ============================
        LOAD USER INFO
     ============================ */
@@ -559,6 +574,7 @@ function validarCorreo(correo) {
 
 </body>
 </html>
+
 
 
 

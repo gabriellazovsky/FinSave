@@ -160,7 +160,7 @@
 <header class="w-full bg-white dark:bg-gray-800 shadow-sm">
     <nav class="container mx-auto flex justify-between items-center px-4 py-3">
         <a href="persona.html" class="hover:text-blue-600 font-semibold" data-i18n="back">← Volver</a>
-        <h1 class="text-xl font-bold text-gray-800 dark:text-gray-100" data-i18n="professionalDashboard">Dashboard Profesional</h1>
+        <h1 class="text-xl font-bold" data-i18n="professionalDashboard">Dashboard Profesional</h1>
 
         <div class="header-actions">
 <label class="theme-switch ml-4" title="Activa modo oscuro/claro" data-i18n-title="theme.toggle_title">
@@ -225,14 +225,6 @@
     const logoutBtn=document.getElementById('logoutBtn');
 
     let draggingElem=null, resizeElem=null, startX=0, startY=0, startW=0, startH=0;
-
-    // ================= DARK MODE
-    if(localStorage.getItem(darkKey)==='true'){ checkbox.checked=true; document.body.classList.add('dark'); }
-    else { checkbox.checked=false; document.body.classList.remove('dark'); }
-    checkbox.addEventListener('change', ()=>{
-        document.body.classList.toggle('dark', checkbox.checked);
-        localStorage.setItem(darkKey, checkbox.checked?'true':'false');
-    });
 
     // ================= LOGOUT
     logoutBtn.addEventListener('click', ()=>{ localStorage.removeItem('token'); window.location.href="persona.html"; });

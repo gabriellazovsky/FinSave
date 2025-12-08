@@ -813,6 +813,7 @@ document.getElementById('editForm').addEventListener('submit', async (e) => {
         return;
     }
     document.getElementById('editModal').style.display = 'none';
+    document.body.style.overflow = '';
     await verHistorial();
 });
 
